@@ -1,51 +1,38 @@
 DSAAnim.register('two-pointers-overview', function(container) {
-  const values = [1, 3, 4, 6, 8, 11];
-  const target = 12;
+  const values = [1, 2, 4, 7, 10, 11, 15];
+  const target = 13;
   const frames = [];
 
   // Initial state
   frames.push({
-    pointers: { L: 0, R: 5 },
-    stat: '1 + 11 = 12',
-    caption: 'Start with pointers at both ends of sorted array. Target sum: 12'
+    pointers: { L: 0, R: 6 },
+    stat: 'nums[L] + nums[R] = 1 + 15 = 16',
+    caption: 'Start with L at left, R at right. Target: 13'
   });
 
-  // Simulate the two-pointer algorithm
-  let l = 0, r = 5;
-  const steps = [];
+  // L=0, R=6: 1+15=16 > 13 → move R left
+  frames.push({
+    pointers: { L: 0, R: 6 },
+    stat: 'nums[L] + nums[R] = 1 + 15 = 16',
+    caption: 'Sum 16 > 13, too big → move R left',
+    color: { 0: 'accent', 6: 'bad' }
+  });
 
-  while (l < r) {
-    const sum = values[l] + values[r];
-    steps.push({ l, r, sum });
-    if (sum === target) break;
-    if (sum < target) l++;
-    else r--;
-  }
+  // L=0, R=5: 1+11=12 < 13 → move L right
+  frames.push({
+    pointers: { L: 0, R: 5 },
+    stat: 'nums[L] + nums[R] = 1 + 11 = 12',
+    caption: 'Sum 12 < 13, too small → move L right',
+    color: { 0: 'bad', 5: 'accent' }
+  });
 
-  // Build frames from simulation
-  steps.forEach((step, idx) => {
-    const { l, r, sum } = step;
-    let caption, highlight, color;
-
-    if (sum === target) {
-      caption = 'Found it! ' + values[l] + ' + ' + values[r] + ' = ' + target;
-      highlight = [l, r];
-      color = { [l]: 'good', [r]: 'good' };
-    } else if (sum < target) {
-      caption = 'Sum too small (' + sum + ' < ' + target + ') → move L right';
-      color = { [l]: 'bad', [r]: 'accent' };
-    } else {
-      caption = 'Sum too big (' + sum + ' > ' + target + ') → move R left';
-      color = { [l]: 'accent', [r]: 'bad' };
-    }
-
-    frames.push({
-      pointers: { L: l, R: r },
-      stat: values[l] + ' + ' + values[r] + ' = ' + sum,
-      caption: caption,
-      highlight: highlight,
-      color: color
-    });
+  // L=1, R=5: 2+11=13 → found!
+  frames.push({
+    pointers: { L: 1, R: 5 },
+    stat: 'nums[L] + nums[R] = 2 + 11 = 13',
+    caption: 'Sum 13 = 13, match!',
+    highlight: [1, 5],
+    color: { 1: 'good', 5: 'good' }
   });
 
   DSAAnim.render(container, {

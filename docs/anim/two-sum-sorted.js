@@ -2,8 +2,8 @@
 DSAAnim.register('two-sum-sorted', function(container) {
   'use strict';
 
-  const values = [2, 3, 5, 8, 11, 15];
-  const target = 13;
+  const values = [2, 3, 5, 8, 11, 15, 19];
+  const target = 7;
   const frames = [];
 
   // Simulate the two-pointer algorithm
@@ -14,7 +14,7 @@ DSAAnim.register('two-sum-sorted', function(container) {
   frames.push({
     pointers: { L, R },
     stat: `target = ${target}`,
-    caption: 'Start with L at leftmost, R at rightmost index.'
+    caption: 'Start: L at leftmost, R at rightmost.'
   });
 
   while (L < R) {
@@ -35,9 +35,8 @@ DSAAnim.register('two-sum-sorted', function(container) {
       frames.push({
         pointers: { L, R },
         highlight: [L, R],
-        color: { [L]: 'accent', [R]: 'accent' },
         stat: `nums[${L}] + nums[${R}] = ${sum}`,
-        caption: `${sum} < ${target} → need bigger → L++`
+        caption: `${sum} < ${target} → too small → L++`
       });
       L++;
     } else {
@@ -45,9 +44,8 @@ DSAAnim.register('two-sum-sorted', function(container) {
       frames.push({
         pointers: { L, R },
         highlight: [L, R],
-        color: { [L]: 'accent2', [R]: 'accent2' },
         stat: `nums[${L}] + nums[${R}] = ${sum}`,
-        caption: `${sum} > ${target} → need smaller → R--`
+        caption: `${sum} > ${target} → too large → R--`
       });
       R--;
     }
