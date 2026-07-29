@@ -3,7 +3,7 @@
   'use strict';
 
   // Bump this on every deploy (keep in sync with CACHE in sw.js). Shown in the top bar.
-  const APP_VERSION = 'v8';
+  const APP_VERSION = 'v9';
 
   const view = document.getElementById('view');
   const topbarTitle = document.getElementById('topbarTitle');
@@ -286,9 +286,14 @@
       if (nowDone) toast('Nice — progress saved');
     });
 
-    // wire pager
+    // wire pager — REPLACE the history entry (don't push) so the phone's
+    // edge-swipe / back gesture returns to the home list instead of walking
+    // back through every module you paged through.
     view.querySelectorAll('[data-goto]').forEach((el) =>
-      el.addEventListener('click', (e) => { e.preventDefault(); location.hash = `#/m/${el.dataset.goto}`; }));
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        location.replace(location.pathname + location.search + `#/m/${el.dataset.goto}`);
+      }));
 
     // load & mount the module's visualization (if one exists)
     mountAnimation(m);
@@ -384,7 +389,7 @@
   backBtn.addEventListener('click', () => {
     // the top-left back arrow always returns to the home list,
     // regardless of how many modules were paged through
-    location.hash = '#/';
+    location.replace(location.pathname + location.search + '#/');
   });
   window.addEventListener('hashchange', route);
 
