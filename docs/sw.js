@@ -1,5 +1,5 @@
 /* Service worker — precache app shell + all module data for full offline use. */
-const CACHE = 'dsa-patterns-v4';
+const CACHE = 'dsa-patterns-v5';
 
 const SHELL = [
   './',

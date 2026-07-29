@@ -52,7 +52,10 @@ body {
 }
 /* nothing may exceed the viewport width */
 img, svg, video, canvas, pre, table { max-width: 100%; }
-p, h1, h2, h3, li, .card-title, .m-summary { overflow-wrap: anywhere; word-break: break-word; }
+p, h1, h2, h3, li, .card-title, .m-summary,
+.section .body code, .explain, .q-text, .opt, .dsa-caption, .steps li, .m-head h1 {
+  overflow-wrap: anywhere; word-break: break-word;
+}
 
 /* ---------- Top bar ---------- */
 .topbar {
@@ -62,6 +65,9 @@ p, h1, h2, h3, li, .card-title, .m-summary { overflow-wrap: anywhere; word-break
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;                 /* a long title can never push the page wide */
   padding: calc(var(--safe-top) + 10px) 14px 10px;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: saturate(160%) blur(12px);
@@ -71,13 +77,14 @@ p, h1, h2, h3, li, .card-title, .m-summary { overflow-wrap: anywhere; word-break
 .topbar-title {
   font-weight: 700;
   font-size: 17px;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 0;                     /* allow the flex item to shrink & ellipsize */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.topbar-actions { display: flex; align-items: center; gap: 6px; }
+.back-btn { flex: 0 0 auto; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 38px; height: 38px; border-radius: 50%;
