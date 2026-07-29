@@ -3,7 +3,7 @@
   'use strict';
 
   // Bump this on every deploy (keep in sync with CACHE in sw.js). Shown in the top bar.
-  const APP_VERSION = 'v7';
+  const APP_VERSION = 'v8';
 
   const view = document.getElementById('view');
   const topbarTitle = document.getElementById('topbarTitle');
@@ -382,8 +382,9 @@
 
   /* ---------- nav ---------- */
   backBtn.addEventListener('click', () => {
-    if (history.length > 1 && location.hash.startsWith('#/m/')) history.back();
-    else location.hash = '#/';
+    // the top-left back arrow always returns to the home list,
+    // regardless of how many modules were paged through
+    location.hash = '#/';
   });
   window.addEventListener('hashchange', route);
 
