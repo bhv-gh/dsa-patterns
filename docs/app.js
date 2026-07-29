@@ -204,6 +204,9 @@
       html += `<section class="section"><h3>${esc(s.heading)}</h3><div class="body">${mdBlock(s.body)}</div></section>`;
     }
 
+    // interactive visualization mount (filled after render, removed if none)
+    if (m.type !== 'intro') html += `<section class="anim-section" id="animMount" hidden></section>`;
+
     // approach steps
     if (Array.isArray(m.approach) && m.approach.length) {
       html += `<section class="section"><h3>${m.type === 'problem' ? 'Step-by-step' : 'When to use it'}</h3>
@@ -283,6 +286,40 @@
     // wire pager
     view.querySelectorAll('[data-goto]').forEach((el) =>
       el.addEventListener('click', (e) => { e.preventDefault(); location.hash = `#/m/${el.dataset.goto}`; }));
+
+    // load & mount the module's visualization (if one exists)
+    mountAnimation(m);
+  }
+
+  const loadedScripts = new Set();
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (loadedScripts.has(src)) return resolve();
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => { loadedScripts.add(src); resolve(); };
+      s.onerror = () => reject(new Error('failed to load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function mountAnimation(m) {
+    if (m.type === 'intro') return;
+    const mount = document.getElementById('animMount');
+    if (!mount) return;
+    try {
+      await loadScript(`./anim/${m.slug}.js`);
+      const fn = window.DSAAnim && window.DSAAnim.registry[m.slug];
+      if (typeof fn === 'function') {
+        mount.innerHTML = '<h3>Visualize it</h3>';
+        fn(mount);
+        mount.hidden = false;
+      } else {
+        mount.remove();
+      }
+    } catch (e) {
+      mount.remove();  // no animation for this module, or offline & uncached
+    }
   }
 
   function quizHtml(q, qi) {

@@ -14,6 +14,7 @@ complexity → Python solution → self-check quiz), organized into two pattern 
 - 📱 Installable PWA (Add to Home Screen) with app icon and standalone display
 - 🔌 Offline-first — a service worker precaches the shell and all lesson data
 - ✅ Progress tracking saved locally (localStorage)
+- 🎬 Step-through visualizations per lesson (play / step / scrub) via a shared `DSAAnim` framework
 - 🧠 Interactive quizzes with explanations
 - 🌗 Dark / light theme
 - ⚡ Zero build step — plain HTML/CSS/JS

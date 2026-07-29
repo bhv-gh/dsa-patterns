@@ -1,5 +1,5 @@
 /* Service worker — precache app shell + all module data for full offline use. */
-const CACHE = 'dsa-patterns-v1';
+const CACHE = 'dsa-patterns-v2';
 
 const SHELL = [
   './',
@@ -11,11 +11,22 @@ const SHELL = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './modules/index.json',
+  './anim/_framework.js',
 ];
 
 // module data files 1..16
 const MODULES = Array.from({ length: 16 }, (_, i) => `./modules/${i + 1}.json`);
-const PRECACHE = SHELL.concat(MODULES);
+
+// per-module animation scripts (slug-based)
+const ANIM = [
+  'two-pointers-overview', 'container-with-most-water', 'two-sum-sorted', '3-sum',
+  'valid-triangle-number', 'move-zeroes', 'sort-colors', 'trapping-rain-water',
+  'fixed-length-sliding-window', 'max-sum-subarrays-size-k', 'max-points-from-cards',
+  'max-sum-distinct-subarrays-k', 'variable-length-sliding-window',
+  'longest-substring-no-repeat', 'longest-repeating-char-replacement',
+].map((slug) => `./anim/${slug}.js`);
+
+const PRECACHE = SHELL.concat(MODULES, ANIM);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
