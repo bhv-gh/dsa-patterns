@@ -144,9 +144,13 @@ p, h1, h2, h3, li, .card-title, .m-summary,
 .group-blurb { color: var(--text-dim); font-size: 13px; margin: 0 2px 12px; }
 
 /* ---------- Module cards ---------- */
-.cards { display: grid; gap: 10px; }
+/* minmax(0,1fr): a grid item's default min-width is `auto`, so a long
+   non-wrapping title would force the column wider than the screen. This
+   lets the column (and card) shrink so the title ellipsizes instead. */
+.cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .card {
   display: flex; align-items: center; gap: 12px;
+  min-width: 0; max-width: 100%;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
