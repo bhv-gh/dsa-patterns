@@ -1,0 +1,59 @@
+{
+  "id": 39,
+  "slug": "split-array-largest-sum",
+  "title": "Split Array Largest Sum",
+  "pattern": "binary-search",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Split array into k contiguous subarrays to minimize the maximum subarray sum using binary search on the answer space.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array `nums` and integer `k`, split the array into exactly `k` contiguous subarrays such that the maximum sum among all subarrays is minimized. Return the minimum possible value of the maximum subarray sum.\n\n**Example 1:**\n- Input: `nums = [4, 8, 15, 7, 3], k = 3`\n- Output: `15`\n- Explanation: Split as `[4, 8]` (sum=12), `[15]` (sum=15), `[7, 3]` (sum=10). Maximum is 15.\n\n**Example 2:**\n- Input: `nums = [6, 3, 9, 2, 1, 8], k = 2`\n- Output: `18`\n- Explanation: Split as `[6, 3, 9]` (sum=18), `[2, 1, 8]` (sum=11). Maximum is 18."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The answer must lie between `max(nums)` and `sum(nums)`. The crucial observation is **monotonicity**: if we can split with max sum ≤ X, we can also split with any max sum > X. This monotonic property enables binary search on the answer.\n\nInstead of searching for an element in an array, we **search the space of possible answers** to find the optimal one. If a candidate max-sum works, try smaller; if it doesn't work, try larger. Binary search finds the boundary between feasible and infeasible values."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Binary Search on Answer** combined with a greedy feasibility check:\n\n1. **Initialize search bounds**: `left = max(nums)` (minimum possible answer - at least one subarray contains the largest element), `right = sum(nums)` (maximum possible - all elements in one subarray).\n\n2. **Binary search the answer space**: While `left < right`, compute `mid = (left + right) // 2` and check if we can split into ≤ k subarrays with max sum ≤ mid.\n\n3. **Feasibility check** (`canSplit` helper): Greedily iterate through the array, packing elements into the current subarray until adding the next element would exceed `maxSum`. When exceeded, start a new subarray. Return `true` if total subarrays needed ≤ k.\n\n4. **Update search range**: If `canSplit(mid)` returns true, the answer might be smaller → set `right = mid`. Otherwise, answer must be larger → set `left = mid + 1`.\n\n5. **Converge**: When `left == right`, we've found the minimum valid max-sum.\n\n6. **Return** `left` as the final answer."
+    }
+  ],
+  "approach": [
+    "Initialize binary search bounds: left = max(nums), right = sum(nums)",
+    "While left < right: calculate mid = (left + right) // 2",
+    "Check feasibility: use greedy helper canSplit(mid) to see if we can split into ≤ k subarrays with max sum ≤ mid",
+    "Update bounds: if feasible, right = mid (try smaller); else left = mid + 1 (need larger)",
+    "Return left when left == right (the minimum valid maximum subarray sum)"
+  ],
+  "complexity": {
+    "time": "O(n * log(sum))",
+    "space": "O(1)"
+  },
+  "code": "def splitArray(nums, k):\n    \"\"\"\n    Split array into k contiguous subarrays minimizing the maximum subarray sum.\n    Uses binary search on the answer space with greedy feasibility check.\n    \n    Time: O(n * log(sum)) where sum is the total of all elements\n    Space: O(1)\n    \"\"\"\n    def canSplit(maxSum):\n        \"\"\"Check if we can split into <= k subarrays with max sum <= maxSum.\"\"\"\n        subarrays = 1\n        currentSum = 0\n        \n        for num in nums:\n            if currentSum + num > maxSum:\n                # Start new subarray\n                subarrays += 1\n                currentSum = num\n            else:\n                currentSum += num\n        \n        return subarrays <= k\n    \n    # Binary search bounds\n    left = max(nums)  # Minimum possible: largest element\n    right = sum(nums)  # Maximum possible: all in one subarray\n    \n    # Binary search for minimum valid max-sum\n    while left < right:\n        mid = (left + right) // 2\n        if canSplit(mid):\n            # Can split with this max, try smaller\n            right = mid\n        else:\n            # Cannot split, need larger max\n            left = mid + 1\n    \n    return left",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(1)",
+        "O(n * log(sum))",
+        "O(n)",
+        "O(n³)"
+      ],
+      "answer": 1,
+      "explain": "The greedy feasibility check runs in O(n) time, and binary search performs O(log(sum - max)) iterations, giving total complexity O(n * log(sum))."
+    },
+    {
+      "q": "Why can we use binary search on the answer in this problem?",
+      "options": [
+        "The array is already sorted",
+        "If max-sum X works, all values > X also work (monotonic property)",
+        "We need to find an element in the array",
+        "The problem asks for the exact middle value"
+      ],
+      "answer": 1,
+      "explain": "Binary search works here because of the monotonic property: if we can split with max sum ≤ X, we can definitely split with any larger max sum. This divides the search space into feasible and infeasible halves."
+    }
+  ]
+}

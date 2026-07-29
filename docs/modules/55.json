@@ -1,0 +1,60 @@
+{
+  "id": 55,
+  "slug": "calculate-tilt",
+  "title": "Calculate Tilt",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Calculate the total tilt of a binary tree, where each node's tilt is the absolute difference between its left and right subtree sums.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root node of a binary tree, write a recursive function to return the sum of all node tilts in the tree.\n\nThe **tilt** of a node is calculated as the absolute difference between the sum of all values in its left subtree and the sum of all values in its right subtree. For nodes that are missing a left child, right child, or both, treat the missing subtree as having a sum of 0.\n\nFor example, a leaf node has a tilt of 0 because both its left and right subtrees are empty (sum = 0), so the absolute difference is |0 - 0| = 0."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **post-order DFS** where each recursive call returns the sum of the subtree, while simultaneously accumulating the tilt values into a nonlocal variable. This dual-purpose approach allows us to compute both the subtree sums (needed for parent calculations) and the total tilt in a single traversal."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Define a helper function** that performs post-order DFS traversal\n2. **Base case**: Return 0 for null nodes (empty subtrees have sum 0)\n3. **Recursive calls**: Get the sum of left and right subtrees\n4. **Calculate tilt**: Compute |left_sum - right_sum| and add to a nonlocal `tilt` variable\n5. **Return sum**: Return `left_sum + right_sum + node.val` for parent's calculation\n\nThe helper function returns subtree sums while accumulating tilts in a nonlocal variable, avoiding the need for multiple return values."
+    }
+  ],
+  "approach": [
+    "Initialize a `tilt` variable to 0 in the main function to track total tilt",
+    "Define a helper DFS function that takes a node as parameter",
+    "Base case: if node is null, return 0 (empty subtree sum)",
+    "Recursively get left subtree sum and right subtree sum",
+    "Calculate current node's tilt as abs(left_sum - right_sum) and add to total tilt",
+    "Return left_sum + right_sum + node.val as the current subtree's sum"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "class Solution:\n    def findTilt(self, root: TreeNode) -> int:\n        \"\"\"Calculate the total tilt of a binary tree.\n        \n        The tilt of a node is the absolute difference between its left\n        and right subtree sums. Returns the sum of all node tilts.\n        \"\"\"\n        tilt = 0\n        \n        def dfs(node):\n            nonlocal tilt\n            # base case: empty subtree has sum 0\n            if not node:\n                return 0\n            \n            # get sums of left and right subtrees\n            left = dfs(node.left)\n            right = dfs(node.right)\n            \n            # calculate tilt and add to total\n            tilt += abs(left - right)\n            \n            # return sum of current subtree\n            return left + right + node.val\n        \n        dfs(root)\n        return tilt",
+  "quiz": [
+    {
+      "q": "Why does the helper function return the subtree sum instead of the tilt value?",
+      "options": [
+        "To calculate each node's tilt, we need the sums of its left and right subtrees",
+        "Returning the tilt would require additional tree traversals",
+        "The sum is easier to calculate than the tilt",
+        "We need the sum to validate the tree structure"
+      ],
+      "answer": 0,
+      "explain": "Each node needs to know the sums of its left and right subtrees to calculate its own tilt as |left_sum - right_sum|. By returning the subtree sum, parent nodes receive the exact information they need for their tilt calculation."
+    },
+    {
+      "q": "What is the time complexity of this solution and why?",
+      "options": [
+        "O(n log n) because we visit each node and perform logarithmic calculations",
+        "O(n²) because each node needs to sum its entire subtree",
+        "O(n) because we visit each node exactly once in the DFS traversal",
+        "O(h) where h is the height, since we only process nodes along root-to-leaf paths"
+      ],
+      "answer": 2,
+      "explain": "The solution visits each node exactly once during the post-order DFS traversal. At each node, we perform O(1) work (adding sums, calculating absolute difference). Therefore, the total time complexity is O(n) where n is the number of nodes."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": 63,
+  "slug": "matrices-grid-dfs",
+  "title": "Matrices (Grid DFS)",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn how to apply DFS to 2D grids by treating each cell as a node with up to 4 neighbors, using bounds checking and visited tracking.",
+  "sections": [
+    {
+      "heading": "Graphs as Matrices",
+      "body": "A common way to represent a graph is as a **2D matrix (grid)**. Each cell in the grid represents a node, and the neighbors of each node are the cells adjacent to it in the **up, down, left, and right** directions.\n\nFor example, `grid[1][1]` is a node with neighbors `grid[0][1]` (up), `grid[2][1]` (down), `grid[1][0]` (left), and `grid[1][2]` (right)."
+    },
+    {
+      "heading": "DFS on a Matrix",
+      "body": "DFS on a matrix is similar to DFS on an adjacency list. We still need to:\n\n- Keep track of **visited nodes** (using a set or by modifying the grid)\n- Recursively call DFS on each neighbor of the current node\n\nThe main differences are:\n\n1. Each cell can have **at most 4 neighbors** (up, down, left, right)\n2. We must **check if the neighbor is within bounds** before visiting it"
+    },
+    {
+      "heading": "The Grid DFS Template",
+      "body": "The standard approach uses:\n\n- A `visited` set to track `(row, col)` tuples\n- A `directions` array storing the 4 direction offsets: `[(-1,0), (1,0), (0,-1), (0,1)]`\n- **Bounds checking**: `if r < 0 or r >= len(matrix) or c < 0 or c >= len(matrix[0])`\n- A loop over directions to explore all neighbors\n\nAlways check visited status and bounds **before** marking a cell as visited to avoid redundant work."
+    },
+    {
+      "heading": "Visited Tracking Strategies",
+      "body": "You can track visited cells in two ways:\n\n1. **Using a set**: Store `(r, c)` tuples. Clean and doesn't modify the input.\n2. **Modifying the grid**: Mark visited cells by changing their value (e.g., set to a sentinel like `-1` or `'#'`). Saves space but mutates the input.\n\nChoose based on whether you can modify the input and space constraints."
+    },
+    {
+      "heading": "Common Pitfalls",
+      "body": "- **Forgetting bounds checks**: Always validate `r` and `c` before accessing `matrix[r][c]`\n- **Wrong visit order**: Check if visited and bounds **before** adding to visited set\n- **Off-by-one errors**: Remember that valid indices are `0 <= r < len(matrix)` and `0 <= c < len(matrix[0])`\n- **Diagonal neighbors**: Grid DFS typically uses 4 directions, not 8 (no diagonals unless specified)"
+    }
+  ],
+  "approach": [
+    "Create a visited set and directions array for 4-directional movement",
+    "Define a helper function that takes row and column indices",
+    "Check if current cell is already visited or out of bounds - return if so",
+    "Mark the current cell as visited by adding (r, c) to the set",
+    "Loop through all 4 directions and recursively call DFS on each neighbor",
+    "Call the helper starting from your initial cell (usually 0, 0 or given starting point)"
+  ],
+  "complexity": {
+    "time": "O(rows * cols)",
+    "space": "O(rows * cols)"
+  },
+  "code": "def dfs(matrix):\n    visited = set()\n    # up, down, left, right\n    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]\n    \n    def dfs_helper(r, c):\n        # check if already visited\n        if (r, c) in visited:\n            return\n        # check if the cell is out of bounds\n        if r < 0 or r >= len(matrix) or c < 0 or c >= len(matrix[0]):\n            return\n        \n        visited.add((r, c))\n        \n        # explore all 4 neighbors\n        for dr, dc in directions:\n            dfs_helper(r + dr, c + dc)\n    \n    dfs_helper(0, 0)",
+  "quiz": [
+    {
+      "q": "What is the maximum number of neighbors a cell can have in a standard grid DFS?",
+      "options": [
+        "4 (up, down, left, right)",
+        "8 (including diagonals)",
+        "3 (excluding the cell itself)",
+        "It depends on the cell's position"
+      ],
+      "answer": 0,
+      "explain": "In standard grid DFS, we only consider 4 directions: up, down, left, and right. Diagonal neighbors are not included unless the problem specifically requires 8-directional movement."
+    },
+    {
+      "q": "Why do we need bounds checking when doing DFS on a matrix?",
+      "options": [
+        "To prevent accessing invalid array indices that would cause an error",
+        "To optimize the time complexity",
+        "To avoid visiting the same cell twice",
+        "To ensure we visit cells in the correct order"
+      ],
+      "answer": 0,
+      "explain": "Bounds checking ensures that row and column indices are valid before accessing matrix[r][c]. Without it, we could try to access negative indices or indices beyond the matrix dimensions, causing index out of bounds errors."
+    }
+  ]
+}

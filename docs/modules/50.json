@@ -1,0 +1,79 @@
+{
+  "id": 50,
+  "slug": "dfs-return-values",
+  "title": "DFS: Return Values",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn how to design what each DFS call returns to its parent (bottom-up) and combine left/right results to solve binary tree problems recursively.",
+  "sections": [
+    {
+      "heading": "Introduction",
+      "body": "To solve binary tree interview problems with DFS, each recursive call must return a value. This lesson demonstrates how recursion and return values work together in DFS.\n\nThe key insight: when a recursive call to `dfs` on a subtree returns, execution returns to the parent of that subtree. If each call returns useful information about its subtree, the parent can use those values to compute its own result.\n\n**Core Question:** \"What information do I need from my left and right subtrees to solve the problem for my subtree?\"\n\nThe answer \"bubbles up\" from leaf nodes to parent nodes until reaching the root."
+    },
+    {
+      "heading": "Thinking Recursively: Sum of Nodes Example",
+      "body": "**Problem:** Find the sum of all nodes in a binary tree.\n\n**Recursive Insight:** The sum of a tree equals:\n```\nsum(node) = sum(node.left) + sum(node.right) + node.val\n```\n\nThis applies to every subtree. For the tree below:\n```\n    4\n   / \\\n  2   7\n / \\ / \\\n1  3 6  9\n```\n\n- Sum of entire tree = 4 + (sum of left subtree) + (sum of right subtree)\n- Sum of left subtree rooted at 2 = 2 + 1 + 3 = 6\n- Sum of right subtree rooted at 7 = 7 + 6 + 9 = 22\n- Total = 4 + 6 + 22 = 32\n\nWe've expressed the solution recursively: in terms of smaller subproblems of the same problem."
+    },
+    {
+      "heading": "DFS Implementation with Return Values",
+      "body": "Each recursive call returns the sum of its subtree:\n\n```python\ndef dfs(node):\n    # base case: empty subtree\n    if node is None:\n        return 0\n    \n    # base case: leaf node\n    if node.left is None and node.right is None:\n        return node.val\n    \n    left = dfs(node.left)\n    right = dfs(node.right)\n    return left + right + node.val\n```\n\n**Base cases** are subproblems we can solve directly:\n- Empty subtree has sum of 0\n- Leaf node has sum equal to its value\n\n**Recursive case:** Get sums from left and right subtrees, then return their sum plus the current node's value."
+    },
+    {
+      "heading": "General Template",
+      "body": "The DFS template with return values:\n\n```python\ndef dfs(node):\n    # base case\n    if node is None:\n        return some_value\n    \n    # optional: leaf node base case\n    # if node.left is None and node.right is None:\n    #     return node.val or appropriate value\n    \n    left = dfs(node.left)\n    right = dfs(node.right)\n    return value_based_on_left_and_right\n```\n\n**Example: Maximum Value in Tree**\n\nQuestion: \"What do I need from my subtrees to find the max in my subtree?\"\n\nAnswer: The max value in my left subtree and the max value in my right subtree.\n\n```python\ndef maxValue(node):\n    if node is None:\n        return float('-inf')\n    \n    if node.left is None and node.right is None:\n        return node.val\n    \n    left = maxValue(node.left)\n    right = maxValue(node.right)\n    return max(left, right, node.val)\n```"
+    },
+    {
+      "heading": "Common Mistakes",
+      "body": "**1. Unclear Return Value Definition**\n\nNot being able to clearly define what each recursive call returns in terms of the node it is called on. This leads to incorrect return values, particularly in base cases.\n\n**2. Inconsistent Return Types**\n\nMake sure the return value of the base case and the recursive case are of the same type. A common mistake:\n\n```python\n# WRONG - mixing None and int\ndef dfs(node):\n    if node is None:\n        return None  # Wrong!\n    left = dfs(node.left)\n    right = dfs(node.right)\n    return left + right + node.val  # Will crash when adding None\n```\n\n**3. Forgetting Base Cases**\n\nAlways handle:\n- Empty subtree (`node is None`)\n- Optionally, leaf nodes (when children are None)"
+    }
+  ],
+  "approach": [
+    "Ask: \"What information do I need from my left and right subtrees?\"",
+    "Define what each recursive call returns (e.g., sum of subtree, max value, height)",
+    "Implement base cases: empty subtree and optionally leaf nodes",
+    "Make recursive calls to get left and right values",
+    "Combine left, right, and current node value to compute the return value",
+    "Ensure all return values have the same type across base and recursive cases"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "def dfs(node):\n    # base case: empty subtree\n    if node is None:\n        return 0\n    \n    # get values from children\n    left = dfs(node.left)\n    right = dfs(node.right)\n    \n    # combine: sum example\n    return left + right + node.val\n\n# height example:\n# return 1 + max(left, right)\n\n# max value example:\n# return max(left, right, node.val)",
+  "quiz": [
+    {
+      "q": "When solving a binary tree problem with DFS and return values, what should you ask yourself at each node?",
+      "options": [
+        "What information do I need from my left and right subtrees to solve the problem for my subtree?",
+        "What is the value of the current node?",
+        "How many nodes are in the tree?",
+        "Should I traverse left or right first?"
+      ],
+      "answer": 0,
+      "explain": "The key question is what information you need from your subtrees. This determines what each recursive call should return. Once you know what the left and right subtrees return, you can combine those values with the current node to solve for your subtree."
+    },
+    {
+      "q": "What is a common mistake when implementing base cases in DFS with return values?",
+      "options": [
+        "Making too many base cases",
+        "Returning different types in base case vs recursive case (e.g., None vs int)",
+        "Always including a leaf node base case",
+        "Checking if node is None"
+      ],
+      "answer": 1,
+      "explain": "A critical mistake is returning inconsistent types. For example, returning None for an empty subtree but returning an integer in the recursive case will cause errors when trying to combine values (e.g., None + 5 crashes). All return values must be the same type."
+    },
+    {
+      "q": "In the sum of nodes problem, what should the base case return for an empty subtree (node is None)?",
+      "options": [
+        "0",
+        "None",
+        "The value of the parent node",
+        "float('-inf')"
+      ],
+      "answer": 0,
+      "explain": "An empty subtree contributes 0 to the sum. Returning 0 is correct and maintains type consistency (all returns are integers). This allows the parent to correctly compute: left_sum + right_sum + node.val even when children are None."
+    }
+  ]
+}

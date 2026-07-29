@@ -1,0 +1,60 @@
+{
+  "id": 61,
+  "slug": "copy-graph",
+  "title": "Copy Graph",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Convert a node-and-pointers graph structure into a dictionary adjacency list using depth-first search traversal with cycle detection.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a reference to a node which is part of an undirected, connected graph, write a function that returns an adjacency list representation of the graph in dictionary form. The keys of the adjacency list are the values of the nodes, and each value is a list of that node's neighbors' values.\n\nThis isn't a deep copy of the node objects. You're converting the node-and-pointers structure into a dictionary adjacency list that describes the same graph.\n\n`node` is an instance of `IntGraphNode`, where `neighbors` is a list of references to other nodes in the graph:\n\n```python\nclass IntGraphNode:\n    def __init__(self, value=0, neighbors=None):\n        self.value = value\n        self.neighbors = neighbors if neighbors is not None else []\n```\n\n**Example:**\n```python\nnode = IntGraphNode(1, [IntGraphNode(2), IntGraphNode(3)])\ncopy_graph(node)  # {1: [2, 3], 2: [1], 3: [1]}\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use depth-first search to traverse the graph while maintaining an adjacency list dictionary that serves a dual purpose: storing the graph representation AND tracking visited nodes to prevent infinite loops in cyclic graphs. Each node is processed exactly once by checking if its value already exists in the dictionary before recursing."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize an adjacency list** as an empty dictionary that will store the graph representation and track visited nodes.\n\n2. **Define a DFS helper function** inside the main function to maintain access to the shared adjacency list across recursive calls.\n\n3. **Check if the node is already visited** by testing if `node.value` exists in the adjacency list. If yes, return immediately to avoid infinite loops.\n\n4. **Add the node to the adjacency list** with its value as the key and a list of its neighbors' values as the value.\n\n5. **Recursively call DFS on each neighbor** to continue the traversal and build the complete adjacency list.\n\n6. **Return the adjacency list** after all nodes have been visited."
+    }
+  ],
+  "approach": [
+    "Initialize an empty dictionary `adj_list` to store the graph adjacency list",
+    "Define a recursive DFS helper function that takes a node as input",
+    "Check if the node's value is already in `adj_list` (visited check) - if yes, return to prevent cycles",
+    "Add the node's value as a key with a list of its neighbors' values as the value",
+    "Recursively call DFS on each neighbor of the current node",
+    "Return the completed adjacency list dictionary"
+  ],
+  "complexity": {
+    "time": "O(V+E)",
+    "space": "O(V)"
+  },
+  "code": "class IntGraphNode:\n    \"\"\"Graph node with an integer value and list of neighbor references.\"\"\"\n    def __init__(self, value=0, neighbors=None):\n        self.value = value\n        self.neighbors = neighbors if neighbors is not None else []\n\ndef copy_graph(node):\n    \"\"\"\n    Convert a node-based graph structure into an adjacency list dictionary.\n    \n    Uses DFS to traverse the graph while building an adjacency list representation.\n    The adjacency list doubles as a visited set to handle cycles.\n    \n    Args:\n        node: IntGraphNode representing a node in an undirected, connected graph\n        \n    Returns:\n        dict: Adjacency list where keys are node values and values are lists of neighbor values\n    \"\"\"\n    adj_list = {}\n    \n    def dfs(node):\n        # Base case: node already visited\n        if node.value in adj_list:\n            return\n        \n        # Add node and its neighbors to adjacency list\n        adj_list[node.value] = [n.value for n in node.neighbors]\n        \n        # Recursively visit all neighbors\n        for neighbor in node.neighbors:\n            dfs(neighbor)\n    \n    if node:\n        dfs(node)\n    \n    return adj_list",
+  "quiz": [
+    {
+      "q": "Why is it essential to check if a node is already in the adjacency list before processing it?",
+      "options": [
+        "To improve performance by skipping redundant work",
+        "To prevent infinite loops when the graph contains cycles",
+        "To ensure nodes are processed in the correct order",
+        "To save memory by avoiding duplicate entries"
+      ],
+      "answer": 1,
+      "explain": "The visited check prevents infinite loops in cyclic graphs. Without it, the DFS would continuously revisit nodes in a cycle, causing stack overflow. While it also improves performance and prevents duplicates, the primary reason is cycle handling - graphs are often cyclic (like in the examples where node 1 connects to node 2, which connects back to node 1)."
+    },
+    {
+      "q": "What is the time complexity of this solution for a graph with V vertices and E edges?",
+      "options": [
+        "O(V) because we visit each vertex once",
+        "O(E) because we traverse each edge once",
+        "O(V + E) because we visit each vertex and traverse each edge once",
+        "O(V * E) because we check edges for each vertex"
+      ],
+      "answer": 2,
+      "explain": "The time complexity is O(V + E). We visit each vertex exactly once (O(V)) due to the visited check, and for each vertex, we iterate through all its edges to add neighbor values to the list (O(E) total across all vertices). The adjacency list construction for each node takes O(degree) time, which sums to O(E) across all nodes."
+    }
+  ]
+}

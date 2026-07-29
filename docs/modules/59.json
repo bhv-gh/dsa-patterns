@@ -1,0 +1,66 @@
+{
+  "id": 59,
+  "slug": "graphs-overview",
+  "title": "Graphs: Overview",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Introduction to graph fundamentals: vertices, edges, neighbors, cycles, and the critical importance of tracking visited nodes during DFS traversal.",
+  "sections": [
+    {
+      "heading": "Graph Basics",
+      "body": "Graphs consist of **nodes** (also called **vertices**) and **edges** that connect the nodes.\n\nNodes connected via an edge are called **neighbors**. Quickly finding a node's neighbors is crucial for graph traversal algorithms.\n\nKey differences from trees:\n- Graphs can contain **cycles** (a path that starts and ends at the same node)\n- Graphs require tracking **visited nodes** to avoid infinite loops"
+    },
+    {
+      "heading": "Connected vs. Disconnected Graphs",
+      "body": "A **connected graph** has a path between every pair of nodes. A tree is a special case: a connected graph with no cycles.\n\nA **disconnected graph** has at least two nodes with no path between them. Groups of connected nodes are called **connected components**.\n\nExample: A graph with nodes 1-6 might have two components: {1,2,3,4} and {5,6}."
+    },
+    {
+      "heading": "Directed vs. Undirected Graphs",
+      "body": "In a **directed graph**, edges only go in one direction (like one-way streets).\n\nIn an **undirected graph**, edges go in both directions (you can traverse either way).\n\nMost coding interview questions use **undirected graphs**."
+    },
+    {
+      "heading": "DFS on Graphs",
+      "body": "Depth-First Search on graphs requires tracking visited nodes because graphs can contain cycles.\n\nGraphs are typically represented as:\n- **Adjacency list**: dictionary mapping each node to its neighbors\n- **Adjacency matrix**: 2D array where `matrix[i][j]` indicates an edge\n\nYou should be comfortable implementing DFS on both representations quickly and without errors."
+    },
+    {
+      "heading": "Why Visited Set is Critical",
+      "body": "Unlike trees (which have no cycles), graphs can have cycles. Without tracking visited nodes, DFS could:\n- Enter an infinite loop\n- Visit the same node multiple times\n- Never terminate\n\nThe visited set ensures each node is processed exactly once during traversal."
+    }
+  ],
+  "approach": [
+    "Use a `visited` set to track all nodes you've already explored",
+    "For each unvisited neighbor, recursively call DFS and mark as visited",
+    "Handle disconnected components by iterating through all nodes as potential starting points",
+    "Choose the right graph representation (adjacency list vs. matrix) based on the problem"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V)"
+  },
+  "code": "def dfs_graph(graph, start, visited=None):\n    \"\"\"DFS traversal on a graph using adjacency list.\n    \n    Args:\n        graph: dict mapping node -> list of neighbors\n        start: starting node\n        visited: set of already visited nodes\n    \"\"\"\n    if visited is None:\n        visited = set()\n    \n    # Mark current node as visited\n    visited.add(start)\n    \n    # Process current node (modify based on problem)\n    print(start)\n    \n    # Recursively visit all unvisited neighbors\n    for neighbor in graph[start]:\n        if neighbor not in visited:\n            dfs_graph(graph, neighbor, visited)\n    \n    return visited\n\n# Example usage:\n# graph = {0: [1, 2], 1: [0, 3, 4], 2: [0], 3: [1], 4: [1]}\n# dfs_graph(graph, 0)",
+  "quiz": [
+    {
+      "q": "Why is a visited set necessary when performing DFS on a graph but not on a tree?",
+      "options": [
+        "Graphs can contain cycles, which could cause infinite loops without tracking visited nodes",
+        "Trees are always smaller than graphs, so they don't need optimization",
+        "Graphs always have more edges than trees",
+        "Trees use recursion but graphs use iteration"
+      ],
+      "answer": 0,
+      "explain": "Graphs can contain cycles (paths that start and end at the same node). Without a visited set, DFS could follow a cycle infinitely. Trees, by definition, are acyclic connected graphs, so they never have cycles and don't need a visited set."
+    },
+    {
+      "q": "In an undirected graph, if node A is a neighbor of node B, what can we conclude?",
+      "options": [
+        "Node B is always a neighbor of node A",
+        "Node B might not be a neighbor of node A",
+        "There must be a cycle in the graph",
+        "The graph must be connected"
+      ],
+      "answer": 0,
+      "explain": "In an undirected graph, edges go in both directions. If there's an edge between A and B, then A is a neighbor of B AND B is a neighbor of A. This is different from directed graphs, where the relationship might only go one way."
+    }
+  ]
+}

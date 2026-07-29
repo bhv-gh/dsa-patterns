@@ -1,0 +1,61 @@
+{
+  "id": 57,
+  "slug": "path-sum-ii",
+  "title": "Path Sum II",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find all root-to-leaf paths in a binary tree where node values sum to a target using DFS with backtracking to explore and collect valid paths.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree and an integer `target`, write a recursive function to find **all root-to-leaf paths** where the sum of all the values along the path equals `target`.\n\n**Example:**\n```\n    1\n   / \\\n  2   4\n /   / \\\n7   5   1\n```\n**Input:** `root = [1,2,4,7,5,1]`, `target = 10`  \n**Output:** `[[1,2,7], [1,4,5]]`\n\nThe paths are `1 → 2 → 7` and `1 → 4 → 5`."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This problem extends the basic Path Sum problem by requiring **all valid paths** to be collected. Use DFS with **backtracking**: maintain the current path as you traverse, append a **copy** of the path when you find a leaf matching the target, then pop the current node when backtracking to explore other branches. A global result list accumulates all valid paths without complex return value handling."
+    },
+    {
+      "heading": "Approach",
+      "body": "**DFS with Backtracking:**\n\n1. Use a helper function `dfs(node, target, path)` that tracks the remaining target and current path.\n2. **Base case:** If the node is `None`, return immediately.\n3. **Build path:** Append the current node's value to the `path` list.\n4. **Check leaf:** If at a leaf node (no children) and `node.val == target`, append a **copy** of `path` (`path[:]`) to the global `result` list.\n5. **Recurse:** Call `dfs` on left and right children with updated target (`target - node.val`).\n6. **Backtrack:** Pop the current node from `path` after exploring both subtrees to restore state for other branches.\n\nThe global `result` list collects all valid paths without merging results up the call stack."
+    }
+  ],
+  "approach": [
+    "Initialize an empty result list to store all valid paths",
+    "Define a helper function dfs(node, target, path) to recursively explore the tree",
+    "In dfs: return early if node is None (base case)",
+    "Append current node's value to the path",
+    "If at a leaf node and node.val equals target, append a copy of path to result",
+    "Recursively call dfs on left and right children with target - node.val",
+    "Pop the current node from path to backtrack and prepare for other branches"
+  ],
+  "complexity": {
+    "time": "O(n^2) worst case when all paths are valid and must be copied; O(n) to visit nodes",
+    "space": "O(h) for recursion stack where h is tree height; O(n*k) for storing k valid paths of average length n/k"
+  },
+  "code": "class Solution:\n    def pathSum(self, root: TreeNode, target: int) -> list[list[int]]:\n        \"\"\"\n        Find all root-to-leaf paths where the sum equals target.\n        \n        Uses DFS with backtracking to explore all paths while maintaining\n        the current path state. Appends a copy of valid paths to result.\n        \"\"\"\n        def dfs(node, target, path):\n            # Base case: empty node\n            if not node:\n                return\n            \n            # Append current value to the path\n            path.append(node.val)\n            \n            # Check if we're at a leaf and the path sum matches target\n            if not node.left and not node.right:\n                if node.val == target:\n                    result.append(path[:])  # Append a copy of the path\n            \n            # Recurse on children with remaining target\n            dfs(node.left, target - node.val, path)\n            dfs(node.right, target - node.val, path)\n            \n            # Backtrack: remove current node to prepare for other paths\n            path.pop()\n        \n        result = []\n        dfs(root, target, [])\n        return result",
+  "quiz": [
+    {
+      "q": "Why must we append `path[:]` (a copy) to the result instead of `path` directly?",
+      "options": [
+        "Because `path` is modified by backtracking, so appending the reference would result in all entries pointing to the same (eventually empty) list",
+        "To improve time complexity by avoiding pointer dereferencing",
+        "Because Python does not allow appending lists to lists without copying",
+        "To comply with the TreeNode API requirements"
+      ],
+      "answer": 0,
+      "explain": "The `path` list is reused and modified throughout the DFS traversal. If we append the reference `path` directly, all entries in `result` would point to the same list object, which gets modified by `path.pop()` during backtracking. By the end, all entries would reference the same empty list. Appending `path[:]` creates a snapshot copy of the current path state."
+    },
+    {
+      "q": "What is the time complexity of this solution in the worst case?",
+      "options": [
+        "O(n) because we visit each node once",
+        "O(n^2) because in the worst case (e.g., a skewed tree where every path is valid), we copy O(n) paths each of length O(n)",
+        "O(n log n) due to the recursive call stack",
+        "O(h) where h is the height of the tree"
+      ],
+      "answer": 1,
+      "explain": "While we visit each node once (O(n)), in the worst case where many or all root-to-leaf paths are valid, we must copy each path. Copying a path of length O(h) takes O(h) time. In a skewed tree with O(n) valid paths each of length O(n), the total copying cost dominates, resulting in O(n^2) worst-case time complexity."
+    }
+  ]
+}

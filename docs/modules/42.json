@@ -1,0 +1,67 @@
+{
+  "id": 42,
+  "slug": "heap-overview",
+  "title": "Heap: Overview",
+  "pattern": "heap",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "A heap maintains the smallest (or largest) value at the root, enabling efficient top-K problems. Push/pop in O(log n) via bubble operations.",
+  "sections": [
+    {
+      "heading": "What is a Heap?",
+      "body": "A heap is an array with a special property: **the smallest value is always at index 0**. When you remove the minimum, the heap efficiently rearranges so the next smallest takes its place.\n\nVisualized as a **complete binary tree**, the heap satisfies the **heap property**: each node's value is ≤ both children (min-heap) or ≥ both children (max-heap). The array and tree representations are equivalent—the tree helps you understand operations, but you'll work with the array in code.\n\n**Parent-child relationships** in array index `i`:\n- Left child: `2*i + 1`\n- Right child: `2*i + 2`\n- Parent: `(i - 1) // 2`"
+    },
+    {
+      "heading": "Min-Heap vs Max-Heap",
+      "body": "**Min-Heap**: Root holds the minimum value. Each parent ≤ its children. Used for finding smallest elements.\n\n**Max-Heap**: Root holds the maximum value. Each parent ≥ its children. Python's `heapq` only provides min-heaps, so **negate values** to simulate a max-heap:\n```python\nnegated = [-x for x in arr]\nheapq.heapify(negated)\nmax_val = -heapq.heappop(negated)\n```"
+    },
+    {
+      "heading": "Core Operations",
+      "body": "**Push** (`heappush(heap, element)`):\n1. Add element to the next position in the last level\n2. **Bubble up**: swap with parent while element < parent\n- Time: **O(log n)** (height of tree)\n\n**Pop** (`heappop(heap)`):\n1. Remove root, replace with last element\n2. **Bubble down**: swap with smaller child while element > children\n- Time: **O(log n)**\n\n**Peek** (`heap[0]`):\n- Access root without removal\n- Time: **O(1)**\n\n**Heapify** (`heapify(arr)`):\n- Convert array to heap in-place\n- Time: **O(n)** (not O(n log n)!)"
+    },
+    {
+      "heading": "Python heapq API",
+      "body": "```python\nimport heapq\n\narr = [3, 1, 4, 1, 5, 9, 2]\nheapq.heapify(arr)  # O(n) - convert to min-heap in-place\n\nheapq.heappush(arr, 0)  # O(log n) - add element\nmin_elem = heapq.heappop(arr)  # O(log n) - remove & return min\npeek = arr[0]  # O(1) - view min without removing\n```\n\n**Tuples**: Heaps order by first element, then second if tied:\n```python\nheap = [(3, 'a'), (1, 'b'), (1, 'c')]\nheapq.heapify(heap)  # (1, 'b') at root\n```"
+    },
+    {
+      "heading": "Top-K Pattern with Size-K Heap",
+      "body": "**Key insight**: To find K largest elements, maintain a **min-heap of size K**. The root is the Kth largest—if a new element exceeds it, pop the root and push the new element.\n\n```python\ndef k_largest(nums, k):\n    heap = nums[:k]\n    heapq.heapify(heap)  # O(k)\n    \n    for num in nums[k:]:  # O(n-k) iterations\n        if num > heap[0]:\n            heapq.heappop(heap)  # O(log k)\n            heapq.heappush(heap, num)  # O(log k)\n    \n    return heap  # K largest elements\n```\n**Time**: O(n log k) vs O(n log n) for full sort—big win when k << n!\n\n**Why this works**: The heap always holds the K largest seen so far. When a larger element arrives, evict the smallest of the K."
+    }
+  ],
+  "approach": [
+    "**Top-K** problems (K largest/smallest elements)",
+    "**Streaming data** where you need ongoing min/max",
+    "**Merge K sorted lists** (use heap to track smallest head)",
+    "**Priority queue** scenarios (task scheduling, event simulation)",
+    "Avoid heaps when: simple min/max over static data (use `min()`/`max()` or sort if needed once)"
+  ],
+  "complexity": {
+    "time": "push/pop O(log n), peek O(1), heapify O(n)",
+    "space": "O(n)"
+  },
+  "code": "import heapq\n\n# Min-heap\nheap = []\nheapq.heappush(heap, 5)\nheapq.heappush(heap, 1)\nmin_val = heapq.heappop(heap)  # 1\n\n# Max-heap (negate values)\nmax_heap = []\nheapq.heappush(max_heap, -5)\nheapq.heappush(max_heap, -10)\nmax_val = -heapq.heappop(max_heap)  # 10\n\n# Top-K largest with size-K min-heap\ndef k_largest(nums, k):\n    heap = nums[:k]\n    heapq.heapify(heap)\n    for num in nums[k:]:\n        if num > heap[0]:\n            heapq.heapreplace(heap, num)  # pop + push in one call\n    return heap",
+  "quiz": [
+    {
+      "q": "You need the 5 largest elements from a stream of 1 million numbers. What's the most efficient approach?",
+      "options": [
+        "Maintain a max-heap of all elements, pop 5 times at the end",
+        "Maintain a min-heap of size 5, replacing root when larger elements arrive",
+        "Sort the array and take the last 5 elements",
+        "Use a min-heap of all elements, pop until 5 remain"
+      ],
+      "answer": 1,
+      "explain": "A size-5 min-heap gives O(n log 5) ≈ O(n) time and O(5) = O(1) space. The root is the 5th largest—when a larger element arrives, pop the root (evicting the smallest of the top 5) and push the new element. Full sorting is O(n log n), and storing all elements wastes space."
+    },
+    {
+      "q": "What is the time complexity of converting an arbitrary array into a heap using heapify?",
+      "options": [
+        "O(n log n)",
+        "O(n)",
+        "O(log n)",
+        "O(n²)"
+      ],
+      "answer": 1,
+      "explain": "Heapify is O(n), not O(n log n). It works bottom-up, bubbling down from the first non-leaf node. Most nodes are near the bottom (low bubble-down cost), so the total work sums to O(n). This is faster than n individual O(log n) pushes."
+    }
+  ]
+}

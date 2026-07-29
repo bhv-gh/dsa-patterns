@@ -231,7 +231,7 @@ Tell the user the live URL and which modules were added.
 
 ## Ledger — PDFs already converted to modules
 
-**Max module id:** 29
+**Max module id:** 67
 **Last updated:** 2026-07-29
 
 | PDF        | id | slug                                  | pattern        | type / difficulty |
@@ -265,3 +265,41 @@ Tell the user the live URL and which modules were added.
 | 27.pdf     | 27 | monotonic-stack                       | stack          | lesson            |
 | 28.pdf     | 28 | daily-temperatures                    | stack          | problem / medium  |
 | 29.pdf     | 29 | largest-rectangle-in-histogram        | stack          | problem / hard    |
+| 30.pdf     | 30 | linked-list-overview                  | linked-list    | lesson            |
+| 31.pdf     | 31 | linked-list-cycle                     | linked-list    | problem / easy    |
+| 32.pdf     | 32 | palindrome-linked-list                | linked-list    | problem / easy    |
+| 33.pdf     | 33 | remove-nth-node-from-end              | linked-list    | problem / medium  |
+| 34.pdf     | 34 | reorder-list                          | linked-list    | problem / medium  |
+| 35.pdf     | 35 | swap-nodes-in-pairs                   | linked-list    | problem / medium  |
+| 36.pdf     | 36 | binary-search-overview                | binary-search  | lesson            |
+| 37.pdf     | 37 | koko-eating-bananas                    | binary-search  | problem / medium  |
+| 38.pdf     | 38 | search-in-rotated-sorted-array        | binary-search  | problem / medium  |
+| 39.pdf     | 39 | split-array-largest-sum               | binary-search  | problem / hard    |
+| 40.pdf     | 40 | kth-smallest-in-sorted-matrix         | binary-search  | problem / medium  |
+| 41.pdf     | 41 | minimum-shipping-capacity             | binary-search  | problem / medium  |
+| 42.pdf     | 42 | heap-overview                         | heap           | lesson            |
+| 43.pdf     | 43 | kth-largest-element                   | heap           | problem / medium  |
+| 44.pdf     | 44 | k-closest-points-to-origin            | heap           | problem / medium  |
+| 45.pdf     | 45 | find-k-closest-elements               | heap           | problem / medium  |
+| 46.pdf     | 46 | merge-k-sorted-lists                  | heap           | problem / hard    |
+| 47.pdf     | 47 | find-median-from-data-stream          | heap           | problem / hard    |
+| 48.pdf     | 48 | dfs-introduction                      | depth-first-search | lesson        |
+| 49.pdf     | 49 | dfs-fundamentals                      | depth-first-search | lesson        |
+| 50.pdf     | 50 | dfs-return-values                     | depth-first-search | lesson        |
+| 51.pdf     | 51 | maximum-depth-of-binary-tree          | depth-first-search | problem / easy |
+| 52.pdf     | 52 | path-sum                              | depth-first-search | problem / easy |
+| 53.pdf     | 53 | dfs-helper-functions                  | depth-first-search | lesson        |
+| 54.pdf     | 54 | validate-binary-search-tree           | depth-first-search | problem / medium |
+| 55.pdf     | 55 | calculate-tilt                        | depth-first-search | problem / easy |
+| 56.pdf     | 56 | diameter-of-binary-tree               | depth-first-search | problem / easy |
+| 57.pdf     | 57 | path-sum-ii                           | depth-first-search | problem / medium |
+| 58.pdf     | 58 | longest-univalue-path                 | depth-first-search | problem / medium |
+| 59.pdf     | 59 | graphs-overview                       | depth-first-search | lesson        |
+| 60.pdf     | 60 | adjacency-list                        | depth-first-search | lesson        |
+| 61.pdf     | 61 | copy-graph                            | depth-first-search | problem / easy |
+| 62.pdf     | 62 | graph-valid-tree                      | depth-first-search | problem / medium |
+| 63.pdf     | 63 | matrices-grid-dfs                     | depth-first-search | lesson        |
+| 64.pdf     | 64 | flood-fill                            | depth-first-search | problem / easy |
+| 65.pdf     | 65 | number-of-islands                     | depth-first-search | problem / medium |
+| 66.pdf     | 66 | surrounded-regions                    | depth-first-search | problem / medium |
+| 67.pdf     | 67 | pacific-atlantic-water-flow           | depth-first-search | problem / medium |

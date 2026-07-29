@@ -1,0 +1,60 @@
+{
+  "id": 40,
+  "slug": "kth-smallest-in-sorted-matrix",
+  "title": "Kth Smallest Element in a Sorted Matrix",
+  "pattern": "binary-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the kth smallest element in an n×n matrix where rows and columns are sorted using binary search on the value range with O(n) staircase counting.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an n×n matrix where each row is sorted in ascending order from left to right, and each column is sorted in ascending order from top to bottom, find the **kth smallest element** among all elements in the matrix.\n\n**Note:** k is 1-indexed (k=1 returns the smallest element).\n\n**Example:**\n```\nmatrix = [\n  [ 1,  5,  9],\n  [10, 11, 13],\n  [12, 13, 15]\n]\nk = 8\n```\nThe elements in sorted order are [1, 5, 9, 10, 11, 12, 13, 13, 15]. The 8th smallest is **13**."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Traditional binary search on matrix positions won't work because the matrix isn't globally sorted. However, we can use **binary search on the value range** itself.\n\nThe key observation: for any value `mid`, we can efficiently count how many elements are ≤ `mid`. This counting function is **monotonic** (never decreases as `mid` increases), making it perfect for binary search.\n\nWe binary search the range [matrix[0][0], matrix[n-1][n-1]] to find the smallest value where count(value) ≥ k. That value must be our kth smallest element."
+    },
+    {
+      "heading": "Approach",
+      "body": "The solution combines binary search on values with efficient staircase counting:\n\n**Binary Search on Value Range:**\n- Initialize `left = matrix[0][0]`, `right = matrix[n-1][n-1]`\n- For each `mid = (left + right) // 2`, count elements ≤ mid\n- If count ≥ k, search lower values: `right = mid`\n- If count < k, search higher values: `left = mid + 1`\n- Converge to the answer when `left == right`\n\n**Staircase Counting (O(n) time):**\nTo count elements ≤ `target`, start from the **bottom-left corner**:\n- If matrix[row][col] ≤ target: all elements above are also ≤ target (column sorted). Add `row + 1` to count, move right.\n- If matrix[row][col] > target: move up to find smaller values.\n- This traverses at most 2n cells (n right + n up moves)."
+    }
+  ],
+  "approach": [
+    "Initialize search bounds: left = matrix[0][0] (minimum), right = matrix[n-1][n-1] (maximum)",
+    "While left < right: calculate mid = (left + right) // 2",
+    "Count how many elements are ≤ mid using staircase traversal from bottom-left corner",
+    "If count ≥ k, the answer is ≤ mid, so set right = mid to search lower values",
+    "If count < k, the answer is > mid, so set left = mid + 1 to search higher values",
+    "Return left when the search converges (left == right)"
+  ],
+  "complexity": {
+    "time": "O(n * log(max - min))",
+    "space": "O(1)"
+  },
+  "code": "def kthSmallest(matrix, k):\n    \"\"\"\n    Find the kth smallest element in a sorted n×n matrix.\n    \n    Uses binary search on the value range [min, max] combined with\n    efficient O(n) staircase counting to find the smallest value\n    where count(value) >= k.\n    \n    Args:\n        matrix: n×n list where rows and columns are sorted ascending\n        k: 1-indexed position (k=1 returns smallest element)\n    \n    Returns:\n        The kth smallest element in the matrix\n    \"\"\"\n    n = len(matrix)\n    left = matrix[0][0]\n    right = matrix[n-1][n-1]\n    \n    while left < right:\n        mid = (left + right) // 2\n        count = countLessOrEqual(matrix, mid)\n        if count >= k:\n            right = mid\n        else:\n            left = mid + 1\n    \n    return left\n\ndef countLessOrEqual(matrix, target):\n    \"\"\"\n    Count elements <= target using staircase traversal.\n    \n    Starts from bottom-left corner and moves right (when element <= target)\n    or up (when element > target). Takes O(n) time.\n    \"\"\"\n    n = len(matrix)\n    count = 0\n    row = n - 1\n    col = 0\n    \n    while row >= 0 and col < n:\n        if matrix[row][col] <= target:\n            count += row + 1\n            col += 1\n        else:\n            row -= 1\n    \n    return count",
+  "quiz": [
+    {
+      "q": "Why do we start the staircase counting from the bottom-left corner instead of top-right?",
+      "options": [
+        "Both corners work equally well; bottom-left is conventional",
+        "Bottom-left allows us to count entire columns at once when moving right",
+        "Top-right would require tracking visited cells, increasing space complexity",
+        "Bottom-left ensures we count elements in sorted order"
+      ],
+      "answer": 1,
+      "explain": "Starting from bottom-left, when matrix[row][col] ≤ target, we know ALL elements above it in that column (row+1 elements) are also ≤ target due to column sorting. This lets us add row+1 to count in O(1) and move right. Top-right would work but we'd move left/down instead; top-left and bottom-right don't give us this efficient column/row counting property."
+    },
+    {
+      "q": "What is the time complexity and why?",
+      "options": [
+        "O(n²) - we must examine every element in the matrix",
+        "O(n log n) - binary search through n rows with O(log n) comparisons",
+        "O(n * log(max - min)) - O(log(max-min)) binary search iterations, each with O(n) counting",
+        "O(log n) - binary search on n² elements takes log(n²) = 2log(n)"
+      ],
+      "answer": 2,
+      "explain": "We binary search the VALUE RANGE from matrix[0][0] to matrix[n-1][n-1], not positions. The number of iterations is O(log(max - min)) where max and min are the largest and smallest values. Each iteration requires O(n) staircase counting (at most n moves right + n moves up). Total: O(n * log(max - min))."
+    }
+  ]
+}

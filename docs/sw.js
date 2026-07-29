@@ -1,5 +1,5 @@
 /* Service worker — precache app shell + all module data for full offline use. */
-const CACHE = 'dsa-patterns-v9';
+const CACHE = 'dsa-patterns-v10';
 
 const SHELL = [
   './',
@@ -14,8 +14,8 @@ const SHELL = [
   './anim/_framework.js',
 ];
 
-// module data files 1..29
-const MODULES = Array.from({ length: 29 }, (_, i) => `./modules/${i + 1}.json`);
+// module data files 1..67
+const MODULES = Array.from({ length: 67 }, (_, i) => `./modules/${i + 1}.json`);
 
 // per-module animation scripts (slug-based)
 const ANIM = [
@@ -30,6 +30,12 @@ const ANIM = [
   // stack
   'stack-overview', 'valid-parentheses', 'decode-string', 'longest-valid-parentheses',
   'monotonic-stack', 'daily-temperatures', 'largest-rectangle-in-histogram',
+  // linked list
+  'linked-list-overview', 'linked-list-cycle', 'palindrome-linked-list',
+  'remove-nth-node-from-end', 'reorder-list', 'swap-nodes-in-pairs',
+  // binary search
+  'binary-search-overview', 'koko-eating-bananas', 'search-in-rotated-sorted-array',
+  'split-array-largest-sum', 'minimum-shipping-capacity',
 ].map((slug) => `./anim/${slug}.js`);
 
 const PRECACHE = SHELL.concat(MODULES, ANIM);

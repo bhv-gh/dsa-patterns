@@ -1,0 +1,67 @@
+{
+  "id": 30,
+  "slug": "linked-list-overview",
+  "title": "Linked List: Overview",
+  "pattern": "linked-list",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Core linked list operations: traversal, insertion, deletion, fast/slow pointers, reversal, and the dummy node technique.",
+  "sections": [
+    {
+      "heading": "Basics",
+      "body": "A **linked list** is a data structure consisting of a sequence of nodes, where each node contains a value and reference to the next node.\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nThe first node is the **head**, the last is the **tail** (with `next=None` unless there's a cycle)."
+    },
+    {
+      "heading": "Common Operations",
+      "body": "**Traversing** - Use a `current` pointer starting at `head`, advancing via `next` until `None`:\n```python\ndef findLength(head):\n    length = 0\n    current = head\n    while current:\n        length += 1\n        current = current.next\n    return length\n```\nTime: O(n), Space: O(1)\n\n**Deleting a node** - Maintain `prev` and `curr` pointers. When `curr` matches target, set `prev.next = curr.next`. Handle head deletion as special case (or use dummy node).\n\nTime: O(n), Space: O(1)"
+    },
+    {
+      "heading": "Fast and Slow Pointers",
+      "body": "A technique to **find the middle node** or **detect cycles**. Initialize two pointers at `head`: `slow` advances one node per iteration, `fast` advances two nodes.\n\n```python\ndef fastAndSlow(head):\n    fast = head\n    slow = head\n    while fast and fast.next:\n        fast = fast.next.next\n        slow = slow.next\n    return slow\n```\n\nWhen `fast` reaches the end, `slow` is at the middle. For even-length lists, returns the second middle node.\n\n**Cycle detection**: If `fast` and `slow` ever point to the same node, a cycle exists.\n\nTime: O(n), Space: O(1)"
+    },
+    {
+      "heading": "Reversing a Linked List",
+      "body": "Reverse by iteratively changing the direction of `next` pointers using three pointers:\n\n```python\ndef reverse(head):\n    prev = None\n    current = head\n    while current:\n        next_ = current.next  # save next node\n        current.next = prev   # reverse pointer\n        prev = current        # advance prev\n        current = next_       # advance current\n    return prev\n```\n\n- **prev**: last reversed node (becomes new head)\n- **current**: node being reversed\n- **next_**: next node to reverse\n\nTime: O(n), Space: O(1)"
+    },
+    {
+      "heading": "Dummy Node Technique",
+      "body": "A **dummy node** simplifies logic when building or modifying lists by avoiding special-case handling for the head.\n\n**Example - Merging two sorted lists**:\n```python\ndef merge_two_lists(l1, l2):\n    dummy = ListNode()\n    tail = dummy\n    while l1 and l2:\n        if l1.val < l2.val:\n            tail.next = l1\n            l1 = l1.next\n        else:\n            tail.next = l2\n            l2 = l2.next\n        tail = tail.next\n    tail.next = l1 or l2\n    return dummy.next\n```\n\n**When to use**: When initializing the head requires the same logic as appending subsequent nodes, or when deleting nodes (including head).\n\n**Steps**: (1) Create dummy node, (2) Build list iteratively, (3) Return `dummy.next`."
+    }
+  ],
+  "approach": [
+    "Use a `current` pointer to traverse, advancing until `None`",
+    "Apply **fast/slow pointers** to find middle or detect cycles",
+    "Reverse lists with three pointers: `prev`, `current`, `next_`",
+    "Use **dummy node** to simplify head-edge-case logic when building or deleting",
+    "For merging, compare node values and append smaller one iteratively"
+  ],
+  "complexity": {
+    "time": "O(n) for traversal, reversal, finding middle",
+    "space": "O(1) pointer-based operations"
+  },
+  "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef traverse(head):\n    current = head\n    while current:\n        # process current.val\n        current = current.next\n\ndef fastAndSlow(head):\n    fast = slow = head\n    while fast and fast.next:\n        fast = fast.next.next\n        slow = slow.next\n    return slow\n\ndef reverse(head):\n    prev = None\n    current = head\n    while current:\n        next_ = current.next\n        current.next = prev\n        prev = current\n        current = next_\n    return prev",
+  "quiz": [
+    {
+      "q": "When using fast/slow pointers on a list with an even number of nodes, which middle node does slow point to when fast reaches the end?",
+      "options": [
+        "The first of the two middle nodes",
+        "The second of the two middle nodes",
+        "The last node in the list",
+        "It depends on the values in the nodes"
+      ],
+      "answer": 1,
+      "explain": "With even-length lists, slow points to the **second middle node** because fast advances two steps per iteration. When fast is None (after the tail), slow has moved n/2 steps from the head."
+    },
+    {
+      "q": "What is the primary advantage of using a dummy node when merging two sorted linked lists?",
+      "options": [
+        "It improves the time complexity from O(n) to O(log n)",
+        "It allows you to avoid special-case logic for initializing the head",
+        "It reduces space complexity by reusing existing nodes",
+        "It automatically handles null pointer exceptions"
+      ],
+      "answer": 1,
+      "explain": "A dummy node lets you treat the head the same as any other node during iteration, eliminating the need for separate initialization logic. The merged list is built starting from `dummy.next`, simplifying the code."
+    }
+  ]
+}

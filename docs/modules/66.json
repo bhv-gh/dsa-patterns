@@ -1,0 +1,60 @@
+{
+  "id": 66,
+  "slug": "surrounded-regions",
+  "title": "Surrounded Regions",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Modify a grid to replace all 'O' regions completely surrounded by 'X' with 'X'. Use reverse logic: mark border-connected 'O's as safe via DFS.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m×n matrix `grid` containing only characters `'X'` and `'O'`, modify the grid to replace all regions of `'O'` that are completely surrounded by `'X'` with `'X'`.\n\nA region of `'O'` is surrounded by `'X'` if there is no adjacent path (cells that border each other in the N, W, E, S directions) consisting of only `'O'` from anywhere inside that region to the border of the board.\n\n**Example:**\n```\nInput:  [['X','X','X','X','O'],\n         ['X','X','O','X','X'],\n         ['X','X','O','X','O'],\n         ['X','O','X','X','X'],\n         ['X','O','X','X','X']]\n\nOutput: [['X','X','X','X','O'],\n         ['X','X','X','X','X'],\n         ['X','X','X','X','O'],\n         ['X','O','X','X','X'],\n         ['X','O','X','X','X']]\n```\n\nThe `'O'`s at grid[1][2] and grid[2][2] are completely surrounded, so they become `'X'`. All other `'O'`s connect to the border and remain unchanged."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**Think in reverse:** instead of finding surrounded regions, identify which `'O'`s are **safe** (not surrounded).\n\nAny `'O'` that is reachable from a border `'O'` via a path of connected `'O'`s cannot be surrounded. This means:\n1. Start DFS from **all border `'O'`s** (not from interior cells)\n2. Mark all `'O'`s reachable from the border as safe (temporary marker `'S'`)\n3. Any `'O'` that remains unmarked is surrounded and should become `'X'`\n4. Restore safe cells back to `'O'`\n\nThis reverse approach is much simpler than trying to detect enclosure directly."
+    },
+    {
+      "heading": "Approach",
+      "body": "The algorithm uses depth-first search to mark border-connected regions:\n\n1. **Handle edge cases:** if grid is empty, return immediately\n2. **Define DFS helper:** recursively marks `'O'` cells as `'S'` (safe) and explores all 4 neighbors\n3. **Mark border-connected regions:** \n   - Iterate through first and last columns, start DFS from any `'O'`\n   - Iterate through first and last rows, start DFS from any `'O'`\n   - DFS will propagate inward, marking all connected `'O'`s\n4. **Final pass - flip unmarked cells:**\n   - Iterate through entire grid\n   - Any `'O'` that wasn't marked → surrounded → flip to `'X'`\n   - Any `'S'` → was safe → restore to `'O'`\n\n**Why this works:** By starting from the border, we guarantee that only truly surrounded `'O'`s remain unmarked. The temporary `'S'` marker serves dual purpose: tracking visited cells and identifying safe regions."
+    }
+  ],
+  "approach": [
+    "Handle edge case: return if grid is empty",
+    "Define recursive DFS function that marks 'O' as 'S' and explores 4 neighbors",
+    "Start DFS from all border cells (first/last row and first/last column) that contain 'O'",
+    "Perform a final pass through the entire grid",
+    "Flip any remaining 'O' to 'X' (surrounded regions)",
+    "Restore all 'S' back to 'O' (safe, border-connected regions)"
+  ],
+  "complexity": {
+    "time": "O(rows*cols)",
+    "space": "O(rows*cols)"
+  },
+  "code": "class Solution:\n    def surrounded_regions(self, grid):\n        \"\"\"\n        Modify grid in-place to replace surrounded 'O' regions with 'X'.\n        Uses reverse approach: mark border-connected 'O's as safe via DFS.\n        \n        Args:\n            grid: m x n matrix containing only 'X' and 'O'\n        Returns:\n            Modified grid with surrounded 'O's replaced by 'X'\n        \"\"\"\n        if not grid:\n            return grid\n        \n        rows = len(grid)\n        cols = len(grid[0])\n        \n        def dfs(x, y):\n            \"\"\"Mark all 'O's reachable from border as 'S' (safe).\"\"\"\n            # Out of bounds or not an 'O' - return\n            if x < 0 or y < 0 or x >= rows or y >= cols or grid[x][y] != 'O':\n                return\n            \n            # Mark as safe\n            grid[x][y] = 'S'\n            \n            # Explore all 4 neighbors\n            dfs(x + 1, y)\n            dfs(x - 1, y)\n            dfs(x, y + 1)\n            dfs(x, y - 1)\n        \n        # Start DFS from first and last column\n        for i in range(rows):\n            if grid[i][0] == 'O':\n                dfs(i, 0)\n            if grid[i][cols - 1] == 'O':\n                dfs(i, cols - 1)\n        \n        # Start DFS from first and last row\n        for j in range(cols):\n            if grid[0][j] == 'O':\n                dfs(0, j)\n            if grid[rows - 1][j] == 'O':\n                dfs(rows - 1, j)\n        \n        # Final pass: flip unmarked 'O' to 'X', restore 'S' to 'O'\n        for i in range(rows):\n            for j in range(cols):\n                if grid[i][j] == 'O':\n                    grid[i][j] = 'X'\n                elif grid[i][j] == 'S':\n                    grid[i][j] = 'O'\n        \n        return grid",
+  "quiz": [
+    {
+      "q": "Why do we start DFS from border cells instead of searching for surrounded regions directly?",
+      "options": [
+        "Because border-connected 'O's are safe by definition, making unmarked 'O's surrounded",
+        "Because DFS only works when starting from edges of a grid",
+        "Because it reduces time complexity from O(n²) to O(n)",
+        "Because we need to check all cells exactly once"
+      ],
+      "answer": 0,
+      "explain": "Starting from the border is the key insight: any 'O' reachable from a border 'O' cannot be surrounded (it has a path to the edge). By marking these as safe first, any remaining unmarked 'O' must be surrounded. This reverse approach is much simpler than trying to detect enclosure directly, which would require checking if a region has any path to the border."
+    },
+    {
+      "q": "What is the purpose of using 'S' as a temporary marker instead of keeping a separate visited set?",
+      "options": [
+        "To save space complexity by avoiding an extra data structure",
+        "To serve dual purpose: track visited cells and mark safe regions for the final pass",
+        "To make the code run faster by reducing memory allocations",
+        "To avoid modifying the original grid"
+      ],
+      "answer": 1,
+      "explain": "The 'S' marker serves two purposes: (1) during DFS, it prevents revisiting cells since we only recurse on 'O', and (2) in the final pass, it identifies which cells to restore to 'O'. While it does save space compared to a separate visited set, the primary benefit is simplifying the logic - we can determine in one final pass which cells to flip to 'X' (remaining 'O's) versus restore to 'O' (marked 'S's)."
+    }
+  ]
+}

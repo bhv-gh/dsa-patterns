@@ -1,0 +1,59 @@
+{
+  "id": 67,
+  "slug": "pacific-atlantic-water-flow",
+  "title": "Pacific Atlantic Water Flow",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find all cells in a grid where water can flow to both Pacific (top/left edges) and Atlantic (bottom/right edges) oceans using boundary DFS.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an `m x n` grid of land heights where rain falls on every cell. The **Pacific Ocean** touches the left and top edges, while the **Atlantic Ocean** touches the right and bottom edges.\n\nWater flows from a cell to neighboring cells (north, south, east, west) only if the neighbor's height is **equal to or lower**.\n\nReturn a list of grid coordinates `[i, j]` where water can flow to **both** oceans."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**Reverse the problem**: Instead of checking if each cell can reach the oceans (expensive O((m×n)²) brute force), start DFS from each ocean's border cells and flow **inland** to neighbors with height **≥ current** (water flows uphill in reverse).\n\nCells reachable from **both** Pacific and Atlantic border sets are the answer. This eliminates redundant path calculations."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Boundary DFS** inverts the flow direction to avoid redundant work:\n\n1. Initialize two sets: `pacific_reachable` and `atlantic_reachable`\n2. Start DFS from **all Pacific border cells** (top row and left column), moving to neighbors with `height >= current`. Mark visited cells in `pacific_reachable`\n3. Start DFS from **all Atlantic border cells** (bottom row and right column), moving to neighbors with `height >= current`. Mark visited cells in `atlantic_reachable`\n4. Use a shared visited set per ocean to avoid revisiting cells during the same ocean's traversal\n5. Return the **intersection** of both sets\n6. Each cell is visited at most twice (once per ocean), achieving O(m×n) time"
+    }
+  ],
+  "approach": [
+    "Initialize two empty sets: `pacific_reachable` and `atlantic_reachable`",
+    "Define a DFS function that takes coordinates, a reachable set, and explores neighbors with height >= current cell",
+    "Start DFS from all Pacific border cells (row 0 and column 0), adding reachable cells to `pacific_reachable`",
+    "Start DFS from all Atlantic border cells (row m-1 and column n-1), adding reachable cells to `atlantic_reachable`",
+    "Return the intersection of both sets as the final answer"
+  ],
+  "complexity": {
+    "time": "O(rows*cols)",
+    "space": "O(rows*cols)"
+  },
+  "code": "class Solution:\n    def pacific_atlantic_flow(self, grid):\n        \"\"\"Find all cells where water can flow to both Pacific and Atlantic oceans.\n        \n        Uses boundary DFS starting from ocean borders and flowing inland\n        to neighbors with height >= current (reverse flow direction).\n        \n        Args:\n            grid: m x n matrix of non-negative integers representing land heights\n            \n        Returns:\n            List of [row, col] coordinates reachable from both oceans\n        \"\"\"\n        if not grid or not grid[0]:\n            return []\n        \n        rows, cols = len(grid), len(grid[0])\n        pacific_reachable = set()\n        atlantic_reachable = set()\n        \n        def dfs(r, c, reachable):\n            reachable.add((r, c))\n            for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < rows and 0 <= nc < cols:\n                    if (nr, nc) not in reachable and grid[nr][nc] >= grid[r][c]:\n                        dfs(nr, nc, reachable)\n        \n        # DFS from Pacific borders (top row and left column)\n        for r in range(rows):\n            dfs(r, 0, pacific_reachable)\n        for c in range(cols):\n            dfs(0, c, pacific_reachable)\n        \n        # DFS from Atlantic borders (bottom row and right column)\n        for r in range(rows):\n            dfs(r, cols - 1, atlantic_reachable)\n        for c in range(cols):\n            dfs(rows - 1, c, atlantic_reachable)\n        \n        # Return intersection of both sets\n        return list(pacific_reachable & atlantic_reachable)",
+  "quiz": [
+    {
+      "q": "Why is boundary DFS more efficient than checking each cell individually?",
+      "options": [
+        "It uses less memory by not storing visited cells",
+        "It eliminates redundant path calculations by sharing a visited set per ocean",
+        "It only visits cells adjacent to ocean borders",
+        "It uses BFS instead of DFS for faster traversal"
+      ],
+      "answer": 1,
+      "explain": "Boundary DFS shares a single visited set across all DFS calls originating from the same ocean. Once a cell is marked reachable from an ocean, it's never revisited during that ocean's traversal. The brute-force approach recalculates parts of the same path multiple times when checking each cell independently."
+    },
+    {
+      "q": "In the boundary DFS approach, why do we move to neighbors with height >= current instead of <= current?",
+      "options": [
+        "Water naturally flows uphill in real physics",
+        "We're reversing the flow direction: starting from oceans and flowing inland",
+        "The grid heights are inverted in the problem statement",
+        "It's a bug in the solution; should be <= current"
+      ],
+      "answer": 1,
+      "explain": "We invert the problem by starting at ocean borders and moving inland. In reverse, water 'flows uphill': if cell A can flow down to cell B (height_A >= height_B), then in reverse, cell B can reach cell A by moving to a neighbor with height_B <= height_A. So from the ocean's perspective moving inland, we go to neighbors with height >= current."
+    }
+  ]
+}

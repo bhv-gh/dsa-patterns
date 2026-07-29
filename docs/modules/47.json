@@ -1,0 +1,60 @@
+{
+  "id": 47,
+  "slug": "find-median-from-data-stream",
+  "title": "Find Median from Data Stream",
+  "pattern": "heap",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Track the running median of a data stream using two heaps: a max-heap for the lower half and a min-heap for the upper half, kept balanced.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Design a data structure that processes a stream of numbers and returns the **median** after each insertion.\n\nGiven an initial array `nums` and incoming values in `adds`, return the median after each value from `adds` is inserted. If the total count is even, the median is the average of the two middle values.\n\n**Example:**\n```\nnums = [5, 2, 8]\nadds = [3, 10, 4]\nOutput: [4, 5, 4.5]\n```\n\nAfter adding 3: [2, 3, 5, 8] → median = (3+5)/2 = 4\n\nAfter adding 10: [2, 3, 5, 8, 10] → median = 5\n\nAfter adding 4: [2, 3, 4, 5, 8, 10] → median = (4+5)/2 = 4.5"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The median divides a sorted list into two halves. We don't need to sort everything—we only need quick access to the **boundary values** between the halves:\n\n- The **largest value** from the smaller half\n- The **smallest value** from the larger half\n\nA **max-heap** for the lower half gives us the maximum in O(1). A **min-heap** for the upper half gives us the minimum in O(1). By keeping these heaps **balanced**, the median is always at the heap tops."
+    },
+    {
+      "heading": "Approach",
+      "body": "Maintain two heaps that stay balanced:\n\n1. **Max-heap (`lower`)** stores the smaller half of numbers (top = largest of the smaller half)\n2. **Min-heap (`upper`)** stores the larger half (top = smallest of the larger half)\n3. Keep `lower` either the same size as `upper` or one element larger\n4. The median is either `lower.top` (if `lower` is larger) or the average of both tops (if equal size)\n\nThis gives us O(1) median access and O(log n) insertions, vastly better than sorting every time (O(n log n) per insertion)."
+    }
+  ],
+  "approach": [
+    "Initialize two heaps: `lower` (max-heap) and `upper` (min-heap)",
+    "For each incoming value, insert it into the appropriate heap: if value ≤ lower.top, push to `lower`; otherwise push to `upper`",
+    "Rebalance the heaps to maintain size invariant: if `lower.size > upper.size + 1`, move `lower.top` to `upper`; if `upper.size > lower.size`, move `upper.top` to `lower`",
+    "Calculate median: if heaps are equal size, return `(lower.top + upper.top) / 2`; otherwise return `lower.top`",
+    "Repeat for each value in the stream, collecting medians after each insertion",
+    "Return the list of medians"
+  ],
+  "complexity": {
+    "time": "add O(log n), median O(1)",
+    "space": "O(n)"
+  },
+  "code": "import heapq\n\nclass MedianFinder:\n    \"\"\"\n    Track the running median of a data stream using two heaps.\n    \n    The lower half is stored in a max-heap (negated values in Python's min-heap).\n    The upper half is stored in a min-heap.\n    We keep lower either equal in size to upper or one element larger.\n    \"\"\"\n    \n    def __init__(self):\n        self.lower = []  # max-heap (store negated values)\n        self.upper = []  # min-heap\n    \n    def addNum(self, num: int) -> None:\n        \"\"\"Insert a number into the data structure.\"\"\"\n        # Decide which heap to insert into\n        if not self.lower or num <= -self.lower[0]:\n            heapq.heappush(self.lower, -num)\n        else:\n            heapq.heappush(self.upper, num)\n        \n        # Rebalance heaps\n        if len(self.lower) > len(self.upper) + 1:\n            heapq.heappush(self.upper, -heapq.heappop(self.lower))\n        elif len(self.upper) > len(self.lower):\n            heapq.heappush(self.lower, -heapq.heappop(self.upper))\n    \n    def findMedian(self) -> float:\n        \"\"\"Return the median of all elements so far.\"\"\"\n        if len(self.lower) == len(self.upper):\n            return (-self.lower[0] + self.upper[0]) / 2.0\n        return float(-self.lower[0])",
+  "quiz": [
+    {
+      "q": "Why do we use a max-heap for the lower half and a min-heap for the upper half?",
+      "options": [
+        "To quickly access the boundary values: the largest of the lower half and the smallest of the upper half",
+        "To sort all elements in ascending order",
+        "To minimize space complexity",
+        "To avoid using extra memory for sorting"
+      ],
+      "answer": 0,
+      "explain": "The median is determined by the middle value(s). By using a max-heap for the lower half, we get instant access to the largest value in that half. Similarly, a min-heap for the upper half gives us the smallest value there. These boundary values are exactly what we need to compute the median in O(1) time."
+    },
+    {
+      "q": "What happens if we don't rebalance the heaps after each insertion?",
+      "options": [
+        "The heaps will still work but use more memory",
+        "The median calculation will be incorrect because the heaps won't represent balanced halves",
+        "The time complexity will increase to O(n)",
+        "Nothing, rebalancing is optional"
+      ],
+      "answer": 1,
+      "explain": "If the heaps become imbalanced (e.g., lower has 10 elements and upper has 2), the top of lower is no longer the true median or middle boundary. The median formula assumes that the heaps are balanced—either equal in size or differing by at most 1 element. Without rebalancing, we lose this guarantee and get wrong results."
+    }
+  ]
+}

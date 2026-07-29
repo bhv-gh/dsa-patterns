@@ -1,0 +1,68 @@
+{
+  "id": 60,
+  "slug": "adjacency-list",
+  "title": "Adjacency List",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn how to represent graphs using adjacency lists, build them from edge lists, and perform DFS traversal with proper visited tracking.",
+  "sections": [
+    {
+      "heading": "What is an Adjacency List?",
+      "body": "An adjacency list is a common way to represent a graph. In an adjacency list, we are given a list of nodes, where each node is mapped to a list of its neighbors.\n\nIn Python, we can create an adjacency list using a dictionary where the keys are the nodes and the values are the list of nodes each node is connected to.\n\n**Example:**\n```python\nadjList = {\n    1: [2],\n    2: [1, 3, 4],\n    3: [2, 4],\n    4: [2, 3, 5],\n    5: [4]\n}\n```\n\nAdjacency lists allow you to look up the neighbors of any node in **O(1)** time, which is a necessary step for depth-first search."
+    },
+    {
+      "heading": "Building an Adjacency List from Edges",
+      "body": "Some questions require you to build an adjacency list from a list of edges. Given an integer `n` representing the number of nodes and a list of edges `edges`, where `edges[i] = [ui, vi]` represents a bidirectional edge between nodes `ui` and `vi`, you can construct the adjacency list as follows:\n\n**Example:**\n```python\nn = 4\nedges = [[0, 1], [1, 2], [2, 3], [3, 0], [0, 2]]\n```\n\n**Output:**\n```python\n{\n    0: [1, 3, 2],\n    1: [0, 2],\n    2: [1, 3, 0],\n    3: [2, 0]\n}\n```\n\nFor **undirected graphs**, each edge must be added in both directions (if there's an edge from u to v, add v to u's list and u to v's list)."
+    },
+    {
+      "heading": "Implementation: Building the Adjacency List",
+      "body": "To build an adjacency list from edges, use a dictionary (or `defaultdict(list)` for cleaner code) and iterate through the edge list:\n\n```python\ndef build_adj_list(n, edges):\n    adj_list = {i: [] for i in range(n)}\n    for u, v in edges:\n        adj_list[u].append(v)\n        adj_list[v].append(u)  # Add both directions for undirected\n    return adj_list\n```\n\nUsing `defaultdict(list)` simplifies initialization:\n```python\nfrom collections import defaultdict\n\ndef build_adj_list(edges):\n    adj_list = defaultdict(list)\n    for u, v in edges:\n        adj_list[u].append(v)\n        adj_list[v].append(u)\n    return adj_list\n```"
+    },
+    {
+      "heading": "DFS on an Adjacency List",
+      "body": "DFS for a graph is conceptually similar to DFS on a binary tree, but with key differences:\n\n1. **Multiple neighbors**: Each node can have any number of neighbors, so use a `for` loop to iterate over each neighbor rather than just left and right children.\n\n2. **Cycle detection**: Graphs can contain cycles, so keep track of visited nodes using a `set`. If you encounter a visited node, skip it to avoid infinite loops.\n\n3. **No explicit base case**: The recursion naturally stops when all reachable nodes are visited.\n\n**Basic DFS implementation:**\n```python\ndef dfs(adjList):\n    if not adjList:\n        return\n    visited = set()\n    \n    def dfs_helper(node):\n        if node in visited:\n            return\n        visited.add(node)\n        for neighbor in adjList[node]:\n            dfs_helper(neighbor)\n    \n    # Handle disconnected components\n    for node in adjList:\n        if node not in visited:\n            dfs_helper(node)\n```"
+    },
+    {
+      "heading": "Key Takeaways",
+      "body": "- Use a **set** to track visited nodes. Add each node to the set when visited.\n- If you encounter a visited node, return immediately to avoid cycles.\n- Use a **for loop** to iterate over neighbors and recursively call DFS on each.\n- Handle **disconnected components** by iterating through all nodes in the graph.\n- Adjacency lists provide **O(1)** neighbor lookup, making them efficient for graph traversal."
+    }
+  ],
+  "approach": [
+    "Initialize adjacency list as a dictionary (or defaultdict(list))",
+    "Iterate through edge list and add neighbors in both directions for undirected graphs",
+    "For DFS, maintain a visited set to track explored nodes",
+    "Use recursive helper function that checks visited status before processing",
+    "Iterate over all neighbors using a for loop",
+    "Handle disconnected components by starting DFS from all unvisited nodes"
+  ],
+  "complexity": {
+    "time": "Build O(E), DFS O(V + E)",
+    "space": "O(V + E)"
+  },
+  "code": "from collections import defaultdict\n\ndef build_adj_list(edges):\n    adj_list = defaultdict(list)\n    for u, v in edges:\n        adj_list[u].append(v)\n        adj_list[v].append(u)  # undirected\n    return adj_list\n\ndef dfs(adjList):\n    visited = set()\n    def dfs_helper(node):\n        if node in visited:\n            return\n        visited.add(node)\n        for neighbor in adjList[node]:\n            dfs_helper(neighbor)\n    for node in adjList:\n        if node not in visited:\n            dfs_helper(node)",
+  "quiz": [
+    {
+      "q": "Why do we need to add edges in both directions when building an adjacency list for an undirected graph?",
+      "options": [
+        "Because each edge connects both nodes bidirectionally, so both nodes must list each other as neighbors",
+        "To make the graph easier to visualize",
+        "To improve time complexity of DFS",
+        "To handle disconnected components"
+      ],
+      "answer": 0,
+      "explain": "In an undirected graph, an edge between u and v means both u can reach v AND v can reach u. Therefore, we must add v to u's neighbor list and u to v's neighbor list to correctly represent the bidirectional relationship."
+    },
+    {
+      "q": "What is the primary reason for using a visited set during DFS on a graph?",
+      "options": [
+        "To improve time complexity",
+        "To avoid infinite loops caused by cycles in the graph",
+        "To keep track of the traversal order",
+        "To reduce space complexity"
+      ],
+      "answer": 1,
+      "explain": "Unlike trees, graphs can contain cycles. Without a visited set, DFS could follow cycles indefinitely, causing an infinite loop. The visited set ensures each node is processed only once, preventing this issue."
+    }
+  ]
+}

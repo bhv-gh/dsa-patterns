@@ -1,0 +1,58 @@
+{
+  "id": 43,
+  "slug": "kth-largest-element",
+  "title": "Kth Largest Element in an Array",
+  "pattern": "heap",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the kth largest element in an unsorted array using a min-heap of size k. Maintain k largest elements; the heap's root is the answer.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function that takes an array of unsorted integers `nums` and an integer `k`, and returns the **kth largest element** in the array.\n\n**Example:**\n```\nnums = [5, 3, 2, 1, 4]\nk = 2\nOutput: 4\n```\n\nThe function should run in O(n log k) time, where n is the length of the array."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **min-heap of size k** to track the k largest elements seen so far. The smallest element in this heap (the root) is exactly the kth largest element overall.\n\nWhy a min-heap instead of max-heap? A min-heap lets us efficiently evict the smallest of our k largest elements when we find a better candidate. The root is always the \"weakest\" of our top-k, which is precisely the kth largest."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize** an empty min-heap.\n2. **Iterate** through each element in the array:\n   - If the heap has fewer than k elements, push the current element.\n   - If the heap has k elements and the current element is larger than the heap's root, pop the root and push the current element.\n3. **After processing all elements**, the heap contains the k largest elements.\n4. **Return** the root of the heap, which is the kth largest element.\n\nThis approach ensures we only keep k elements in memory and perform O(log k) operations for each of the n elements."
+    }
+  ],
+  "approach": [
+    "Initialize an empty min-heap to store up to k elements",
+    "For each number in the array, add it to the heap if size < k",
+    "If heap size equals k and current number > heap root, replace root with current number",
+    "After processing all elements, return the heap root (kth largest element)"
+  ],
+  "complexity": {
+    "time": "O(n log k)",
+    "space": "O(k)"
+  },
+  "code": "import heapq\n\ndef kth_largest(nums, k):\n    \"\"\"\n    Find the kth largest element in an unsorted array.\n    \n    Args:\n        nums: List of integers\n        k: Integer representing which largest element to find\n    \n    Returns:\n        The kth largest element in the array\n    \"\"\"\n    if not nums:\n        return None\n    \n    heap = []\n    for num in nums:\n        if len(heap) < k:\n            heapq.heappush(heap, num)\n        elif num > heap[0]:\n            heapq.heappushpop(heap, num)\n    \n    return heap[0]",
+  "quiz": [
+    {
+      "q": "Why do we use a min-heap of size k instead of a max-heap to find the kth largest element?",
+      "options": [
+        "A min-heap of size k keeps the k largest elements, with the smallest (kth largest) at the root for easy access",
+        "A max-heap would require O(n) space while a min-heap only needs O(k) space",
+        "Min-heaps are faster than max-heaps for insertion operations",
+        "A max-heap cannot be used to find the kth largest element"
+      ],
+      "answer": 0,
+      "explain": "A min-heap of size k maintains the k largest elements seen so far. The root is the smallest among these k elements, which is exactly the kth largest overall. When we encounter a larger element, we can efficiently evict the current kth largest (root) and insert the new element."
+    },
+    {
+      "q": "What is the time complexity of finding the kth largest element using a min-heap approach?",
+      "options": [
+        "O(n)",
+        "O(n log k)",
+        "O(n log n)",
+        "O(k log n)"
+      ],
+      "answer": 1,
+      "explain": "We iterate through all n elements once. For each element, we may perform a heap operation (push or pop) which takes O(log k) time since the heap size is limited to k. Total time complexity is O(n log k), which is better than sorting O(n log n) when k is small."
+    }
+  ]
+}

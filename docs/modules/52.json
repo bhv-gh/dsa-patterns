@@ -1,0 +1,60 @@
+{
+  "id": 52,
+  "slug": "path-sum",
+  "title": "Path Sum",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Determine if a binary tree has a root-to-leaf path where values sum to a target using DFS, checking for equality only at leaf nodes.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the **root** of a binary tree and an integer **target**, write a recursive function to determine if the tree has a root-to-leaf path where all the values along that path sum to the target.\n\nFor example, given a tree with nodes `[4, 2, 7, 1, 3, 6, 9]` and `target = 17`, the path `4 -> 7 -> 6` sums to 17, so return `true`.\n\nA **leaf** is a node with no children. The solution must check the sum only at leaf nodes, not at intermediate nodes."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **depth-first search** to traverse the tree, subtracting each node's value from the target as you go deeper. The critical insight is to check if the remaining target equals the node's value **only when you reach a leaf node**.\n\nThis ensures that we're checking complete root-to-leaf paths, not stopping prematurely at intermediate nodes that happen to match the remaining sum."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Return Value:** Each recursive call returns `True` if there exists a path from the current node to a leaf that sums to the current target, `False` otherwise.\n\n**Base Cases:**\n- If the current node is `None`, return `False` (no path exists in an empty subtree)\n- If the current node is a **leaf** (no left or right child), return whether `target == node.val`\n\n**Recursive Case:** Subtract the current node's value from the target and recursively check both left and right subtrees. Return `True` if either subtree has a valid path."
+    }
+  ],
+  "approach": [
+    "Handle the base case: if the node is `None`, return `False`",
+    "Check if the current node is a leaf (no left and no right children)",
+    "If it's a leaf, return `True` if the target equals the leaf's value, otherwise `False`",
+    "If not a leaf, subtract the current node's value from the target",
+    "Recursively check both left and right subtrees with the updated target",
+    "Return `True` if either subtree contains a valid path, otherwise `False`"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "def hasPathSum(root, target):\n    \"\"\"\n    Determine if the tree has a root-to-leaf path summing to target.\n    \n    Args:\n        root: TreeNode, the root of the binary tree\n        target: int, the target sum\n    \n    Returns:\n        bool: True if a valid path exists, False otherwise\n    \"\"\"\n    if not root:\n        return False\n    \n    # If we reach a leaf node, check if target equals the leaf's value\n    if not root.left and not root.right:\n        return target == root.val\n    \n    # Recursively check left and right subtrees with updated target\n    left = hasPathSum(root.left, target - root.val)\n    right = hasPathSum(root.right, target - root.val)\n    \n    return left or right",
+  "quiz": [
+    {
+      "q": "Why must we check the sum only at leaf nodes rather than at any node?",
+      "options": [
+        "Because the problem requires a complete root-to-leaf path, not a partial path ending at an intermediate node",
+        "Because leaf nodes have special properties that make sum checking easier",
+        "Because intermediate nodes cannot be part of valid paths",
+        "Because the recursion would fail if we checked at intermediate nodes"
+      ],
+      "answer": 0,
+      "explain": "The problem explicitly asks for a root-to-leaf path. If we checked the sum at intermediate nodes, we might return true for a partial path that doesn't reach a leaf, which would be incorrect. The leaf condition ensures we've traversed a complete path from root to leaf."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(log n) because we only visit nodes on one path",
+        "O(h) where h is the height of the tree",
+        "O(n) because we may need to visit all nodes in the worst case",
+        "O(n²) because we check both left and right subtrees"
+      ],
+      "answer": 2,
+      "explain": "In the worst case, we must visit every node in the tree before finding a valid path (or determining none exists). For example, if the valid path is the rightmost path, we'll explore all other paths first. Each node is visited exactly once, giving us O(n) time complexity."
+    }
+  ]
+}

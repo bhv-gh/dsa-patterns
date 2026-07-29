@@ -1,0 +1,67 @@
+{
+  "id": 36,
+  "slug": "binary-search-overview",
+  "title": "Binary Search: Overview",
+  "pattern": "binary-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Efficient O(log n) search algorithm that repeatedly halves the search space in a sorted array by comparing the target with the middle element.",
+  "sections": [
+    {
+      "heading": "The Halving Principle",
+      "body": "Binary Search works by repeatedly cutting the search space in half. Given a sorted array, the middle element divides it into two halves: all elements to the left are smaller or equal, and all elements to the right are larger or equal.\n\nBy comparing the target to the middle element, we can safely discard one half of the array. If `target > mid`, we search the right half; if `target < mid`, we search the left half. This halving continues until we find the target or exhaust the search space.\n\nThe efficiency comes from this repeated halving: each step eliminates half the remaining elements, giving us **O(log n)** time complexity compared to O(n) for linear search."
+    },
+    {
+      "heading": "The Left-Mid-Right Invariant",
+      "body": "Binary Search maintains three pointers:\n\n- **left**: start of the current search space\n- **right**: end of the current search space\n- **mid**: middle element, calculated as `(left + right) // 2`\n\nThe loop continues while `left <= right`, meaning the search space is non-empty. When `left > right`, the pointers have \"crossed\" and the search space is empty, indicating the target is not in the array.\n\nKey invariant: Elements before `left` and after `right` have been ruled out. The valid search space is always `[left, right]` inclusive."
+    },
+    {
+      "heading": "Off-by-One Care",
+      "body": "Binary Search is notorious for off-by-one errors. Critical details:\n\n- Initialize `right = len(nums) - 1` (last valid index, not length)\n- Loop condition is `left <= right` (not `<`), because when `left == right` there's still one element to check\n- Update pointers as `left = mid + 1` or `right = mid - 1` (not just `mid`), because we've already checked `mid`\n- Use integer division `//` for mid calculation to avoid floating point issues\n\nThe termination condition `left <= right` ensures we check every element exactly once and stop when the search space is truly empty."
+    },
+    {
+      "heading": "Binary Search on the Answer",
+      "body": "Binary Search extends beyond searching sorted arrays. The key insight: **if you can check whether a candidate answer is \"too small\" or \"too large\" in O(f(n)) time, and the answer space is monotonic, you can binary search it.**\n\nThis pattern appears in problems like:\n- **Koko Eating Bananas**: Binary search on eating speed (1 to max pile size)\n- **Minimum Shipping Capacity**: Binary search on ship capacity\n- **Split Array Largest Sum**: Binary search on the maximum subarray sum\n\nThe template remains the same, but instead of `nums[mid] < target`, you use a predicate function that checks if a candidate value satisfies the constraints. This unlocks binary search for optimization problems where you're searching over a monotonic answer space."
+    },
+    {
+      "heading": "Edge Cases",
+      "body": "Handle these gracefully:\n\n- **Empty array**: `left = 0`, `right = -1`, loop doesn't run, return -1\n- **Single element**: All pointers point to index 0, one comparison determines result\n- **Target not present**: Loop terminates when `left > right`, return -1\n- **Duplicates**: Standard binary search finds *some* occurrence; finding first/last requires variant templates\n\nVisualize the pointers crossing to understand termination: when there's one element left (`left == right`), we check it; then the loop updates make `left > right`, ending the search."
+    }
+  ],
+  "approach": [
+    "Array is sorted (or search space has monotonic property)",
+    "Need to find exact value or optimize over a range",
+    "Can eliminate half the search space with each comparison",
+    "Problem mentions 'minimum/maximum value that satisfies condition'",
+    "O(log n) time requirement suggests halving approach"
+  ],
+  "complexity": {
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "code": "def binary_search(nums, target):\n    left = 0\n    right = len(nums) - 1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        \n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1",
+  "quiz": [
+    {
+      "q": "Why must we use `left = mid + 1` and `right = mid - 1` instead of `left = mid` or `right = mid`?",
+      "options": [
+        "To avoid infinite loops when the search space has two elements",
+        "To improve the time complexity from O(n) to O(log n)",
+        "To handle duplicate elements correctly",
+        "To ensure the mid calculation doesn't overflow"
+      ],
+      "answer": 0,
+      "explain": "Using `left = mid` or `right = mid` can cause infinite loops. For example, with two elements where `left = 0, right = 1`, `mid = 0`. If we set `left = mid`, the pointers never change and the loop repeats forever. We must exclude `mid` from the next search space since we've already checked it."
+    },
+    {
+      "q": "In 'binary search on the answer' problems, what must be true about the answer space?",
+      "options": [
+        "The answer space must be a sorted array",
+        "The predicate function must have a monotonic property (all values below threshold fail, all above succeed, or vice versa)",
+        "The answer must be an integer between 1 and n",
+        "The problem must involve finding a minimum or maximum value"
+      ],
+      "answer": 1,
+      "explain": "Binary search on the answer requires a monotonic predicate: if value X satisfies the condition, all values greater than X (or less than X) must also satisfy it. This creates a 'boundary' we can binary search for. The answer space doesn't need to be an array—it can be a range of integers or even continuous values, as long as the predicate has this monotonic property."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": 48,
+  "slug": "dfs-introduction",
+  "title": "DFS: Introduction",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn Depth-First Search, a traversal algorithm that explores as far down a path as possible before backtracking. Master the recursive pattern for trees and graphs.",
+  "sections": [
+    {
+      "heading": "What is Depth-First Search?",
+      "body": "Depth-First Search (DFS) is a traversal algorithm for trees and graphs. It's called \"depth-first\" because it explores as far down a path as possible before backtracking to try another path.\n\nFor example, when traversing a tree, DFS goes all the way down the left side before backtracking to visit other branches. This \"go deep, then backtrack\" behavior separates DFS from Breadth-First Search, which explores all nodes at one level before moving to the next.\n\nDFS is arguably the most important algorithm to master for coding interviews due to its versatility."
+    },
+    {
+      "heading": "The Basic DFS Pattern",
+      "body": "At its core, DFS follows a simple recursive pattern:\n\n```python\ndef dfs(node):\n    if node is null:\n        return\n    \n    # process the current node\n    \n    dfs(node.left)\n    dfs(node.right)\n```\n\nFor graphs, you also need to track visited nodes to avoid infinite loops caused by cycles:\n\n```python\ndef dfs(node, visited):\n    if node in visited:\n        return\n    \n    visited.add(node)\n    \n    for neighbor in node.neighbors:\n        dfs(neighbor, visited)\n```"
+    },
+    {
+      "heading": "How DFS Works: The Call Stack",
+      "body": "DFS leverages the call stack to enable backtracking. When you make a recursive call, the current function pauses and gets pushed onto the call stack. Once the recursive call completes, execution returns to the paused function.\n\nThis natural backtracking mechanism is what allows DFS to explore one path completely before trying another. For binary trees, DFS can return values to aggregate information from subtrees (like finding depth or validating structure)."
+    },
+    {
+      "heading": "Common DFS Applications",
+      "body": "DFS excels in several scenarios:\n\n- **Explore all possible paths**: Finding all solutions or any valid solution\n- **Traverse hierarchical structures**: Trees and nested data\n- **Find connected components**: Counting distinct regions in graphs or grids\n- **Detect cycles**: Identifying circular dependencies in graphs\n- **Process nodes in specific order**: Pre-order, in-order, or post-order traversal\n\nKey insight: Use DFS when you need to explore thoroughly or find any valid solution. Use BFS when you need the shortest path or level-by-level traversal."
+    },
+    {
+      "heading": "DFS on Different Structures",
+      "body": "**Binary Trees**: The simplest case. Trees have no cycles, so you don't need to track visited nodes. Focus on understanding how the call stack enables backtracking and how return values aggregate information.\n\n**Graphs**: Add complexity with cycles, requiring visited tracking. You'll work with adjacency lists and handle potentially disconnected components.\n\n**2D Matrix Grids**: Apply DFS with directional arrays (up, down, left, right) to traverse grid cells. Common in problems involving islands, regions, or boundary traversal."
+    }
+  ],
+  "approach": [
+    "Use DFS when you need to explore all possible paths or find any valid solution",
+    "For trees: implement the basic recursive pattern without visited tracking",
+    "For graphs: maintain a visited set to prevent infinite loops from cycles",
+    "For grids: use directional arrays to explore neighbors (up, down, left, right)",
+    "Start from boundary cells and work inward for boundary-connected problems",
+    "Use the outer loop to find new components, DFS to consume each one fully"
+  ],
+  "complexity": {
+    "time": "O(V + E) for graphs (V vertices, E edges); O(n) for trees (n nodes)",
+    "space": "O(h) recursion stack depth (h = height for trees, can be O(V) for graphs in worst case)"
+  },
+  "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef dfs(node):\n    # Base case: null node\n    if node is None:\n        return\n    \n    # Process current node (pre-order)\n    print(node.val)\n    \n    # Recursively traverse left subtree\n    dfs(node.left)\n    \n    # Recursively traverse right subtree\n    dfs(node.right)\n\n# Example: Find depth of tree\ndef max_depth(node):\n    if node is None:\n        return 0\n    \n    left_depth = max_depth(node.left)\n    right_depth = max_depth(node.right)\n    \n    return 1 + max(left_depth, right_depth)",
+  "quiz": [
+    {
+      "q": "What is the key difference between DFS and BFS?",
+      "options": [
+        "DFS explores as far down a path as possible before backtracking, while BFS explores level by level",
+        "DFS always finds the shortest path, while BFS does not",
+        "DFS requires a visited set for trees, while BFS does not",
+        "DFS uses a queue, while BFS uses the call stack"
+      ],
+      "answer": 0,
+      "explain": "DFS (depth-first) goes deep down one path before backtracking, while BFS (breadth-first) explores all nodes at the current level before moving to the next level. BFS finds shortest paths in unweighted graphs, not DFS. DFS uses the call stack (recursion) while BFS uses a queue."
+    },
+    {
+      "q": "When traversing a graph with DFS, why do you need to track visited nodes?",
+      "options": [
+        "To improve the time complexity of the algorithm",
+        "To avoid infinite loops caused by cycles in the graph",
+        "To ensure nodes are visited in sorted order",
+        "To reduce the space complexity of recursion"
+      ],
+      "answer": 1,
+      "explain": "Graphs can contain cycles, which would cause DFS to loop infinitely without a visited set. When you encounter a node you've already visited, you skip it to prevent revisiting and infinite recursion. Trees don't need this because they have no cycles by definition."
+    }
+  ]
+}

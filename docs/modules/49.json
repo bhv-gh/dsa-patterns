@@ -1,0 +1,67 @@
+{
+  "id": 49,
+  "slug": "dfs-fundamentals",
+  "title": "DFS: Fundamentals",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn the fundamentals of Depth-First Search: how DFS traverses binary trees using recursion, the call stack, and backtracking.",
+  "sections": [
+    {
+      "heading": "Binary Tree Properties",
+      "body": "A **binary tree** has a **root** node at the top. Each node can have at most two children: a **left child** and a **right child**. Nodes without children are **leaf nodes**.\n\n**Height**: The number of edges on the longest path from the root to a leaf.\n\n**Balanced**: A tree where the height of left and right subtrees of every node differ by at most 1.\n\n**Complete**: Every level except possibly the last is completely filled, and nodes are as far left as possible. Complete trees have height O(log n).\n\n**Binary Search Tree (BST)**: All nodes in the left subtree are less than the root; all nodes in the right subtree are greater. This property applies recursively to all subtrees."
+    },
+    {
+      "heading": "Depth-First Search Algorithm",
+      "body": "**Depth-First Search (DFS)** traverses every node in a binary tree by going \"down\" as far as possible before backtracking. It starts at the root and tries to reach a leaf node, then backtracks to explore the next path.\n\nThis \"go deep then backtrack\" behavior differentiates DFS from Breadth-First Search (BFS), which explores all nodes at one level before moving to the next."
+    },
+    {
+      "heading": "Recursion and the Call Stack",
+      "body": "DFS is typically implemented as a **recursive function** that calls itself. Understanding the **call stack** is essential.\n\n**Call Frame**: When a function is called, a call frame is pushed onto the call stack containing the current line of execution and local variables.\n\n**Pushing to the Stack**: Each recursive call to `dfs(node.left)` or `dfs(node.right)` pushes a new call frame onto the stack.\n\n**Base Case**: When `node` is `None`, the function returns without making further recursive calls. This stops the traversal from going deeper.\n\n**Backtracking**: When a function returns, its call frame is popped off the stack, and execution returns to the previous call frame. This is how DFS backtracks to explore other paths."
+    },
+    {
+      "heading": "DFS Traversal Process",
+      "body": "1. Start at the root node\n2. Make a recursive call to the left child\n3. Continue recursively until reaching a `None` node (base case)\n4. Return and backtrack to the parent\n5. Make a recursive call to the right child\n6. Repeat until all nodes are visited\n\nWhen a recursive call returns, we have finished visiting all nodes in both the left and right subtrees of the current node."
+    },
+    {
+      "heading": "Complexity Analysis",
+      "body": "**Time Complexity**: O(N) where N is the number of nodes. DFS visits each node exactly once. If each recursive call does constant work, the overall time is O(N).\n\n**Space Complexity**: O(H) where H is the height of the tree. This accounts for the recursive call stack. In the worst case (unbalanced tree), H = N, so space is O(N). For a balanced tree, H = O(log N)."
+    }
+  ],
+  "approach": [
+    "DFS uses recursion to traverse trees by going as deep as possible before backtracking",
+    "Every recursive DFS function has a base case (typically `if not node: return`) to stop traversal",
+    "Recursive calls are made on left and right children to explore subtrees",
+    "The call stack manages the traversal and enables automatic backtracking when functions return",
+    "After a recursive call returns, all nodes in that subtree have been visited"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "def dfs(node):\n    # Base case: stop when we reach None\n    if node is None:\n        return\n    \n    # Recursive case: visit left subtree\n    dfs(node.left)\n    \n    # Recursive case: visit right subtree\n    dfs(node.right)\n    \n    # When we return here, all nodes in both\n    # left and right subtrees have been visited",
+  "quiz": [
+    {
+      "q": "What happens when a DFS recursive call reaches a None node?",
+      "options": [
+        "The function returns and the call frame is popped from the stack, causing backtracking",
+        "The function continues to the next node in the tree",
+        "The function throws an error",
+        "The function starts over from the root"
+      ],
+      "answer": 0,
+      "explain": "When node is None, the base case triggers a return. This pops the current call frame off the stack and returns execution to the previous call frame, which is the backtracking mechanism in DFS."
+    },
+    {
+      "q": "What is the space complexity of DFS on a balanced binary tree with n nodes?",
+      "options": [
+        "O(1)",
+        "O(log n)",
+        "O(n)",
+        "O(n²)"
+      ],
+      "answer": 1,
+      "explain": "The space complexity is determined by the maximum depth of the call stack, which equals the height of the tree. A balanced binary tree has height O(log n), so the space complexity is O(log n)."
+    }
+  ]
+}

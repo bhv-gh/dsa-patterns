@@ -1,0 +1,60 @@
+{
+  "id": 33,
+  "slug": "remove-nth-node-from-end",
+  "title": "Remove Nth Node From End of List",
+  "pattern": "linked-list",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Remove the nth node from the end of a singly linked list in one pass using two pointers with a gap of n nodes between them.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a reference `head` of type `ListNode` that is the head node of a singly linked list and an integer `n`, write a function that removes the n-th node from the end of the list and returns the head of the modified list.\n\n**Note:** `n` is guaranteed to be between 1 and the length of the list. If `n` is the length of the list, the head of the list should be removed.\n\n**Example 1:**\n- Input: `head = [5,4,3,2,1]`, `n = 2`\n- Output: `[5,4,3,1]`\n- Explanation: The 2nd to last node is removed from the list.\n\n**Example 2:**\n- Input: `head = [5,4,3,2,1]`, `n = 5`\n- Output: `[4,3,2,1]`\n- Explanation: The 5th to last node is the head node, so it is removed."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The key insight is to use **two pointers with a gap of n nodes** between them. By advancing the `fast` pointer n steps ahead first, then moving both pointers together until `fast` reaches the end, the `slow` pointer will be positioned exactly at the node before the one we need to remove.\n\nA **dummy node** eliminates the special case handling for removing the head node. The dummy node acts as a predecessor to the head, allowing us to treat all nodes uniformly - even when we need to remove the head itself."
+    },
+    {
+      "heading": "Approach",
+      "body": "The optimal solution uses the **two-pointer technique with a dummy node**:\n\n1. **Create a dummy node** that points to the head of the list. This handles the edge case of removing the head node without special logic.\n\n2. **Initialize two pointers** (`fast` and `slow`) both starting at the dummy node.\n\n3. **Advance the fast pointer** n steps ahead to create a gap of n nodes between `fast` and `slow`.\n\n4. **Move both pointers together** one step at a time until `fast.next` is `None` (i.e., `fast` reaches the last node). At this point, `slow` will be positioned at the node right before the target node to remove.\n\n5. **Remove the target node** by setting `slow.next = slow.next.next`, effectively skipping over the nth node from the end.\n\n6. **Return the modified list** by returning `dummy.next`, which is the head of the updated list (and handles the case where the original head was removed)."
+    }
+  ],
+  "approach": [
+    "Create a dummy node pointing to the head to handle edge cases uniformly",
+    "Initialize two pointers (fast and slow) both at the dummy node",
+    "Advance the fast pointer n steps ahead to create a gap of n nodes",
+    "Move both pointers together until fast reaches the last node",
+    "Remove the target node by setting slow.next = slow.next.next",
+    "Return dummy.next as the head of the modified list"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def removeNthFromEnd(head, n):\n    \"\"\"\n    Remove the nth node from the end of a singly linked list.\n    \n    Args:\n        head: ListNode - head of the singly linked list\n        n: int - position from the end (1-indexed)\n    \n    Returns:\n        ListNode - head of the modified list\n    \"\"\"\n    # Create dummy node to handle edge case of removing head\n    dummy = ListNode(0)\n    dummy.next = head\n    fast = dummy\n    slow = dummy\n    \n    # Move fast pointer n steps ahead to create n-node gap\n    for i in range(n):\n        fast = fast.next\n    \n    # Move both pointers until fast reaches end\n    # When fast is at last node, slow will be at node before target\n    while fast.next is not None:\n        fast = fast.next\n        slow = slow.next\n    \n    # Remove the nth node from end by skipping it\n    slow.next = slow.next.next\n    \n    return dummy.next",
+  "quiz": [
+    {
+      "q": "Why do we use a dummy node in this approach?",
+      "options": [
+        "To eliminate special case handling when removing the head node",
+        "To improve the time complexity from O(n²) to O(n)",
+        "To reduce the space complexity to O(1)",
+        "To avoid using two pointers"
+      ],
+      "answer": 0,
+      "explain": "The dummy node acts as a predecessor to the head, allowing us to treat all nodes uniformly. Without it, we would need special logic to handle the case where n equals the list length (removing the head), since the head has no preceding node. With the dummy node, slow will point to dummy when we need to remove the head, and the same `slow.next = slow.next.next` logic works for all cases."
+    },
+    {
+      "q": "After advancing fast n steps ahead, what condition ensures slow is positioned at the node before the target?",
+      "options": [
+        "When fast reaches None",
+        "When fast.next is None (fast is at the last node)",
+        "When slow reaches the middle of the list",
+        "When the gap between fast and slow equals n-1"
+      ],
+      "answer": 1,
+      "explain": "We move both pointers until `fast.next is None`, meaning fast is at the last node. Since fast started n nodes ahead of slow, when fast reaches the last node, slow will be exactly n nodes behind it - positioning slow at the node right before the nth node from the end. This allows us to remove the target node by updating slow.next."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": 53,
+  "slug": "dfs-helper-functions",
+  "title": "Passing Values Down & Helper Functions",
+  "pattern": "depth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn to pass state down via helper function parameters (top-down) vs returning up, and when to use outer variables to collect results.",
+  "sections": [
+    {
+      "heading": "When to Use Helper Functions",
+      "body": "Some binary tree problems require passing information **down** from parents to children, rather than returning values **up** from children to parents.\n\nWhen you need more parameters than the original function signature allows, introduce a **helper function** with extra parameters. This is common for:\n\n- Root-to-leaf path problems\n- Tracking accumulated state (running max, path sum, etc.)\n- Passing contextual information down the tree"
+    },
+    {
+      "heading": "Passing State Down via Parameters",
+      "body": "Consider the \"Good Nodes\" problem: count nodes where no ancestor has a greater value.\n\nTo check if a node is good, we need the **maximum value seen so far** on the path from the root. This requires passing state **down**:\n\n```python\ndef goodNodes(root):\n    def dfs(root, max_):\n        if root is None:\n            return 0\n        \n        count = 0\n        if root.val >= max_:\n            count += 1\n            max_ = root.val\n        \n        left = dfs(root.left, max_)\n        right = dfs(root.right, max_)\n        return count + left + right\n    \n    return dfs(root, -float('inf'))\n```\n\nKey insight: `max_` is passed **down** via parameters, while counts are returned **up**."
+    },
+    {
+      "heading": "Using Outer Variables to Collect Results",
+      "body": "When you need to **collect results** (like a list of nodes) rather than aggregate them (like a count), use an outer variable:\n\n```python\ndef goodNodes(root):\n    nodes = []\n    \n    def dfs(root, max_):\n        nonlocal nodes\n        if root is None:\n            return\n        \n        if root.val >= max_:\n            max_ = root.val\n            nodes.append(root)\n        \n        dfs(root.left, max_)\n        dfs(root.right, max_)\n    \n    dfs(root, -float('inf'))\n    return nodes\n```\n\nThis avoids merging lists at each node (which would be O(n²) time complexity)."
+    },
+    {
+      "heading": "Top-Down vs Bottom-Up",
+      "body": "**Bottom-Up (Return Values):** Information flows from children to parents via return values. Used when each node's answer depends on its subtrees.\n\n**Top-Down (Helper Parameters):** Information flows from parents to children via parameters. Used when each node needs context from its ancestors.\n\n**Common pattern:** Combine both approaches—pass accumulated state down via parameters, return aggregated results up via return values."
+    },
+    {
+      "heading": "Best Practices",
+      "body": "**Define helper inside main function:** This keeps outer variables scoped locally rather than truly global:\n\n```python\ndef mainFunction(root):\n    result = []  # only accessible within mainFunction\n    \n    def helper(node, state):\n        nonlocal result\n        # ... use result\n    \n    helper(root, initial_state)\n    return result\n```\n\n**Avoid passing collections as parameters:** Passing a list as a parameter and returning it at each call is error-prone. Use an outer variable instead.\n\n**When to use each approach:**\n- Return values: aggregating counts, sums, max/min from subtrees\n- Parameters: passing accumulated state down (path info, running totals)\n- Outer variables: collecting results in a list, tracking global max/min"
+    }
+  ],
+  "approach": [
+    "Identify if you need to pass information down (ancestor context) or return up (subtree results)",
+    "If down: create a helper function with extra parameters for accumulated state",
+    "If collecting results: use an outer variable (nonlocal) rather than merging returned lists",
+    "Initialize helper call with appropriate starting values (e.g., -infinity for max, 0 for sum)",
+    "Update accumulated state before passing to children; return aggregated results from children"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "def mainFunc(root):\n    result = []  # outer variable for collecting\n    \n    def helper(node, accumulated_state):\n        nonlocal result\n        if not node:\n            return base_value\n        \n        # use accumulated_state from parent\n        if condition:\n            result.append(node)\n            accumulated_state = updated_state\n        \n        # pass state DOWN to children\n        left = helper(node.left, accumulated_state)\n        right = helper(node.right, accumulated_state)\n        \n        # return aggregated result UP\n        return combine(left, right, node.val)\n    \n    helper(root, initial_state)\n    return result",
+  "quiz": [
+    {
+      "q": "When should you use a helper function with extra parameters in DFS?",
+      "options": [
+        "When you need to pass accumulated state down from parents to children",
+        "When you need to return aggregated results up from children to parents",
+        "When the tree is unbalanced",
+        "When you want to avoid recursion"
+      ],
+      "answer": 0,
+      "explain": "Helper functions with extra parameters are used to pass information DOWN the tree (top-down), such as running max, path sum, or ancestor context. Return values handle passing information UP (bottom-up)."
+    },
+    {
+      "q": "Why is using an outer variable preferred over merging returned lists at each node?",
+      "options": [
+        "It makes the code shorter",
+        "It avoids O(n²) time complexity from copying lists at each node",
+        "It uses less memory",
+        "It is required by Python syntax"
+      ],
+      "answer": 1,
+      "explain": "Merging lists returned from left and right subtrees at each node requires copying up to n elements at each of n nodes, resulting in O(n²) time. An outer variable allows appending in O(1) and avoids this overhead."
+    }
+  ]
+}

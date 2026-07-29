@@ -1,0 +1,60 @@
+{
+  "id": 34,
+  "slug": "reorder-list",
+  "title": "Reorder List",
+  "pattern": "linked-list",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Reorder a linked list in-place to alternate between nodes from the start and end: 1st → last → 2nd → 2nd-to-last → 3rd → ...",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a singly linked list, reorder it in-place to form the pattern:\n\n**1st node → last node → 2nd node → 2nd to last node → 3rd node → ...**\n\nFor example:\n- Input: `5 → 4 → 3 → 2 → 1`\n- Output: `5 → 1 → 4 → 2 → 3`\n\nThe list should be modified in-place without creating a new list."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The reordered list can be created by **merging two smaller lists**: the first half of the original list and the **reversed second half**.\n\nFor example, if the original list is `5 → 4 → 3 → 2 → 1`:\n- First half: `5 → 4 → 3`\n- Reversed second half: `1 → 2`\n- Merged result: `5 → 1 → 4 → 2 → 3`\n\nThis insight breaks the problem into three manageable sub-problems using common linked list patterns."
+    },
+    {
+      "heading": "Approach",
+      "body": "The solution involves three distinct phases:\n\n**Phase 1: Find the Middle**\nUse the fast and slow pointer technique. Initialize both pointers at the head, then move `slow` one step and `fast` two steps until `fast` reaches the end. When `fast` finishes, `slow` points to the middle.\n\n**Phase 2: Reverse Second Half**\nStarting from the middle node, reverse the direction of all pointers in the second half. Use three pointers (`prev`, `curr`, `next_`) to iteratively reverse each node's pointer.\n\n**Phase 3: Merge Alternately**\nMerge the first half with the reversed second half by alternating nodes. Use two pointers (`first` and `second`) and interleave nodes from each half until the second half is exhausted."
+    }
+  ],
+  "approach": [
+    "Initialize `slow` and `fast` pointers at the head of the list",
+    "Move `slow` one step and `fast` two steps until `fast` reaches the end; `slow` now points to the middle",
+    "Reverse the second half starting from `slow` using three pointers: `prev`, `curr`, and `next_`",
+    "Initialize `first` pointer at `head` and `second` pointer at the head of reversed second half (`prev`)",
+    "Alternate merging: link `first.next` to `second`, advance `first`; link `second.next` to `first`, advance `second`",
+    "Continue merging until `second.next` is None; return the modified head"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def reorderList(head):\n    \"\"\"Reorder a singly linked list in-place to alternate between start and end nodes.\n    \n    Args:\n        head: The head node of the singly linked list\n        \n    Returns:\n        The head of the reordered list (modified in-place)\n    \"\"\"\n    if not head or not head.next:\n        return head\n    \n    # Step 1: Find the middle of the list using slow/fast pointers\n    slow = fast = head\n    while fast and fast.next:\n        fast = fast.next.next\n        slow = slow.next\n    \n    # Step 2: Reverse the second half starting from slow\n    prev, curr = None, slow\n    while curr:\n        next_ = curr.next\n        curr.next = prev\n        prev, curr = curr, next_\n    \n    # Step 3: Merge first half with reversed second half alternately\n    first, second = head, prev\n    while second.next:\n        first.next, first = second, first.next\n        second.next, second = first, second.next\n    \n    return head",
+  "quiz": [
+    {
+      "q": "Why do we need the `next_` pointer when reversing the second half of the list?",
+      "options": [
+        "To store the next node before overwriting curr.next, preventing loss of reference to the rest of the list",
+        "To improve the time complexity from O(n²) to O(n)",
+        "To keep track of the tail node for the merge phase",
+        "To handle the edge case when the list has only one node"
+      ],
+      "answer": 0,
+      "explain": "Before reversing a pointer with `curr.next = prev`, we must save the original `curr.next` in `next_`. Otherwise, we lose access to the remaining nodes and cannot continue iterating through the list."
+    },
+    {
+      "q": "What will `slow` point to after the fast/slow pointer phase for a list with 4 nodes?",
+      "options": [
+        "The 2nd node (first node of second half)",
+        "The 1st node (head of the list)",
+        "The 3rd node (first node of second half)",
+        "The 4th node (tail of the list)"
+      ],
+      "answer": 2,
+      "explain": "For an even-length list with 4 nodes, when `fast` reaches the end (becomes None after moving past the tail), `slow` will be at the 3rd node, which is the first node of the second half."
+    }
+  ]
+}

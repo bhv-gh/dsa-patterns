@@ -1,0 +1,59 @@
+{
+  "id": 64,
+  "slug": "flood-fill",
+  "title": "Flood Fill",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Perform a flood fill on a grid by starting at a given pixel and recoloring all 4-connected pixels that share the same original color.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an `m x n` integer grid `image` and integers `sr`, `sc`, and `newColor`, perform a flood fill on the image starting from the pixel `image[sr][sc]`.\n\nIn a flood fill, change the color of `image[sr][sc]` to `newColor`. Then, change the color of all pixels connected to `image[sr][sc]` from either the top, bottom, left, or right that have the same color as the original `image[sr][sc]`, along with all the connected pixels of those pixels, and so on.\n\n**Example:**\n- Input: `image = [[1,0,1],[1,0,0],[0,0,1]], sr = 1, sc = 1, newColor = 2`\n- Output: `[[1,2,1],[1,2,2],[2,2,1]]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **depth-first search** to recursively explore all 4-connected neighbors of the starting pixel. Before beginning the DFS, check if the new color is the same as the original color—if so, return immediately to avoid infinite recursion. Otherwise, recolor each visited pixel that matches the original color and continue the search in all four directions."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Store the original color** at `image[sr][sc]`.\n2. **Guard against infinite loop**: If the original color equals `newColor`, return the image unchanged.\n3. **Define a DFS helper function** that takes the current row and column.\n4. **In the DFS function**: If the current pixel's color matches the original color, recolor it to `newColor` and recursively call DFS on all four neighbors (up, down, left, right) if they are within bounds.\n5. **Start the DFS** from `(sr, sc)` and return the modified image."
+    }
+  ],
+  "approach": [
+    "Store the original color at image[sr][sc]",
+    "Check if original color == newColor; if so, return image unchanged to avoid infinite recursion",
+    "Define a DFS helper function that recolors the current pixel if it matches the original color",
+    "Recursively call DFS on all 4-connected neighbors (up, down, left, right) within bounds",
+    "Start DFS from (sr, sc) and return the modified image"
+  ],
+  "complexity": {
+    "time": "O(rows*cols)",
+    "space": "O(rows*cols)"
+  },
+  "code": "def flood_fill(image, sr, sc, color):\n    \"\"\"\n    Perform a flood fill on the image starting from pixel (sr, sc).\n    \n    Args:\n        image: m x n grid of integers representing pixel colors\n        sr: starting row index\n        sc: starting column index\n        color: new color to fill\n    \n    Returns:\n        Modified image with flood fill applied\n    \"\"\"\n    rows, cols = len(image), len(image[0])\n    original_color = image[sr][sc]\n    \n    if original_color == color:\n        return image\n        \n    def dfs(r, c):\n        if image[r][c] == original_color:\n            image[r][c] = color\n            \n            if r >= 1: dfs(r - 1, c)\n            if r + 1 < rows: dfs(r + 1, c)\n            if c >= 1: dfs(r, c - 1)\n            if c + 1 < cols: dfs(r, c + 1)\n        return\n        \n    dfs(sr, sc)\n    return image",
+  "quiz": [
+    {
+      "q": "Why must we check if the original color equals the new color before starting the DFS?",
+      "options": [
+        "To avoid infinite recursion since pixels would never change color",
+        "To optimize the algorithm's time complexity",
+        "To ensure the starting pixel is within bounds",
+        "To prevent stack overflow from visiting too many pixels"
+      ],
+      "answer": 0,
+      "explain": "If the original color equals the new color, pixels will never change color. The DFS would continue visiting the same pixels repeatedly because they always match the original color, leading to infinite recursion."
+    },
+    {
+      "q": "What is the time complexity of the flood fill algorithm?",
+      "options": [
+        "O(log(m * n))",
+        "O(4^n)",
+        "O(V + E)",
+        "O(m * n)"
+      ],
+      "answer": 3,
+      "explain": "In the worst case, we visit every pixel in the m x n grid exactly once. Each pixel is processed in constant time (changing color and checking neighbors), giving us O(m * n) time complexity."
+    }
+  ]
+}

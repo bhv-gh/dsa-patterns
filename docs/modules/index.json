@@ -20,6 +20,26 @@
       "id": "stack",
       "title": "Stack",
       "blurb": "Use LIFO order for matching/nesting and 'process most recent first' — including monotonic stacks."
+    },
+    {
+      "id": "linked-list",
+      "title": "Linked List",
+      "blurb": "Pointer manipulation — dummy heads, fast/slow pointers, reversing and rewiring nodes."
+    },
+    {
+      "id": "binary-search",
+      "title": "Binary Search",
+      "blurb": "Halve a sorted or monotonic search space each step — including binary search on the answer."
+    },
+    {
+      "id": "heap",
+      "title": "Heap",
+      "blurb": "A priority queue for top-K, streaming medians, and merging — O(log n) push/pop."
+    },
+    {
+      "id": "depth-first-search",
+      "title": "Depth-First Search",
+      "blurb": "Recurse deep through trees, graphs, and grids — return values up or pass state down."
     }
   ],
   "modules": [
@@ -283,6 +303,348 @@
       "type": "problem",
       "difficulty": "hard",
       "summary": "Find the largest rectangular area in a histogram using a monotonically increasing stack to track bar indices in O(n) time."
+    },
+    {
+      "id": 30,
+      "slug": "linked-list-overview",
+      "title": "Linked List: Overview",
+      "pattern": "linked-list",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Core linked list operations: traversal, insertion, deletion, fast/slow pointers, reversal, and the dummy node technique."
+    },
+    {
+      "id": 31,
+      "slug": "linked-list-cycle",
+      "title": "Linked List Cycle",
+      "pattern": "linked-list",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Detect if a linked list contains a cycle using Floyd's fast and slow pointer technique without modifying the list."
+    },
+    {
+      "id": 32,
+      "slug": "palindrome-linked-list",
+      "title": "Palindrome Linked List",
+      "pattern": "linked-list",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Check if a singly linked list is a palindrome by finding the middle, reversing the second half, and comparing both halves in O(1) space."
+    },
+    {
+      "id": 33,
+      "slug": "remove-nth-node-from-end",
+      "title": "Remove Nth Node From End of List",
+      "pattern": "linked-list",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Remove the nth node from the end of a singly linked list in one pass using two pointers with a gap of n nodes between them."
+    },
+    {
+      "id": 34,
+      "slug": "reorder-list",
+      "title": "Reorder List",
+      "pattern": "linked-list",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Reorder a linked list in-place to alternate between nodes from the start and end: 1st → last → 2nd → 2nd-to-last → 3rd → ..."
+    },
+    {
+      "id": 35,
+      "slug": "swap-nodes-in-pairs",
+      "title": "Swap Nodes in Pairs",
+      "pattern": "linked-list",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Swap every two adjacent nodes in a linked list by rewiring pointers using a dummy head to handle edge cases uniformly."
+    },
+    {
+      "id": 36,
+      "slug": "binary-search-overview",
+      "title": "Binary Search: Overview",
+      "pattern": "binary-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Efficient O(log n) search algorithm that repeatedly halves the search space in a sorted array by comparing the target with the middle element."
+    },
+    {
+      "id": 37,
+      "slug": "koko-eating-bananas",
+      "title": "Koko Eating Bananas",
+      "pattern": "binary-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the minimum eating speed to finish all banana piles within h hours using binary search on the answer space."
+    },
+    {
+      "id": 38,
+      "slug": "search-in-rotated-sorted-array",
+      "title": "Search in Rotated Sorted Array",
+      "pattern": "binary-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find target in rotated sorted array in O(log n) time. At each step, one half is sorted—check if target is in that half to discard the other."
+    },
+    {
+      "id": 39,
+      "slug": "split-array-largest-sum",
+      "title": "Split Array Largest Sum",
+      "pattern": "binary-search",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Split array into k contiguous subarrays to minimize the maximum subarray sum using binary search on the answer space."
+    },
+    {
+      "id": 40,
+      "slug": "kth-smallest-in-sorted-matrix",
+      "title": "Kth Smallest Element in a Sorted Matrix",
+      "pattern": "binary-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the kth smallest element in an n×n matrix where rows and columns are sorted using binary search on the value range with O(n) staircase counting."
+    },
+    {
+      "id": 41,
+      "slug": "minimum-shipping-capacity",
+      "title": "Minimum Shipping Capacity",
+      "pattern": "binary-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find minimum box capacity to ship all products within box limit, considering both capacity and weight constraints per box."
+    },
+    {
+      "id": 42,
+      "slug": "heap-overview",
+      "title": "Heap: Overview",
+      "pattern": "heap",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "A heap maintains the smallest (or largest) value at the root, enabling efficient top-K problems. Push/pop in O(log n) via bubble operations."
+    },
+    {
+      "id": 43,
+      "slug": "kth-largest-element",
+      "title": "Kth Largest Element in an Array",
+      "pattern": "heap",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the kth largest element in an unsorted array using a min-heap of size k. Maintain k largest elements; the heap's root is the answer."
+    },
+    {
+      "id": 44,
+      "slug": "k-closest-points-to-origin",
+      "title": "K Closest Points to Origin",
+      "pattern": "heap",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find k closest points to origin using a max-heap of size k with negated distances, avoiding square root computation."
+    },
+    {
+      "id": 45,
+      "slug": "find-k-closest-elements",
+      "title": "Find K Closest Elements",
+      "pattern": "heap",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find k elements closest to a target value in a sorted array using a max-heap to track the k smallest distances."
+    },
+    {
+      "id": 46,
+      "slug": "merge-k-sorted-lists",
+      "title": "Merge K Sorted Lists",
+      "pattern": "heap",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Merge k sorted linked lists into one sorted list using a min-heap to efficiently track the smallest unmerged element from each list."
+    },
+    {
+      "id": 47,
+      "slug": "find-median-from-data-stream",
+      "title": "Find Median from Data Stream",
+      "pattern": "heap",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Track the running median of a data stream using two heaps: a max-heap for the lower half and a min-heap for the upper half, kept balanced."
+    },
+    {
+      "id": 48,
+      "slug": "dfs-introduction",
+      "title": "DFS: Introduction",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn Depth-First Search, a traversal algorithm that explores as far down a path as possible before backtracking. Master the recursive pattern for trees and graphs."
+    },
+    {
+      "id": 49,
+      "slug": "dfs-fundamentals",
+      "title": "DFS: Fundamentals",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn the fundamentals of Depth-First Search: how DFS traverses binary trees using recursion, the call stack, and backtracking."
+    },
+    {
+      "id": 50,
+      "slug": "dfs-return-values",
+      "title": "DFS: Return Values",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn how to design what each DFS call returns to its parent (bottom-up) and combine left/right results to solve binary tree problems recursively."
+    },
+    {
+      "id": 51,
+      "slug": "maximum-depth-of-binary-tree",
+      "title": "Maximum Depth of Binary Tree",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Find the maximum depth of a binary tree, defined as the number of nodes along the longest path from root to leaf using recursive DFS."
+    },
+    {
+      "id": 52,
+      "slug": "path-sum",
+      "title": "Path Sum",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Determine if a binary tree has a root-to-leaf path where values sum to a target using DFS, checking for equality only at leaf nodes."
+    },
+    {
+      "id": 53,
+      "slug": "dfs-helper-functions",
+      "title": "Passing Values Down & Helper Functions",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn to pass state down via helper function parameters (top-down) vs returning up, and when to use outer variables to collect results."
+    },
+    {
+      "id": 54,
+      "slug": "validate-binary-search-tree",
+      "title": "Validate Binary Search Tree",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Validate a BST by passing min/max bounds down the tree. Each node must lie strictly within its inherited range."
+    },
+    {
+      "id": 55,
+      "slug": "calculate-tilt",
+      "title": "Calculate Tilt",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Calculate the total tilt of a binary tree, where each node's tilt is the absolute difference between its left and right subtree sums."
+    },
+    {
+      "id": 56,
+      "slug": "diameter-of-binary-tree",
+      "title": "Diameter of a Binary Tree",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Find the longest path between any two nodes in a binary tree using DFS to track height and diameter simultaneously."
+    },
+    {
+      "id": 57,
+      "slug": "path-sum-ii",
+      "title": "Path Sum II",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find all root-to-leaf paths in a binary tree where node values sum to a target using DFS with backtracking to explore and collect valid paths."
+    },
+    {
+      "id": 58,
+      "slug": "longest-univalue-path",
+      "title": "Longest Univalue Path",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the longest path in a binary tree where all nodes have the same value. Use post-order DFS to calculate same-value arms at each node."
+    },
+    {
+      "id": 59,
+      "slug": "graphs-overview",
+      "title": "Graphs: Overview",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Introduction to graph fundamentals: vertices, edges, neighbors, cycles, and the critical importance of tracking visited nodes during DFS traversal."
+    },
+    {
+      "id": 60,
+      "slug": "adjacency-list",
+      "title": "Adjacency List",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn how to represent graphs using adjacency lists, build them from edge lists, and perform DFS traversal with proper visited tracking."
+    },
+    {
+      "id": 61,
+      "slug": "copy-graph",
+      "title": "Copy Graph",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Convert a node-and-pointers graph structure into a dictionary adjacency list using depth-first search traversal with cycle detection."
+    },
+    {
+      "id": 62,
+      "slug": "graph-valid-tree",
+      "title": "Graph Valid Tree",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Determine if undirected edges form a valid tree by checking two conditions: no cycles exist and all nodes are connected in a single component."
+    },
+    {
+      "id": 63,
+      "slug": "matrices-grid-dfs",
+      "title": "Matrices (Grid DFS)",
+      "pattern": "depth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn how to apply DFS to 2D grids by treating each cell as a node with up to 4 neighbors, using bounds checking and visited tracking."
+    },
+    {
+      "id": 64,
+      "slug": "flood-fill",
+      "title": "Flood Fill",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Perform a flood fill on a grid by starting at a given pixel and recoloring all 4-connected pixels that share the same original color."
+    },
+    {
+      "id": 65,
+      "slug": "number-of-islands",
+      "title": "Number of Islands",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Count connected regions of land ('1') in a binary grid by scanning cells and using DFS to mark entire islands as visited."
+    },
+    {
+      "id": 66,
+      "slug": "surrounded-regions",
+      "title": "Surrounded Regions",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Modify a grid to replace all 'O' regions completely surrounded by 'X' with 'X'. Use reverse logic: mark border-connected 'O's as safe via DFS."
+    },
+    {
+      "id": 67,
+      "slug": "pacific-atlantic-water-flow",
+      "title": "Pacific Atlantic Water Flow",
+      "pattern": "depth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find all cells in a grid where water can flow to both Pacific (top/left edges) and Atlantic (bottom/right edges) oceans using boundary DFS."
     }
   ]
 }

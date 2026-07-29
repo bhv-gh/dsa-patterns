@@ -1,0 +1,60 @@
+{
+  "id": 65,
+  "slug": "number-of-islands",
+  "title": "Number of Islands",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Count connected regions of land ('1') in a binary grid by scanning cells and using DFS to mark entire islands as visited.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "You are given a binary matrix `grid` of size `m x n`, where `'1'` denotes land and `'0'` signifies water. Determine the count of islands present in this grid.\n\nAn island is defined as a region of contiguous land cells connected either vertically or horizontally, and it is completely encircled by water. Assume that the grid is bordered by water on all sides.\n\n**Example:**\n```\nInput: grid = [\n  [1,1,0,1],\n  [1,1,0,1],\n  [1,1,0,0]\n]\nOutput: 2\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Each time we encounter an unvisited land cell (`'1'`), we've discovered a new island. We can use depth-first search to explore and mark all connected land cells of that island, preventing them from being counted again. By scanning the entire grid and counting how many times we initiate a DFS, we determine the total number of islands."
+    },
+    {
+      "heading": "Approach",
+      "body": "This solution uses depth-first search to traverse the grid and count islands. The algorithm iterates through every cell in the grid. When it finds a land cell (`'1'`), it increments the island count and performs DFS to mark all connected land cells as visited by changing them to `'0'`.\n\nDuring DFS, we explore all four directions (up, down, left, right) from the current cell. For each adjacent cell that is within bounds and contains a `'1'`, we recursively continue the DFS. This ensures that all cells belonging to the same island are marked before we continue scanning for the next island."
+    }
+  ],
+  "approach": [
+    "Initialize a counter `count = 0` to track the number of islands",
+    "Iterate through each cell in the grid using nested loops",
+    "When you find a cell with value `'1'`, increment the count (new island discovered)",
+    "Perform DFS from that cell: mark current cell as `'0'` (visited)",
+    "Recursively explore all 4 adjacent cells (up, down, left, right) that are in bounds and contain `'1'`",
+    "Continue iterating through remaining cells; each new `'1'` found represents a new island"
+  ],
+  "complexity": {
+    "time": "O(m*n)",
+    "space": "O(m*n)"
+  },
+  "code": "def numIslands(grid):\n    \"\"\"Count the number of islands in a binary grid.\n    \n    An island is a group of connected '1's (land) surrounded by '0's (water).\n    Connections are only horizontal or vertical, not diagonal.\n    \n    Args:\n        grid: List[List[str]] - Binary matrix where '1' is land and '0' is water\n        \n    Returns:\n        int - Number of islands in the grid\n    \"\"\"\n    if not grid:\n        return 0\n    \n    rows, cols = len(grid), len(grid[0])\n    count = 0\n    \n    def dfs(r, c):\n        grid[r][c] = 0\n        if r + 1 < rows and grid[r + 1][c] == 1:\n            dfs(r + 1, c)\n        if r > 0 and grid[r - 1][c] == 1:\n            dfs(r - 1, c)\n        if c + 1 < cols and grid[r][c + 1] == 1:\n            dfs(r, c + 1)\n        if c > 0 and grid[r][c - 1] == 1:\n            dfs(r, c - 1)\n        return\n    \n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 1:\n                count += 1\n                dfs(i, j)\n    \n    return count",
+  "quiz": [
+    {
+      "q": "Why do we mark cells as '0' during DFS instead of using a separate visited set?",
+      "options": [
+        "To save space complexity",
+        "To prevent counting the same island multiple times",
+        "To make the code run faster",
+        "To modify the grid in-place for debugging"
+      ],
+      "answer": 1,
+      "explain": "Marking cells as '0' during DFS ensures that once we've explored all connected land cells of an island, those cells won't trigger a new island count when we encounter them again during the grid scan. This prevents counting the same island multiple times."
+    },
+    {
+      "q": "What is the time complexity and why?",
+      "options": [
+        "O(m*n) because we visit each cell at most twice",
+        "O(m*n) because we visit each cell exactly once",
+        "O(4^(m*n)) because we explore 4 directions recursively",
+        "O(m+n) because we only iterate rows and columns"
+      ],
+      "answer": 1,
+      "explain": "The time complexity is O(m*n) where m is the number of rows and n is the number of columns. Each cell is visited exactly once: either during the main grid iteration or during a DFS call. Once visited, cells are marked as '0' and never processed again."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": 44,
+  "slug": "k-closest-points-to-origin",
+  "title": "K Closest Points to Origin",
+  "pattern": "heap",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find k closest points to origin using a max-heap of size k with negated distances, avoiding square root computation.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a list of points `[[x1, y1], [x2, y2], ..., [xn, yn]]` and an integer `k`, find the `k` closest points to the origin `(0, 0)` on the 2D plane.\n\nDistance is calculated as `√((x - 0)² + (y - 0)²)`. Return the k closest points in any order.\n\n**Example:**\n```\npoints = [[3,4],[2,2],[1,1],[0,0],[5,5]]\nk = 3\nOutput: [[2,2],[1,1],[0,0]] (any order valid)\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **max-heap of size k** storing negated distances to efficiently track the k closest points. Since Python's `heapq` implements a min-heap, negate distances to simulate a max-heap.\n\nThe root always holds the **farthest** of the k closest points seen so far. When a new point is closer than the root, replace it.\n\n**Optimization:** Store `distance² = x² + y²` instead of computing `√(x² + y²)` since relative ordering is preserved."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize** an empty heap\n2. **Build initial heap** by pushing the first k points as tuples `(-distance², index)`\n3. **Process remaining points**: For each point after the first k:\n   - Calculate `distance² = x² + y²`\n   - If `distance² < -heap[0][0]` (closer than the farthest in heap), use `heappushpop` to replace the root\n4. **Extract results** by collecting the points at indices stored in the heap tuples\n5. Return the k points in any order"
+    }
+  ],
+  "approach": [
+    "Initialize an empty heap to store (-distance², index) tuples",
+    "Push the first k points onto the heap with negated squared distances",
+    "For each remaining point, calculate distance² and compare with -heap[0][0]",
+    "If current point is closer, use heappushpop to replace the farthest point",
+    "Extract and return the k points from the heap using stored indices"
+  ],
+  "complexity": {
+    "time": "O(n log k)",
+    "space": "O(k)"
+  },
+  "code": "import heapq\n\ndef k_closest(points, k):\n    \"\"\"\n    Find k closest points to origin using a max-heap.\n    \n    Args:\n        points: List of [x, y] coordinate pairs\n        k: Number of closest points to return\n    \n    Returns:\n        List of k closest points in any order\n    \"\"\"\n    heap = []\n    for i in range(len(points)):\n        x, y = points[i]\n        distance = x * x + y * y\n        \n        if len(heap) < k:\n            heapq.heappush(heap, (-distance, i))\n        elif distance < -heap[0][0]:\n            heapq.heappushpop(heap, (-distance, i))\n    \n    return [points[p[1]] for p in heap]",
+  "quiz": [
+    {
+      "q": "Why do we use a max-heap instead of a min-heap for this problem?",
+      "options": [
+        "To keep track of the k farthest points and replace them with closer ones",
+        "To keep track of the k closest points and efficiently access the farthest of them",
+        "Because Python's heapq only supports max-heaps natively",
+        "To improve the time complexity to O(n)"
+      ],
+      "answer": 1,
+      "explain": "A max-heap of size k keeps the k closest points with the **farthest of the k** at the root. This allows O(log k) comparison and replacement when finding closer points. Option 1 is incorrect (we track closest, not farthest). Option 2 is correct. Option 3 is false (heapq is a min-heap). Option 4 is incorrect (time is O(n log k))."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(1)",
+        "O(n log n)",
+        "O(n log k)",
+        "O(2^n)"
+      ],
+      "answer": 2,
+      "explain": "We iterate through all n points once. For each point, we potentially perform a heap operation (push or pushpop) which takes O(log k) time on a heap of size k. Total: O(n) × O(log k) = O(n log k). This is better than sorting O(n log n) when k << n."
+    }
+  ]
+}

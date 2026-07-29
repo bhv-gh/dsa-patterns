@@ -1,0 +1,58 @@
+{
+  "id": 51,
+  "slug": "maximum-depth-of-binary-tree",
+  "title": "Maximum Depth of Binary Tree",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Find the maximum depth of a binary tree, defined as the number of nodes along the longest path from root to leaf using recursive DFS.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree, write a recursive function to find its maximum depth, where maximum depth is defined as the number of nodes along the longest path from the root node down to a leaf node.\n\n**Example:**\n```\n    4\n   / \\\n  2   7\n /   / \\\n1   6   9\n \\\n  8\n```\nInput: `[4, 2, 7, 1, null, 6, 9, null, 8]`\n\nOutput: `4` (The longest path has 4 nodes: 4 → 2 → 1 → 8)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The maximum depth of a tree rooted at any node equals **1 (the current node) + the maximum depth of its deeper subtree**. This naturally leads to a recursive solution where each node asks its children for their depths and returns the larger value plus one to its parent. The base case is an empty tree (None), which has depth 0."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Base Case**: If the current node is `None`, return 0 (empty tree has depth 0).\n\n2. **Recursive Calls**: Recursively compute the maximum depth of the left subtree and right subtree.\n\n3. **Combine Results**: The depth at the current node is `1 + max(left_depth, right_depth)`.\n\n4. **Return**: Return this depth to the parent node, which will use it in its own calculation."
+    }
+  ],
+  "approach": [
+    "Handle the base case: if root is None, return 0",
+    "Recursively find the maximum depth of the left subtree",
+    "Recursively find the maximum depth of the right subtree",
+    "Return 1 + max(left_depth, right_depth) to account for the current node"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "class Solution:\n    def maxDepth(self, root):\n        \"\"\"\n        Find the maximum depth of a binary tree.\n        \n        Args:\n            root: TreeNode, the root of the binary tree\n            \n        Returns:\n            int, the maximum depth (number of nodes on longest path)\n        \"\"\"\n        if root is None:\n            return 0\n        \n        # Get the maximum depth of left and right subtrees\n        left = self.maxDepth(root.left)\n        right = self.maxDepth(root.right)\n        \n        # Current depth is 1 + max of subtree depths\n        return max(left, right) + 1",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n)",
+        "O(h) where h is the height",
+        "O(n * log n)",
+        "O(2^n)"
+      ],
+      "answer": 0,
+      "explain": "We must visit every node exactly once to compute the maximum depth, making the time complexity O(n) where n is the number of nodes in the tree."
+    },
+    {
+      "q": "What is the space complexity and why?",
+      "options": [
+        "O(1) - only using a few variables",
+        "O(n) - storing all nodes",
+        "O(h) - recursion stack depth where h is tree height",
+        "O(log n) - binary tree property"
+      ],
+      "answer": 2,
+      "explain": "The space complexity is O(h) where h is the height of the tree, due to the recursion call stack. In the worst case (skewed tree), h = n, making it O(n). In a balanced tree, h = log n."
+    }
+  ]
+}

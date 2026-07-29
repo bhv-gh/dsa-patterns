@@ -1,0 +1,60 @@
+{
+  "id": 45,
+  "slug": "find-k-closest-elements",
+  "title": "Find K Closest Elements",
+  "pattern": "heap",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find k elements closest to a target value in a sorted array using a max-heap to track the k smallest distances.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a sorted array `nums`, a target value `target`, and an integer `k`, find the `k` closest elements to `target` in the array, where \"closest\" is measured by absolute difference. Return these elements sorted in ascending order.\n\n**Example:**\n- Input: `nums = [-1, 0, 1, 4, 6]`, `target = 1`, `k = 3`\n- Output: `[-1, 0, 1]`\n- Explanation: -1 is 2 away, 0 is 1 away, 1 is 0 away from target. All others are more than 2 away."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a max-heap of size `k` to maintain the k smallest distances seen so far. The heap stores tuples of `(-distance, num)` so Python's min-heap acts as a max-heap. The root always holds the element furthest from target among the k closest, allowing us to efficiently replace it when we find a closer element."
+    },
+    {
+      "heading": "Approach",
+      "body": "We maintain a max-heap of size `k` containing the closest elements seen so far:\n\n1. **Initialize** an empty heap\n2. **Build initial heap**: Push the first `k` elements as `(-distance, num)` tuples\n3. **Process remaining elements**: For each element, calculate its distance from target\n4. **Update heap**: If distance is smaller than the root's distance (`-heap[0][0]`), pop the root and push the current element\n5. **Extract results**: After processing all elements, extract the numbers from heap tuples\n6. **Sort and return**: Sort the k elements in ascending order and return"
+    }
+  ],
+  "approach": [
+    "Initialize an empty heap to store (negative distance, element) tuples",
+    "Push the first k elements onto the heap as (-abs(num - target), num)",
+    "For each remaining element, calculate its distance from the target",
+    "If the heap has k elements and current distance < -heap[0][0], use heappushpop to replace the root",
+    "Extract all numbers from the heap tuples into a list",
+    "Sort the result list in ascending order and return it"
+  ],
+  "complexity": {
+    "time": "O(n log k)",
+    "space": "O(k)"
+  },
+  "code": "import heapq\n\ndef k_closest(nums, k, target):\n    \"\"\"\n    Find k elements closest to target in a sorted array.\n    \n    Args:\n        nums: Sorted array of integers\n        k: Number of closest elements to find\n        target: Target value to measure distance from\n    \n    Returns:\n        List of k closest elements, sorted in ascending order\n    \"\"\"\n    heap = []\n    \n    for num in nums:\n        distance = abs(num - target)\n        if len(heap) < k:\n            heapq.heappush(heap, (-distance, num))\n        elif distance < -heap[0][0]:\n            heapq.heappushpop(heap, (-distance, num))\n    \n    result = [pair[1] for pair in heap]\n    result.sort()\n    return result",
+  "quiz": [
+    {
+      "q": "Why do we negate the distance when pushing onto the heap?",
+      "options": [
+        "To make Python's min-heap behave like a max-heap",
+        "To handle negative numbers in the array",
+        "To sort the final result in descending order",
+        "To improve the time complexity"
+      ],
+      "answer": 0,
+      "explain": "Python's heapq only implements a min-heap. By negating distances, the largest distance becomes the smallest negative value, so it rises to the root. This lets us efficiently track and remove the furthest element when we find a closer one."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(n log k)",
+        "O(k log n)"
+      ],
+      "answer": 2,
+      "explain": "We iterate through all n elements, and for each element we may perform a heap operation (push or pushpop) which takes O(log k) time on a heap of size k. The final sort of k elements adds O(k log k), which is dominated by O(n log k) when n > k."
+    }
+  ]
+}

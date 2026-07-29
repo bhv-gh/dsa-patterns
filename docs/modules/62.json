@@ -1,0 +1,60 @@
+{
+  "id": 62,
+  "slug": "graph-valid-tree",
+  "title": "Graph Valid Tree",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Determine if undirected edges form a valid tree by checking two conditions: no cycles exist and all nodes are connected in a single component.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer `n` and a list of undirected edges where each entry is a pair of integers representing an edge between nodes `0` to `n-1`, determine whether these edges form a valid tree.\n\nA valid tree must satisfy:\n1. The graph contains no cycles\n2. There is a single connected component (all nodes reachable from any starting node)\n\n**Example:**\n- Input: `n = 4`, `edges = [[0, 1], [2, 3]]`\n- Output: `false` (graph is not connected)\n\n- Input: `n = 5`, `edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]]`\n- Output: `false` (contains a cycle: 1→2→3→1)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A valid tree with `n` nodes must have **exactly `n-1` edges**. This is a necessary (but not sufficient) condition. Additionally:\n\n- **Too few edges**: Graph will be disconnected\n- **Too many edges**: Graph will contain cycles\n- **Exactly n-1 edges**: May be a tree if it's also fully connected\n\nUse DFS with a visited set and parent tracking to detect cycles. After DFS, verify all nodes were visited to ensure connectivity."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Step 1: Build Adjacency List**\nConvert the edge list into an adjacency list representation for efficient neighbor lookups during DFS.\n\n**Step 2: Initialize Tracking**\nCreate a `visited` array to track which nodes have been explored during traversal.\n\n**Step 3: Run DFS with Cycle Detection**\nStarting from node 0, perform DFS. For each node:\n- Mark it as visited\n- For each neighbor, check if it's already visited AND is not the parent (if so, cycle detected)\n- Recursively explore unvisited neighbors, passing current node as parent\n\n**Step 4: Check Connectivity**\nAfter DFS completes, verify all nodes were visited. If any node remains unvisited, the graph is disconnected.\n\n**Step 5: Return Result**\nReturn `true` only if no cycle was found AND all nodes were visited."
+    }
+  ],
+  "approach": [
+    "Build an adjacency list from the edge list to represent the graph",
+    "Initialize a visited array to track explored nodes",
+    "Perform DFS from node 0, tracking parent to detect cycles",
+    "During DFS, if a visited neighbor is not the parent, a cycle exists",
+    "After DFS, check if all nodes were visited to ensure connectivity",
+    "Return true only if no cycle found and all nodes visited"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "code": "def validTree(n, edges):\n    \"\"\"\n    Determine if undirected edges form a valid tree.\n    \n    Args:\n        n: Number of nodes (0 to n-1)\n        edges: List of undirected edges [u, v]\n    \n    Returns:\n        True if edges form a valid tree, False otherwise\n    \"\"\"\n    # Build adjacency list\n    adj_list = [[] for _ in range(n)]\n    for u, v in edges:\n        adj_list[u].append(v)\n        adj_list[v].append(u)\n    \n    # Use DFS to check if the graph is a valid tree\n    visited = [False] * n\n    if hasCycle(adj_list, 0, visited, -1):\n        return False\n    \n    # Check if all nodes are connected\n    return all(visited)\n\ndef hasCycle(adj_list, node, visited, parent):\n    \"\"\"\n    Check if there is a cycle in the graph using DFS.\n    \n    Args:\n        adj_list: Adjacency list representation of graph\n        node: Current node being visited\n        visited: Array tracking visited nodes\n        parent: Parent node in DFS tree\n    \n    Returns:\n        True if cycle detected, False otherwise\n    \"\"\"\n    visited[node] = True\n    \n    for neighbor in adj_list[node]:\n        # If neighbor is visited and not parent, cycle found\n        if visited[neighbor] and parent != neighbor:\n            return True\n        # Recursively check unvisited neighbors\n        elif not visited[neighbor] and hasCycle(adj_list, neighbor, visited, node):\n            return True\n    \n    return False",
+  "quiz": [
+    {
+      "q": "Why must a valid tree with n nodes have exactly n-1 edges?",
+      "options": [
+        "A tree with n nodes has exactly n-1 edges by definition; fewer edges means disconnected components, more edges means cycles",
+        "It's arbitrary convention; trees can have any number of edges as long as there are no cycles",
+        "n-1 edges ensures optimal memory usage in the adjacency list representation",
+        "DFS algorithm requires n-1 edges to terminate properly without infinite loops"
+      ],
+      "answer": 0,
+      "explain": "A tree is a connected acyclic graph. For n nodes to be connected with no cycles, you need exactly n-1 edges. With fewer edges, you can't connect all nodes. With more edges, you must create at least one cycle."
+    },
+    {
+      "q": "In the DFS cycle detection, why do we need to track the parent node?",
+      "options": [
+        "To prevent counting the edge back to parent as a cycle in undirected graphs",
+        "To optimize memory usage by reusing the parent's adjacency list",
+        "To ensure we visit nodes in the correct depth-first order",
+        "To track the path length from the root node for complexity analysis"
+      ],
+      "answer": 0,
+      "explain": "In an undirected graph, when we visit node A from parent B, node B will be in A's neighbor list. Without tracking parent, we'd incorrectly detect the edge A↔B as a cycle. We only have a cycle if we encounter a visited node that is NOT our parent."
+    }
+  ]
+}

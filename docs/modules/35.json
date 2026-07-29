@@ -1,0 +1,60 @@
+{
+  "id": 35,
+  "slug": "swap-nodes-in-pairs",
+  "title": "Swap Nodes in Pairs",
+  "pattern": "linked-list",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Swap every two adjacent nodes in a linked list by rewiring pointers using a dummy head to handle edge cases uniformly.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the head of a singly linked list, swap every two adjacent nodes and return the new head. You must solve the problem **without modifying the values** in the list's nodes (i.e., only the node pointers themselves may be changed).\n\n**Example 1:**\n- Input: `1 -> 2 -> 3 -> 4`\n- Output: `2 -> 1 -> 4 -> 3`\n\n**Example 2:**\n- Input: `1 -> 2 -> 3 -> 4 -> 5`\n- Output: `2 -> 1 -> 4 -> 3 -> 5`\n- Explanation: The last node (5) remains in place since it has no pair."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A **dummy node** eliminates special-case logic for swapping the first pair. To swap two nodes `first` and `second`, you need a reference to the node **before** `first`. Without a dummy node, the head has no predecessor, requiring separate handling. The dummy node ensures every node in the original list has a predecessor, allowing uniform pointer rewiring logic throughout."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use a dummy node and three pointers (`prev`, `first`, `second`) to iteratively swap adjacent pairs:\n\n1. **Create a dummy node** pointing to the head to simplify edge cases.\n2. **Initialize `prev`** to the dummy node and iterate while at least two nodes remain.\n3. **Identify the pair:** `first = prev.next`, `second = first.next`.\n4. **Rewire pointers:**\n   - `prev.next = second` (skip over `first`)\n   - `first.next = second.next` (connect `first` to the node after `second`)\n   - `second.next = first` (complete the swap)\n5. **Advance `prev`** to `first` (end of the swapped pair) for the next iteration.\n6. **Return `dummy.next`** as the new head."
+    }
+  ],
+  "approach": [
+    "Create a dummy node pointing to the head to handle edge cases uniformly.",
+    "Initialize `prev` to the dummy node and enter a loop while `prev.next` and `prev.next.next` exist.",
+    "Identify the pair to swap: `first = prev.next` and `second = first.next`.",
+    "Rewire pointers in three steps: (1) `prev.next = second`, (2) `first.next = second.next`, (3) `second.next = first`.",
+    "Move `prev` forward to `first` to prepare for the next pair.",
+    "After the loop, return `dummy.next` as the new head of the modified list."
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def swapPairs(head):\n    \"\"\"\n    Swap every two adjacent nodes in a linked list.\n    \n    Args:\n        head: ListNode, the head of the singly linked list\n    \n    Returns:\n        ListNode, the new head after swapping pairs\n    \"\"\"\n    # Create dummy node to simplify edge cases\n    dummy = ListNode(0)\n    dummy.next = head\n    prev = dummy\n    \n    # Process pairs while both nodes exist\n    while prev.next and prev.next.next:\n        # Identify the two nodes to swap\n        first = prev.next\n        second = prev.next.next\n        \n        # Perform the swap by adjusting pointers\n        prev.next = second        # Link previous to second node\n        first.next = second.next  # Link first to node after second\n        second.next = first       # Link second to first (completing swap)\n        \n        # Move prev to the end of swapped pair for next iteration\n        prev = first\n    \n    return dummy.next  # Return new head",
+  "quiz": [
+    {
+      "q": "Why is a dummy node essential for this problem?",
+      "options": [
+        "It provides a predecessor for the head node, allowing uniform swap logic without special-casing the first pair",
+        "It reduces the time complexity from O(n²) to O(n)",
+        "It prevents infinite loops when the list has an odd number of nodes",
+        "It stores the original head for later reference"
+      ],
+      "answer": 0,
+      "explain": "The dummy node gives the head a predecessor, so swapping the first pair uses the same three-step pointer rewiring as all other pairs. Without it, you'd need separate logic to update the head reference when swapping the first two nodes."
+    },
+    {
+      "q": "What is the termination condition for the swapping loop?",
+      "options": [
+        "When `first` becomes None",
+        "When `prev.next` or `prev.next.next` is None",
+        "When the list length is even",
+        "When `second.next` is None"
+      ],
+      "answer": 1,
+      "explain": "The loop continues while `prev.next` (the first node of the pair) and `prev.next.next` (the second node of the pair) both exist. This handles both even-length lists (all pairs swapped) and odd-length lists (last node remains in place)."
+    }
+  ]
+}

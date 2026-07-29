@@ -1,0 +1,61 @@
+{
+  "id": 46,
+  "slug": "merge-k-sorted-lists",
+  "title": "Merge K Sorted Lists",
+  "pattern": "heap",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Merge k sorted linked lists into one sorted list using a min-heap to efficiently track the smallest unmerged element from each list.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given **k linked lists**, each sorted in ascending order, write a function to merge the input lists into one sorted linked list.\n\n**Example:**\n```\nInput: lists = [[3,4,6], [2,3,5], [-1,6]]\n  3 -> 4 -> 6\n  2 -> 3 -> 5\n  -1 -> 6\n\nOutput: -1 -> 2 -> 3 -> 3 -> 4 -> 5 -> 6 -> 6\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **min-heap of size k** to maintain the smallest unmerged element from each list. The heap's root always contains the next element to add to the merged result. After popping the smallest node, push its `.next` node back onto the heap to maintain k candidates."
+    },
+    {
+      "heading": "Approach",
+      "body": "The solution leverages a min-heap to efficiently track and extract the smallest element among k candidates:\n\n1. **Initialize the heap** with the head of each non-empty list, storing tuples of `(node.val, id(node), node)` to avoid node comparison issues\n2. **Create a dummy head** to simplify linked list construction\n3. **Extract the minimum** node from the heap repeatedly\n4. **Append it** to the merged result list\n5. **Push its successor** (if it exists) back onto the heap\n6. **Return** the merged list when the heap is empty"
+    }
+  ],
+  "approach": [
+    "Filter out empty lists and initialize a min-heap with the head of each non-empty list",
+    "Use tuples (node.val, id(node), node) to avoid comparing ListNode objects directly",
+    "Create a dummy head and current pointer for building the merged list",
+    "While the heap is not empty, pop the smallest node",
+    "Append the popped node to the result and advance the current pointer",
+    "If the popped node has a next node, push it onto the heap",
+    "Return dummy.next as the merged sorted list"
+  ],
+  "complexity": {
+    "time": "O(N log k)",
+    "space": "O(k)"
+  },
+  "code": "from heapq import heappush, heappop\n\ndef mergeKLists(lists):\n    \"\"\"\n    Merge k sorted linked lists into one sorted linked list.\n    \n    Args:\n        lists: List of k sorted linked list heads\n    \n    Returns:\n        Head of the merged sorted linked list\n    \"\"\"\n    if not lists:\n        return None\n    \n    # Filter out empty lists\n    non_empty = [head for head in lists if head]\n    if not non_empty:\n        return None\n    \n    # Initialize heap with head of each list\n    # Use (val, id, node) to avoid comparing nodes\n    heap = []\n    for head in non_empty:\n        heappush(heap, (head.val, id(head), head))\n    \n    # Build merged list using dummy head\n    dummy = ListNode(0)\n    current = dummy\n    \n    # Extract minimum and add its successor\n    while heap:\n        val, _, node = heappop(heap)\n        current.next = node\n        current = current.next\n        \n        if node.next:\n            heappush(heap, (node.next.val, id(node.next), node.next))\n    \n    return dummy.next",
+  "quiz": [
+    {
+      "q": "Why do we use `(node.val, id(node), node)` tuples instead of just `node` in the heap?",
+      "options": [
+        "To avoid comparing ListNode objects when they have equal values",
+        "To make the heap operations faster",
+        "To save memory by storing references",
+        "To maintain the original order of the lists"
+      ],
+      "answer": 0,
+      "explain": "Python's heapq compares tuples element-by-element. If two nodes have the same value, it would try to compare the ListNode objects directly, which raises a TypeError. Using `id(node)` as a tiebreaker ensures unique comparison without implementing `__lt__` on ListNode."
+    },
+    {
+      "q": "What is the time complexity of this solution where N is the total number of nodes across all k lists?",
+      "options": [
+        "O(N * k)",
+        "O(N log N)",
+        "O(N log k)",
+        "O(k^2)"
+      ],
+      "answer": 2,
+      "explain": "We process each of the N total nodes exactly once. For each node, we perform heap operations (push/pop) on a heap of size k, which takes O(log k) time. Therefore, the overall time complexity is O(N log k)."
+    }
+  ]
+}

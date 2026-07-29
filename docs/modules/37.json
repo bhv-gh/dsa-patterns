@@ -1,0 +1,60 @@
+{
+  "id": 37,
+  "slug": "koko-eating-bananas",
+  "title": "Koko Eating Bananas",
+  "pattern": "binary-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the minimum eating speed to finish all banana piles within h hours using binary search on the answer space.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array of integers `piles` where `piles[i]` represents the number of bananas in the i-th pile, and an integer `h` representing the hours available, determine the **minimum** eating speed `k` (bananas per hour) such that all bananas can be consumed within `h` hours.\n\n**Constraints:**\n- Koko can only eat from one pile per hour\n- If a pile has fewer bananas than `k`, she finishes early but waits until the next hour to start the next pile\n- Each pile must be finished before moving to the next\n\n**Example:** `piles = [3, 6, 7], h = 8` → Output: `3`\n\nAt speed 3: pile[0] takes 1 hour, pile[1] takes 2 hours, pile[2] takes 3 hours = 6 hours total ≤ 8 ✓"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is a **binary search on the answer** problem. The search space is not the input array, but the range of possible eating speeds `[1, max(piles)]`.\n\n**Why binary search works:**\n\n1. **Monotonic feasibility**: If speed `k` allows finishing in `h` hours, then any speed `k' > k` will also work (faster speeds never make things worse)\n2. **We want the minimum feasible speed**: Binary search efficiently finds the leftmost `True` in a sorted boolean array `[F, F, F, T, T, T]`\n3. **Search space reduction**: Each check eliminates half the candidate speeds\n\nThe key is recognizing that we're searching for a value (speed) rather than searching in the input array."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Binary Search on Speed:**\n\n1. **Define search bounds**: `left = 1` (minimum possible speed), `right = max(piles)` (maximum useful speed)\n2. **Create feasibility function**: `can_finish(speed, h)` returns whether eating at `speed` allows finishing all piles within `h` hours\n   - Time needed for pile `i` = `ceil(piles[i] / speed)` = `(piles[i] + speed - 1) // speed`\n   - Sum times for all piles and check if total ≤ `h`\n3. **Binary search template** (find minimum valid):\n   - Calculate `mid = (left + right) // 2`\n   - If `can_finish(mid, h)` is `False`: speed too slow → `left = mid + 1`\n   - If `can_finish(mid, h)` is `True`: speed works, but try slower → `right = mid` (keep mid in search space)\n4. **Return `left`** when `left == right` (converged to minimum valid speed)\n\n**Why `right = mid` not `mid - 1`?** We want the minimum valid speed. When mid works, it might be the answer, so we keep it in the search space."
+    }
+  ],
+  "approach": [
+    "Initialize binary search bounds: left = 1, right = max(piles)",
+    "Define helper function can_finish(speed) that calculates total hours needed at given speed",
+    "For each pile, compute hours = ceiling(pile / speed) using integer math: (pile + speed - 1) // speed",
+    "Binary search: if can_finish(mid) > h, speed too slow, set left = mid + 1",
+    "Otherwise speed is valid, try slower: set right = mid",
+    "Return left when search converges (left == right)"
+  ],
+  "complexity": {
+    "time": "O(n log m) where n = len(piles), m = max(piles). Binary search runs O(log m) iterations, each checking feasibility in O(n)",
+    "space": "O(1) excluding input, only using constant extra variables"
+  },
+  "code": "def minEatingSpeed(piles: list[int], h: int) -> int:\n    \"\"\"\n    Find minimum eating speed to finish all banana piles within h hours.\n    \n    Uses binary search on the answer space [1, max(piles)].\n    \n    Args:\n        piles: List of integers representing bananas in each pile\n        h: Maximum hours available\n        \n    Returns:\n        Minimum eating speed (bananas per hour)\n    \"\"\"\n    def can_finish(speed):\n        \"\"\"Check if eating at 'speed' finishes all piles within h hours.\"\"\"\n        hours_needed = 0\n        for pile in piles:\n            # Ceiling division: how many hours for this pile\n            hours_needed += (pile + speed - 1) // speed\n        return hours_needed <= h\n    \n    # Binary search bounds\n    left, right = 1, max(piles)\n    \n    # Find minimum valid speed\n    while left < right:\n        mid = (left + right) // 2\n        if can_finish(mid):\n            # Speed works, try slower\n            right = mid\n        else:\n            # Speed too slow, need faster\n            left = mid + 1\n    \n    return left",
+  "quiz": [
+    {
+      "q": "Why is the feasibility function monotonic in this problem?",
+      "options": [
+        "Because the piles array is sorted in increasing order",
+        "Because if speed k works, any speed k' > k also works (eating faster never makes it take longer)",
+        "Because we use ceiling division when calculating hours needed",
+        "Because the maximum speed is always max(piles)"
+      ],
+      "answer": 1,
+      "explain": "Feasibility is monotonic because eating speed and completion time have an inverse relationship. If speed `k` allows finishing in ≤ h hours, then any faster speed `k' > k` will finish in ≤ h hours too (you can't make things worse by eating faster). This creates the pattern [F, F, F, T, T, T] that binary search exploits."
+    },
+    {
+      "q": "Why do we set `right = mid` instead of `right = mid - 1` when the speed is valid?",
+      "options": [
+        "To avoid an infinite loop in the binary search",
+        "Because mid might be the minimum valid speed, and mid - 1 could discard the answer",
+        "Because we're searching for the maximum instead of minimum",
+        "To ensure the search converges in O(log n) time"
+      ],
+      "answer": 1,
+      "explain": "When mid is a valid speed, it could be the minimum valid speed (our target answer). Setting `right = mid - 1` would remove mid from the search space and potentially discard the correct answer. We use `right = mid` to keep mid as a candidate while continuing to search for slower (smaller) valid speeds in [left, mid]."
+    }
+  ]
+}

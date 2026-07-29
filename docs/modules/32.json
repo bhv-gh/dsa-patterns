@@ -1,0 +1,59 @@
+{
+  "id": 32,
+  "slug": "palindrome-linked-list",
+  "title": "Palindrome Linked List",
+  "pattern": "linked-list",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Check if a singly linked list is a palindrome by finding the middle, reversing the second half, and comparing both halves in O(1) space.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a reference of type `ListNode` which is the head of a singly linked list, write a function to determine if the linked list is a palindrome.\n\nA linked list is a palindrome if the values of the nodes are the same when read from left-to-right and right-to-left. An empty list is considered a palindrome.\n\n**Example 1:**\n```\n5 -> 4 -> 3 -> 4 -> 5\nOutput: True\n```\n\n**Example 2:**\n```\n5 -> 4 -> 3\nOutput: False\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Since we can only traverse a singly linked list in one direction, we can reverse the second half of the list in-place and then use two pointers to compare the first half with the reversed second half. This achieves O(1) space complexity without needing to convert to an array."
+    },
+    {
+      "heading": "Approach",
+      "body": "The optimal solution uses the **fast/slow pointer technique** to find the middle, **in-place reversal** for the second half, and **two-pointer comparison** to check if it's a palindrome:\n\n1. **Find the middle**: Use fast and slow pointers. Fast moves 2 steps, slow moves 1 step. When fast reaches the end, slow is at the middle.\n\n2. **Reverse the second half**: Starting from the middle node, reverse the direction of all pointers in the second half by maintaining three pointers (prev, curr, next).\n\n3. **Compare both halves**: Use two pointers starting from the head and the new head of the reversed second half. Compare values while moving both pointers forward.\n\n4. **Return result**: If all values match, return `True`. If any mismatch is found, return `False`.\n\n**Edge Cases:**\n- Empty list: Returns `True` (empty is a palindrome)\n- Single node: Returns `True` (single node is a palindrome)\n- Two nodes: Compares the two values directly"
+    }
+  ],
+  "approach": [
+    "Initialize fast and slow pointers at the head",
+    "Move fast by 2 steps and slow by 1 step until fast reaches the end",
+    "Reverse the second half starting from slow using prev, curr, and next pointers",
+    "Compare values from head and the reversed second half using two pointers",
+    "Return True if all values match, False otherwise"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def is_palindrome(head):\n    \"\"\"Check if a singly linked list is a palindrome.\n    \n    Args:\n        head: The head node of the linked list\n        \n    Returns:\n        bool: True if the list is a palindrome, False otherwise\n    \"\"\"\n    # Find middle of the linked list using fast and slow pointers\n    slow = fast = head\n    while fast and fast.next:\n        fast = fast.next.next\n        slow = slow.next\n    \n    # Reverse second half of the list\n    curr, prev = slow, None\n    while curr:\n        next_ = curr.next  # Save next node\n        curr.next = prev   # Reverse pointer\n        prev = curr        # Move pointers\n        curr = next_\n    \n    # Check palindrome by comparing halves\n    left, right = head, prev\n    while right:\n        if left.val != right.val:\n            return False\n        left = left.next\n        right = right.next\n    \n    return True",
+  "quiz": [
+    {
+      "q": "Why do we need to store `next_` before reversing the pointer in the reversal step?",
+      "options": [
+        "To maintain a reference to the next node before we overwrite curr.next with prev",
+        "To check if we've reached the end of the list",
+        "To compare values between adjacent nodes",
+        "To restore the original list after checking"
+      ],
+      "answer": 0,
+      "explain": "We need `next_` because once we set `curr.next = prev` to reverse the pointer, we lose the reference to the rest of the list. Storing `next_` first allows us to continue iterating through the remaining nodes."
+    },
+    {
+      "q": "What is a key trade-off of the O(1) space solution compared to the O(n) array-based solution?",
+      "options": [
+        "It has worse time complexity",
+        "It mutates the input linked list structure",
+        "It cannot handle empty lists",
+        "It only works for even-length lists"
+      ],
+      "answer": 1,
+      "explain": "The O(1) space solution reverses the second half of the list in-place, which mutates the input data structure. This can be problematic in multi-threaded contexts or when other code holds references to the list. The array-based O(n) space solutions preserve the original list structure."
+    }
+  ]
+}

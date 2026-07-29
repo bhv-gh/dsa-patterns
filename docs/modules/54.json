@@ -1,0 +1,61 @@
+{
+  "id": 54,
+  "slug": "validate-binary-search-tree",
+  "title": "Validate Binary Search Tree",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Validate a BST by passing min/max bounds down the tree. Each node must lie strictly within its inherited range.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree, determine if it is a valid binary search tree (BST).\n\nA tree is a BST if:\n- Every node in the left subtree has a value **less than** the current node\n- Every node in the right subtree has a value **greater than** the current node\n- Both left and right subtrees must also be valid BSTs\n\n**Example 1:**\n```\n    2\n   / \\\n  1   4\n```\nInput: `[2,1,4]`  \nOutput: `true`\n\n**Example 2:**\n```\n    4\n   / \\\n  1   5\n     / \\\n    3   6\n```\nInput: `[4,1,5,null,null,3,6]`  \nOutput: `false` (3 is in the root's right subtree but less than 4)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**Checking only parent vs. children is INSUFFICIENT.** A node deep in the right subtree might violate an ancestor's constraint even if it satisfies its immediate parent.\n\nThe solution is to carry **min/max bounds** down the recursion. Each node must lie strictly between `(min, max)`—exclusive bounds inherited from ancestors. When recursing:\n- **Left child:** inherit `(min, current_val)` (must be less than current)\n- **Right child:** inherit `(current_val, max)` (must be greater than current)"
+    },
+    {
+      "heading": "Approach",
+      "body": "Use a DFS helper that threads **valid range bounds** through the tree:\n\n1. **Helper signature:** `dfs(node, min_, max_)` returns `bool`\n2. **Base case:** Empty tree (`node is None`) is valid—return `True`\n3. **Validity check:** If `node.val <= min_` or `node.val >= max_`, return `False` (outside bounds)\n4. **Recurse left:** Call `dfs(node.left, min_, node.val)` (left must be < current)\n5. **Recurse right:** Call `dfs(node.right, node.val, max_)` (right must be > current)\n6. **Combine:** Return `left_valid AND right_valid`\n7. **Kickoff:** Start with `dfs(root, -∞, +∞)`"
+    }
+  ],
+  "approach": [
+    "Define helper `dfs(node, min_, max_)` that validates the subtree rooted at `node` with bounds `(min_, max_)`",
+    "Base case: if `node is None`, return `True` (empty tree is valid)",
+    "Check if `node.val` is strictly within `(min_, max_)`: if `node.val <= min_` or `node.val >= max_`, return `False`",
+    "Recurse left: `dfs(node.left, min_, node.val)` (left subtree must have values < `node.val`)",
+    "Recurse right: `dfs(node.right, node.val, max_)` (right subtree must have values > `node.val`)",
+    "Return `True` only if both subtrees are valid",
+    "Initial call: `dfs(root, float('-inf'), float('inf'))`"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "class Solution:\n    def validateBST(self, root):\n        \"\"\"\n        Validate if a binary tree is a valid BST.\n        \n        Args:\n            root: TreeNode representing the root of the binary tree\n            \n        Returns:\n            bool: True if the tree is a valid BST, False otherwise\n        \"\"\"\n        def dfs(node, min_, max_):\n            # base case: empty tree is valid\n            if node is None:\n                return True\n            \n            # check if current node's value is within valid range (exclusive)\n            if node.val <= min_ or node.val >= max_:\n                return False\n            \n            # recurse: left child must be < node.val, right child must be > node.val\n            return dfs(node.left, min_, node.val) and dfs(node.right, node.val, max_)\n        \n        return dfs(root, float('-inf'), float('inf'))",
+  "quiz": [
+    {
+      "q": "Why is checking only `node.left.val < node.val < node.right.val` at each node insufficient?",
+      "options": [
+        "It doesn't validate the subtrees recursively",
+        "A deep descendant might violate an ancestor's constraint even if it satisfies its parent",
+        "It doesn't handle the base case correctly",
+        "It has the wrong time complexity"
+      ],
+      "answer": 1,
+      "explain": "A node deep in the tree might satisfy its immediate parent but still violate a constraint from a higher ancestor. For example, a node in the right subtree of the root's left child must be less than the root, not just greater than its parent. Bounds propagation ensures all ancestor constraints are checked."
+    },
+    {
+      "q": "What is the space complexity and why?",
+      "options": [
+        "O(1) because we only use a constant amount of extra variables",
+        "O(n) because we might store all nodes in the recursion stack",
+        "O(h) where h is the height, due to recursion stack depth",
+        "O(log n) because BSTs are always balanced"
+      ],
+      "answer": 2,
+      "explain": "The recursion stack depth equals the tree height h. In a balanced tree h = O(log n), but in a skewed tree h = O(n). We use O(h) space for the call stack."
+    }
+  ]
+}

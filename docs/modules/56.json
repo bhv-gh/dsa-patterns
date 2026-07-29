@@ -1,0 +1,60 @@
+{
+  "id": 56,
+  "slug": "diameter-of-binary-tree",
+  "title": "Diameter of a Binary Tree",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Find the longest path between any two nodes in a binary tree using DFS to track height and diameter simultaneously.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree, write a recursive function to find the **diameter** of the tree. The diameter of a binary tree is the length of the longest path (number of edges) between any two nodes in a tree. This path may or may not pass through the root.\n\n**Example 1:**\n```\n    3\n   / \\\n  9   2\n /\n1\n \\\n  5\n```\nInput: `[3, 9, 2, 1, 4, null, null, null, 5]`\n\nOutput: `4` (The longest path is 5 → 1 → 9 → 3 → 2 for a total of 4 edges)\n\n**Example 2:**\n```\n    3\n   /\n  9\n /\n1\n \\\n  4\n   \\\n    3\n```\nInput: `[3, 9, null, 1, 4, null, null, 2, null, 3]`\n\nOutput: `4` (The longest path is 2 → 1 → 9 → 4 → 3 for a total of 4 edges)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The longest path through any node equals the **sum of the maximum depths** of its left and right subtrees. The DFS function should return the **height** of each subtree (for parent calculations), while tracking the maximum **diameter** seen so far in an outer variable."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use a DFS helper function that returns subtree height while tracking the global maximum diameter:\n\n1. **Base Case**: An empty tree has height 0\n2. **Recursive Calls**: Get the max depth of left and right subtrees by recursively calling DFS\n3. **Update Diameter**: The diameter through the current node is `left_depth + right_depth`. Update the global maximum if this is larger\n4. **Return Height**: Return `1 + max(left_depth, right_depth)` to the parent (the height of the current subtree)\n5. **Helper Function Pattern**: Use a nested helper function with `nonlocal` to access the outer `max_diameter` variable, keeping it protected from external code"
+    }
+  ],
+  "approach": [
+    "Define outer function with `max_diameter = 0` variable",
+    "Create nested DFS helper function that takes a node",
+    "Base case: if node is None, return 0 (empty tree has height 0)",
+    "Recursively get left_depth and right_depth from children",
+    "Update max_diameter with max(max_diameter, left_depth + right_depth)",
+    "Return 1 + max(left_depth, right_depth) as current subtree height"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "class Solution:\n    def diameterOfBinaryTree(self, root):\n        \"\"\"\n        Find the diameter (longest path) of a binary tree.\n        \n        The diameter is the number of edges in the longest path between\n        any two nodes. This path may or may not pass through the root.\n        \n        Args:\n            root: TreeNode, the root of the binary tree\n            \n        Returns:\n            int, the diameter of the tree (number of edges)\n        \"\"\"\n        max_diameter = 0\n        \n        def dfs(node):\n            nonlocal max_diameter\n            \n            # base case: empty tree has height 0\n            if not node:\n                return 0\n            \n            # get the max depth of left and right subtrees\n            left = dfs(node.left)\n            right = dfs(node.right)\n            \n            # update the maximum diameter (path through current node)\n            max_diameter = max(max_diameter, left + right)\n            \n            # return the height of current subtree to parent\n            return 1 + max(left, right)\n        \n        dfs(root)\n        return max_diameter",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n log n)",
+        "O(log m * n)",
+        "O(n)",
+        "O(V + E)"
+      ],
+      "answer": 2,
+      "explain": "We visit each node exactly once during the DFS traversal, performing constant work at each node. Therefore the time complexity is O(n) where n is the number of nodes."
+    },
+    {
+      "q": "Why does the DFS function return height instead of diameter?",
+      "options": [
+        "Height is easier to calculate than diameter",
+        "The parent node needs the child's height to calculate the diameter through itself",
+        "Returning diameter would cause stack overflow",
+        "Height and diameter are the same value"
+      ],
+      "answer": 1,
+      "explain": "Each parent node needs to know the heights of its left and right subtrees to calculate the potential diameter passing through it (left_height + right_height). We track the maximum diameter separately in an outer variable."
+    }
+  ]
+}

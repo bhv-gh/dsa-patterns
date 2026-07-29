@@ -1,0 +1,58 @@
+{
+  "id": 31,
+  "slug": "linked-list-cycle",
+  "title": "Linked List Cycle",
+  "pattern": "linked-list",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Detect if a linked list contains a cycle using Floyd's fast and slow pointer technique without modifying the list.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the `head` of a linked list, return `True` if the linked list contains a cycle, and `False` otherwise. You must not modify the linked list in any way.\n\nA cycle exists when a node's `next` pointer points back to a previous node in the list, creating a loop.\n\n**Example 1:** List with values `[5, 4, 3, 2, 0]` where node 0 points back to node 3 → Output: `True`\n\n**Example 2:** List with values `[5, 4, 3, 2, 0]` where the last node points to `None` → Output: `False`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **Floyd's Cycle Detection Algorithm** (fast and slow pointers). Initialize two pointers at the head: `slow` moves one step at a time, `fast` moves two steps at a time. If a cycle exists, the fast pointer will eventually catch up to the slow pointer. If no cycle exists, the fast pointer will reach the end (`None`).\n\nThis approach achieves **O(1) space complexity** because we only use two pointers, regardless of the list size, unlike the set-based approach which requires O(n) space."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Floyd's Fast and Slow Pointer Algorithm:**\n\n1. **Initialize** both `slow` and `fast` pointers to `head`\n2. **Iterate** while `fast` and `fast.next` are not `None`\n3. **Move** `slow` forward by one node (`slow = slow.next`)\n4. **Move** `fast` forward by two nodes (`fast = fast.next.next`)\n5. **Check** if `slow == fast` (pointers meet) → return `True` (cycle detected)\n6. If loop exits (fast reaches end) → return `False` (no cycle)\n\n**Edge Cases:**\n- Empty list: `fast = None` initially, return `False`\n- Single node without cycle: `fast.next = None`, return `False`\n- Single node with cycle: Pointers meet on first iteration, return `True`"
+    }
+  ],
+  "approach": [
+    "Initialize two pointers, slow and fast, both at the head of the linked list",
+    "While fast and fast.next are not None, advance slow by one node and fast by two nodes",
+    "If slow and fast ever point to the same node, a cycle exists - return True",
+    "If fast reaches the end of the list (fast or fast.next becomes None), no cycle exists - return False"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef hasCycle(head):\n    \"\"\"\n    Detect if a linked list contains a cycle using Floyd's cycle detection algorithm.\n    \n    Uses two pointers: slow (moves 1 step) and fast (moves 2 steps).\n    If they meet, a cycle exists. If fast reaches None, no cycle.\n    \n    Time: O(n) - traverse at most 2n nodes in worst case\n    Space: O(1) - only two pointers used\n    \n    Args:\n        head: ListNode - head of the linked list\n        \n    Returns:\n        bool - True if cycle exists, False otherwise\n    \"\"\"\n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        \n        if slow == fast:\n            return True\n    \n    return False",
+  "quiz": [
+    {
+      "q": "Why does Floyd's cycle detection algorithm use O(1) space instead of O(n)?",
+      "options": [
+        "It only uses two pointers regardless of list size, whereas the set-based approach stores every visited node",
+        "It modifies the linked list in-place to mark visited nodes",
+        "It uses recursion with tail-call optimization",
+        "It compresses the linked list data structure"
+      ],
+      "answer": 0,
+      "explain": "The fast and slow pointer approach only allocates two pointer variables, which is constant space. In contrast, the set-based approach stores a reference to every node visited (up to n nodes), requiring O(n) space."
+    },
+    {
+      "q": "In the worst-case scenario for a linked list with a cycle, how many nodes does the fast pointer traverse before meeting the slow pointer?",
+      "options": [
+        "Exactly n nodes",
+        "At most n nodes",
+        "At most 2n nodes",
+        "It depends on where the cycle begins"
+      ],
+      "answer": 2,
+      "explain": "In the worst case, the fast pointer may need to traverse the entire list once to enter the cycle, then traverse the cycle again to catch up to the slow pointer. This results in at most 2n node traversals, maintaining O(n) time complexity."
+    }
+  ]
+}

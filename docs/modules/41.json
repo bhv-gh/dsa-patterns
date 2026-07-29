@@ -1,0 +1,61 @@
+{
+  "id": 41,
+  "slug": "minimum-shipping-capacity",
+  "title": "Minimum Shipping Capacity",
+  "pattern": "binary-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find minimum box capacity to ship all products within box limit, considering both capacity and weight constraints per box.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "You're a logistics manager shipping products from a warehouse. Each product type has a quantity and weight per item. Shipping boxes have **two constraints**:\n\n1. **Capacity limit**: Maximum number of items per box\n2. **Weight limit**: Maximum weight (kg) per box\n\n**Rules:**\n- Each product type must be packed separately\n- All boxes have the same capacity and weight limits\n- A box can hold at most `capacity` items OR `maxWeightPerBox` kg, **whichever comes first**\n- Items must be whole numbers (can't pack fractional items)\n\nGiven arrays of quantities and weights per item, plus `maxBoxes` and `maxWeightPerBox` constraints, find the **minimum box capacity** needed to ship all products.\n\n**Example:**\n```\nInput:\nquantities = [8, 12, 5]\nweights = [2, 3, 1]  # kg per item\nmaxBoxes = 6\nmaxWeightPerBox = 20\n\nOutput: 5\n\nExplanation: With capacity 5:\n- Product 0 (8 items @ 2kg): min(5, 10, 8) = 5 items/box → 2 boxes\n- Product 1 (12 items @ 3kg): min(5, 6, 12) = 5 items/box → 3 boxes\n- Product 2 (5 items @ 1kg): min(5, 20, 5) = 5 items/box → 1 box\n- Total: 6 boxes ≤ 6 ✓\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is **binary search on the answer** with compound constraints. The key insight is recognizing the **monotonic property**: if capacity `c` works (uses ≤ maxBoxes), then any capacity larger than `c` also works—bigger boxes mean fewer boxes needed.\n\nThe search space is `[1, max(quantities)]`. We binary search for the **smallest feasible capacity** where feasibility is determined by simulating the packing process.\n\nThe challenge is the **feasibility check**: for each product, items per box = `min(capacity, floor(maxWeightPerBox / weight[i]), remaining)`. We must simulate packing because the weight constraint creates non-uniform packing patterns—different products may be limited by different constraints."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use **binary search** on the capacity value, with a helper function to count boxes needed.\n\n**Why it works:**\n- If capacity `X` works, then `X+1` also works (monotonic)\n- We want the minimum `X` where `countBoxes(X) ≤ maxBoxes`\n- Binary search finds this boundary in `O(log max(quantities))` iterations\n\n**The feasibility check** (countBoxes):\n- For each product, simulate packing items into boxes\n- Each box holds `min(capacity, floor(maxWeightPerBox / weights[i]), remaining)` items\n- Count total boxes needed across all products"
+    }
+  ],
+  "approach": [
+    "Initialize search bounds: `left = 1`, `right = max(quantities)`",
+    "While `left < right`, compute `mid = (left + right) // 2`",
+    "Count boxes needed with capacity `mid` by simulating packing for each product",
+    "For each product, pack items greedily: `itemsPerBox = min(mid, maxWeightPerBox // weight[i], remaining)`",
+    "If total boxes ≤ maxBoxes, capacity works → try smaller: `right = mid`",
+    "Otherwise, capacity too small → search larger: `left = mid + 1`",
+    "Return `left` when converged"
+  ],
+  "complexity": {
+    "time": "O(n · m · log(max(quantities))) where n = number of products, m = max items per product",
+    "space": "O(1)"
+  },
+  "code": "def minimumShippingCapacity(quantities, weights, maxBoxes, maxWeightPerBox):\n    \"\"\"\n    Find minimum box capacity to ship all products within box limit.\n    \n    Args:\n        quantities: List of item counts per product\n        weights: List of weight per item (kg) for each product\n        maxBoxes: Maximum number of boxes allowed\n        maxWeightPerBox: Maximum weight per box (kg)\n    \n    Returns:\n        Minimum capacity (items per box) needed\n    \"\"\"\n    def countBoxes(capacity):\n        boxes = 0\n        for i in range(len(quantities)):\n            remaining = quantities[i]\n            while remaining > 0:\n                # Items this box = min(capacity limit, weight limit, items left)\n                itemsThisBox = min(\n                    capacity,\n                    maxWeightPerBox // weights[i],\n                    remaining\n                )\n                boxes += 1\n                remaining -= itemsThisBox\n        return boxes\n    \n    # Binary search on capacity\n    left = 1\n    right = max(quantities)\n    \n    while left < right:\n        mid = (left + right) // 2\n        if countBoxes(mid) <= maxBoxes:\n            right = mid  # Capacity works, try smaller\n        else:\n            left = mid + 1  # Capacity too small, search larger\n    \n    return left",
+  "quiz": [
+    {
+      "q": "Why can't we use simple ceiling division `ceil(quantity / capacity)` to count boxes for each product?",
+      "options": [
+        "Because items must be packed in whole numbers only",
+        "Because the weight constraint creates non-uniform packing—different boxes may hold different amounts based on weight limit",
+        "Because products must be packed separately",
+        "Because binary search requires exact simulation"
+      ],
+      "answer": 1,
+      "explain": "The weight constraint means each box might be limited by either capacity OR weight. For a product with heavy items, `floor(maxWeightPerBox / weight[i])` might be less than `capacity`, so different boxes hold different amounts. We must simulate the packing process box-by-box, taking `min(capacity, weightLimit, remaining)` each time."
+    },
+    {
+      "q": "What is the search space for binary search in this problem?",
+      "options": [
+        "[0, sum(quantities)]",
+        "[1, maxBoxes]",
+        "[1, max(quantities)]",
+        "[min(quantities), max(quantities)]"
+      ],
+      "answer": 2,
+      "explain": "The minimum capacity is 1 (smallest possible box). The maximum capacity is `max(quantities)` because a box that holds the largest quantity can ship any single product type in the minimum number of boxes (assuming weight allows). Going beyond `max(quantities)` provides no additional benefit. The answer must lie in `[1, max(quantities)]`."
+    }
+  ]
+}

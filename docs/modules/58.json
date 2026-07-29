@@ -1,0 +1,60 @@
+{
+  "id": 58,
+  "slug": "longest-univalue-path",
+  "title": "Longest Univalue Path",
+  "pattern": "depth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the longest path in a binary tree where all nodes have the same value. Use post-order DFS to calculate same-value arms at each node.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree, find the longest path where all nodes along the path have the same value. This path doesn't have to include the root node, and it can bend at a node to connect that node's left and right subtrees. Return the **number of edges** on that path, not the number of nodes.\n\n**Example 1:** Tree `[1,4,5,4,4,5]` with path `[4,4,4]` returns `2` (two edges).\n\n**Example 2:** Tree `[1,1,1,1,1,1,1]` with path `[1,1,1,1,1]` returns `4` (four edges)."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **post-order DFS** where each recursive call returns the length of the longest same-value arm extending from the current node to its parent. At each node, you can extend a child's arm only if the child's value equals the current node's value. The answer is the maximum sum of left and right arms across all nodes, tracked in a global variable."
+    },
+    {
+      "heading": "Approach",
+      "body": "Each DFS call returns the longest same-value **arm** rooted at the current node (a path that extends upward to the parent). Internally, we:\n\n1. **Base case:** If the node is null, return `0`.\n2. **Recurse** on left and right children to get their arm lengths.\n3. **Extend arms:** Initialize `left_arrow = 0` and `right_arrow = 0`. If `node.left.val == node.val`, set `left_arrow = left_length + 1`. Similarly for the right child.\n4. **Update global max:** The longest univalue path **through** this node is `left_arrow + right_arrow`. Update the global `max_length`.\n5. **Return to parent:** Return `max(left_arrow, right_arrow)` so the parent can extend only one arm.\n6. **Final answer:** After DFS completes, return `max_length`."
+    }
+  ],
+  "approach": [
+    "Define a global variable `max_length = 0` to track the longest univalue path (sum of left and right arms).",
+    "Define a DFS helper that returns the longest same-value arm from the current node upward. Base case: if node is null, return 0.",
+    "Recursively call DFS on left and right children to get `left_length` and `right_length`.",
+    "Initialize `left_arrow = 0` and `right_arrow = 0`. If the left child exists and has the same value as the current node, set `left_arrow = left_length + 1`. Do the same for the right child.",
+    "Update `max_length = max(max_length, left_arrow + right_arrow)` to capture the longest path through the current node.",
+    "Return `max(left_arrow, right_arrow)` to allow the parent to extend only one arm."
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "code": "class Solution:\n    def longestUnivaluePath(self, root):\n        \"\"\"\n        Find the longest path where all nodes have the same value.\n        Returns the number of edges in that path.\n        \n        :param root: TreeNode - root of the binary tree\n        :return: int - number of edges in the longest univalue path\n        \"\"\"\n        max_length = 0\n        \n        def dfs(node):\n            nonlocal max_length\n            if not node:\n                return 0\n            \n            left_length = dfs(node.left)\n            right_length = dfs(node.right)\n            left_arrow = right_arrow = 0\n            \n            # Extend arms only if children have the same value\n            if node.left and node.left.val == node.val:\n                left_arrow = left_length + 1\n            if node.right and node.right.val == node.val:\n                right_arrow = right_length + 1\n            \n            # Update global max with path through current node\n            max_length = max(max_length, left_arrow + right_arrow)\n            \n            # Return longest arm to parent\n            return max(left_arrow, right_arrow)\n        \n        dfs(root)\n        return max_length",
+  "quiz": [
+    {
+      "q": "Why does the DFS function return `max(left_arrow, right_arrow)` instead of `left_arrow + right_arrow`?",
+      "options": [
+        "Because a parent can only extend one child's arm upward to form a valid path, not both",
+        "Because we want to minimize the path length for efficiency",
+        "Because the problem asks for the number of nodes, not edges",
+        "Because combining both arms would create a cycle"
+      ],
+      "answer": 0,
+      "explain": "The return value represents the longest same-value arm that the parent can extend. A parent can only extend one branch (left or right), not both, because a path is linear upward from a node. The sum of both arms is tracked in `max_length` for the final answer."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n log n)",
+        "O(n)",
+        "O(n²)",
+        "O(h)"
+      ],
+      "answer": 1,
+      "explain": "We visit each node exactly once during the post-order DFS traversal, performing constant work at each node. Therefore, the time complexity is O(n), where n is the number of nodes in the tree."
+    }
+  ]
+}
