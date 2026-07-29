@@ -231,7 +231,7 @@ Tell the user the live URL and which modules were added.
 
 ## Ledger — PDFs already converted to modules
 
-**Max module id:** 16
+**Max module id:** 29
 **Last updated:** 2026-07-29
 
 | PDF        | id | slug                                  | pattern        | type / difficulty |
@@ -252,3 +252,16 @@ Tell the user the live URL and which modules were added.
 | 14.pdf     | 14 | variable-length-sliding-window        | sliding-window | lesson            |
 | 15.pdf     | 15 | longest-substring-no-repeat           | sliding-window | problem / medium  |
 | 16.pdf     | 16 | longest-repeating-char-replacement    | sliding-window | problem / medium  |
+| 17.pdf     | 17 | intervals-overview                    | intervals      | lesson            |
+| 18.pdf     | 18 | can-attend-meetings                   | intervals      | problem / easy    |
+| 19.pdf     | 19 | insert-interval                       | intervals      | problem / medium  |
+| 20.pdf     | 20 | non-overlapping-intervals             | intervals      | problem / medium  |
+| 21.pdf     | 21 | merge-intervals                       | intervals      | problem / medium  |
+| 22.pdf     | 22 | employee-free-time                    | intervals      | problem / hard    |
+| 23.pdf     | 23 | stack-overview                        | stack          | lesson            |
+| 24.pdf     | 24 | valid-parentheses                     | stack          | problem / easy    |
+| 25.pdf     | 25 | decode-string                         | stack          | problem / medium  |
+| 26.pdf     | 26 | longest-valid-parentheses             | stack          | problem / hard    |
+| 27.pdf     | 27 | monotonic-stack                       | stack          | lesson            |
+| 28.pdf     | 28 | daily-temperatures                    | stack          | problem / medium  |
+| 29.pdf     | 29 | largest-rectangle-in-histogram        | stack          | problem / hard    |

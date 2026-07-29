@@ -1,0 +1,67 @@
+{
+  "id": 17,
+  "slug": "intervals-overview",
+  "title": "Intervals: Overview",
+  "pattern": "intervals",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Sort intervals by start/end time, then sweep to detect overlaps and merge. Core pattern for meeting scheduling and conflict detection.",
+  "sections": [
+    {
+      "heading": "What Are Interval Problems?",
+      "body": "Intervals are given as `[start, end]` pairs representing time ranges, meeting slots, or continuous segments.\n\nThe core strategy: **sort the intervals** (by start or end time), then **sweep through** them to detect overlaps or merge ranges.\n\nSorting transforms a chaotic unsorted list into a structure where you can compare each interval with just the **previous** one."
+    },
+    {
+      "heading": "Sorting by Start Time",
+      "body": "Most interval problems sort by **start time**. This makes detecting overlaps trivial:\n\n- After sorting, interval `i` overlaps with `i-1` if:\n  ```python\n  intervals[i][0] < intervals[i-1][1]\n  ```\n- Translation: **current starts before previous ends**.\n\nMerging overlapping intervals: set the merged end to `max(prev_end, current_end)`."
+    },
+    {
+      "heading": "Sorting by End Time",
+      "body": "Some problems (e.g., **maximum non-overlapping intervals**) require sorting by **end time**.\n\n**Why?** Greedy strategy: picking intervals that end earliest frees up time to fit more intervals later.\n\nExample: choosing an interval `[5, 18]` blocks many later slots. Choosing `[6, 11]` leaves room for `[17, 22]` and others.\n\nRule: sort by end time when you need to **maximize count** of non-overlapping intervals."
+    },
+    {
+      "heading": "Detecting Overlaps",
+      "body": "Two intervals `a` and `b` overlap if:\n```python\na.start <= b.end and b.start <= a.end\n```\n\nAfter sorting by start time, the check simplifies:\n- Current overlaps with previous if `current[0] < previous[1]`.\n\nIf they overlap, you can **merge** them:\n```python\nprevious[1] = max(previous[1], current[1])\n```"
+    },
+    {
+      "heading": "Recognition Cues",
+      "body": "**Use the intervals pattern when you see:**\n- Problem gives `[start, end]` pairs (meetings, tasks, time ranges)\n- Asked to merge, detect conflicts, or count overlaps\n- Keywords: \"schedule\", \"calendar\", \"free time\", \"non-overlapping\", \"minimum removals\"\n\n**Typical approach:**\n1. Sort intervals (by start or end)\n2. Sweep left-to-right, comparing current vs previous\n3. Merge or count as needed"
+    }
+  ],
+  "approach": [
+    "Problem gives list of `[start, end]` time ranges or intervals",
+    "Asked to merge overlapping intervals or detect conflicts",
+    "Need to find minimum removals to eliminate overlaps",
+    "Scheduling problems: meetings, tasks, or calendars",
+    "Keywords: \"overlapping\", \"merge\", \"free time\", \"non-overlapping\""
+  ],
+  "complexity": {
+    "time": "O(n log n) for sorting, then O(n) sweep",
+    "space": "O(1) or O(n) for merged result"
+  },
+  "code": "def merge_intervals(intervals):\n    if not intervals:\n        return []\n    \n    # Sort by start time\n    intervals.sort(key=lambda x: x[0])\n    merged = [intervals[0]]\n    \n    for current in intervals[1:]:\n        prev = merged[-1]\n        # Check overlap: current starts before prev ends\n        if current[0] <= prev[1]:\n            # Merge: extend prev end to max\n            prev[1] = max(prev[1], current[1])\n        else:\n            # No overlap: add current as new interval\n            merged.append(current)\n    \n    return merged",
+  "quiz": [
+    {
+      "q": "After sorting intervals by start time, how do you detect if the current interval overlaps with the previous one?",
+      "options": [
+        "The two intervals share the same start time",
+        "The current interval's duration is longer than the previous interval's",
+        "The current interval ends after the previous interval starts",
+        "The current interval starts before the previous interval ends"
+      ],
+      "answer": 3,
+      "explain": "After sorting by start time, current overlaps with previous if current[0] < previous[1] — i.e., current starts before previous ends."
+    },
+    {
+      "q": "When should you sort intervals by end time instead of start time?",
+      "options": [
+        "When you need to merge all overlapping intervals",
+        "When you want to maximize the count of non-overlapping intervals",
+        "When detecting if any two intervals overlap",
+        "When the intervals are already sorted by start time"
+      ],
+      "answer": 1,
+      "explain": "Sorting by end time is optimal for greedy selection of maximum non-overlapping intervals. Picking intervals that end earliest frees time for more intervals."
+    }
+  ]
+}

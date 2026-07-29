@@ -10,6 +10,16 @@
       "id": "sliding-window",
       "title": "Sliding Window",
       "blurb": "Maintain a moving window over a sequence to answer subarray/substring questions efficiently."
+    },
+    {
+      "id": "intervals",
+      "title": "Intervals",
+      "blurb": "Sort intervals by start (or end), then sweep once to merge, detect overlaps, or find gaps."
+    },
+    {
+      "id": "stack",
+      "title": "Stack",
+      "blurb": "Use LIFO order for matching/nesting and 'process most recent first' — including monotonic stacks."
     }
   ],
   "modules": [
@@ -156,6 +166,123 @@
       "type": "problem",
       "difficulty": "medium",
       "summary": "Find the longest substring of identical letters after replacing at most k characters in a string of uppercase English letters."
+    },
+    {
+      "id": 17,
+      "slug": "intervals-overview",
+      "title": "Intervals: Overview",
+      "pattern": "intervals",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Sort intervals by start/end time, then sweep to detect overlaps and merge. Core pattern for meeting scheduling and conflict detection."
+    },
+    {
+      "id": 18,
+      "slug": "can-attend-meetings",
+      "title": "Can Attend Meetings",
+      "pattern": "intervals",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Check if a person can attend all meetings without conflicts by detecting overlapping intervals."
+    },
+    {
+      "id": 19,
+      "slug": "insert-interval",
+      "title": "Insert Interval",
+      "pattern": "intervals",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Insert a new interval into a sorted list of non-overlapping intervals, merging any overlaps including touching intervals."
+    },
+    {
+      "id": 20,
+      "slug": "non-overlapping-intervals",
+      "title": "Non-Overlapping Intervals",
+      "pattern": "intervals",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the minimum number of intervals to remove so remaining intervals don't overlap using greedy end-time sorting."
+    },
+    {
+      "id": 21,
+      "slug": "merge-intervals",
+      "title": "Merge Intervals",
+      "pattern": "intervals",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Consolidate overlapping intervals by sorting by start time, then merging intervals that share any common time into single ranges."
+    },
+    {
+      "id": 22,
+      "slug": "employee-free-time",
+      "title": "Employee Free Time",
+      "pattern": "intervals",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Find common free-time intervals across all employees by merging busy intervals and identifying gaps."
+    },
+    {
+      "id": 23,
+      "slug": "stack-overview",
+      "title": "Stack: Overview",
+      "pattern": "stack",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "LIFO data structure for managing nested sequences, undo operations, and processing most recent items first."
+    },
+    {
+      "id": 24,
+      "slug": "valid-parentheses",
+      "title": "Valid Parentheses",
+      "pattern": "stack",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Check if brackets are properly nested using a stack to match opening and closing pairs in correct LIFO order."
+    },
+    {
+      "id": 25,
+      "slug": "decode-string",
+      "title": "Decode String",
+      "pattern": "stack",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Decode an encoded string where k[encoded_string] means repeat the string k times. Brackets can be nested."
+    },
+    {
+      "id": 26,
+      "slug": "longest-valid-parentheses",
+      "title": "Longest Valid Parentheses",
+      "pattern": "stack",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Find the length of the longest well-formed parentheses substring using a stack to track unmatched indices."
+    },
+    {
+      "id": 27,
+      "slug": "monotonic-stack",
+      "title": "Monotonic Stack",
+      "pattern": "stack",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "A stack variant that maintains elements in sorted order to efficiently find next greater/smaller elements in O(n) time."
+    },
+    {
+      "id": 28,
+      "slug": "daily-temperatures",
+      "title": "Daily Temperatures",
+      "pattern": "stack",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the number of days to wait for a warmer temperature after each day using a monotonic decreasing stack of indices."
+    },
+    {
+      "id": 29,
+      "slug": "largest-rectangle-in-histogram",
+      "title": "Largest Rectangle in Histogram",
+      "pattern": "stack",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Find the largest rectangular area in a histogram using a monotonically increasing stack to track bar indices in O(n) time."
     }
   ]
 }

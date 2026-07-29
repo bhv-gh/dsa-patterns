@@ -1,0 +1,60 @@
+{
+  "id": 20,
+  "slug": "non-overlapping-intervals",
+  "title": "Non-Overlapping Intervals",
+  "pattern": "intervals",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the minimum number of intervals to remove so remaining intervals don't overlap using greedy end-time sorting.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array of intervals where `intervals[i] = [start_i, end_i]`, return the **minimum number of intervals** you need to remove to make the rest non-overlapping.\n\nIntervals that touch at endpoints are **not** considered overlapping (e.g., `[2,5]` and `[5,7]` don't overlap).\n\n**Example:**\n```\nInput: [[1,3],[5,8],[4,10],[11,13]]\nOutput: 1\nExplanation: Remove [4,10] to make all remaining intervals non-overlapping.\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The problem reduces to finding the **maximum number of non-overlapping intervals**. Once we know that, subtract it from the total to get removals needed.\n\nThe greedy strategy: **sort by end time** and always keep the interval that ends earliest. This frees up the most time for future intervals, maximizing how many we can keep.\n\nWhy sort by end, not start? Choosing intervals that finish early leaves more room for later intervals. An interval starting early but ending late blocks more future options than one ending early."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Handle edge case:** If the array is empty, return 0.\n\n2. **Sort intervals by end time** using `intervals.sort(key=lambda x: x[1])`.\n\n3. **Initialize tracking variables:**\n   - `end` = end time of the first interval (the last kept interval)\n   - `count` = 1 (we keep the first interval)\n\n4. **Iterate through remaining intervals** (starting from index 1):\n   - If current interval's start >= `end`, it doesn't overlap\n     - Increment `count` (we keep this interval)\n     - Update `end` to current interval's end\n   - Otherwise, skip it (it overlaps, so we'd need to remove it)\n\n5. **Return total intervals - count** to get the number of removals.\n\n6. **Why this works:** By always choosing intervals that end earliest, we greedily maximize the number of non-overlapping intervals we can keep."
+    }
+  ],
+  "approach": [
+    "Sort intervals by their end time to enable greedy selection",
+    "Initialize end tracker with first interval's end and count = 1",
+    "Iterate through sorted intervals starting from index 1",
+    "For each interval, check if start >= end (non-overlapping)",
+    "If non-overlapping, increment count and update end to current interval's end",
+    "Return total intervals minus count to get minimum removals needed"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(1)"
+  },
+  "code": "def nonOverlappingIntervals(intervals):\n    \"\"\"\n    Return minimum number of intervals to remove for non-overlapping remainder.\n    \n    Args:\n        intervals: List of [start, end] interval pairs\n        \n    Returns:\n        Minimum number of intervals to remove\n        \n    Example:\n        >>> nonOverlappingIntervals([[1,3],[5,8],[4,10],[11,13]])\n        1\n    \"\"\"\n    if not intervals:\n        return 0\n    \n    # Sort by end time for greedy selection\n    intervals.sort(key=lambda x: x[1])\n    \n    # Track end of last kept interval and count of kept intervals\n    end = intervals[0][1]\n    count = 1\n    \n    for i in range(1, len(intervals)):\n        # Non-overlapping interval found\n        if intervals[i][0] >= end:\n            end = intervals[i][1]\n            count += 1\n    \n    # Return number of intervals to remove\n    return len(intervals) - count",
+  "quiz": [
+    {
+      "q": "Why do we sort intervals by END time rather than START time?",
+      "options": [
+        "Sorting by start time is O(n²) while sorting by end time is O(n log n)",
+        "Intervals ending earliest free up the most time for future intervals, maximizing how many we can keep",
+        "End times are always smaller than start times, making the sort faster",
+        "Sorting by end time automatically handles the edge case of empty arrays"
+      ],
+      "answer": 1,
+      "explain": "The greedy insight is that keeping intervals that end earliest leaves the maximum amount of time available for selecting future intervals. An interval that starts early but ends late blocks more opportunities than one ending early. Sorting by start time would not guarantee an optimal solution."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n) because we iterate through the intervals once",
+        "O(n²) because we compare each interval with every other interval",
+        "O(n log n) because sorting dominates the linear iteration",
+        "O(1) because we only use constant extra space"
+      ],
+      "answer": 2,
+      "explain": "The dominant operation is sorting the intervals by end time, which takes O(n log n). The subsequent iteration through the sorted intervals is O(n), but O(n log n) + O(n) = O(n log n) overall. Space complexity is O(1) if we ignore the sorting space, but time is determined by the sort."
+    }
+  ]
+}

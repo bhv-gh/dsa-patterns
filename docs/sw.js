@@ -1,5 +1,5 @@
 /* Service worker — precache app shell + all module data for full offline use. */
-const CACHE = 'dsa-patterns-v5';
+const CACHE = 'dsa-patterns-v6';
 
 const SHELL = [
   './',
@@ -14,8 +14,8 @@ const SHELL = [
   './anim/_framework.js',
 ];
 
-// module data files 1..16
-const MODULES = Array.from({ length: 16 }, (_, i) => `./modules/${i + 1}.json`);
+// module data files 1..29
+const MODULES = Array.from({ length: 29 }, (_, i) => `./modules/${i + 1}.json`);
 
 // per-module animation scripts (slug-based)
 const ANIM = [
@@ -24,6 +24,12 @@ const ANIM = [
   'fixed-length-sliding-window', 'max-sum-subarrays-size-k', 'max-points-from-cards',
   'max-sum-distinct-subarrays-k', 'variable-length-sliding-window',
   'longest-substring-no-repeat', 'longest-repeating-char-replacement',
+  // intervals
+  'intervals-overview', 'can-attend-meetings', 'insert-interval',
+  'non-overlapping-intervals', 'merge-intervals', 'employee-free-time',
+  // stack
+  'stack-overview', 'valid-parentheses', 'decode-string', 'longest-valid-parentheses',
+  'monotonic-stack', 'daily-temperatures', 'largest-rectangle-in-histogram',
 ].map((slug) => `./anim/${slug}.js`);
 
 const PRECACHE = SHELL.concat(MODULES, ANIM);

@@ -1,0 +1,63 @@
+{
+  "id": 23,
+  "slug": "stack-overview",
+  "title": "Stack: Overview",
+  "pattern": "stack",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "LIFO data structure for managing nested sequences, undo operations, and processing most recent items first.",
+  "sections": [
+    {
+      "heading": "Fundamentals",
+      "body": "A **stack** is a collection of elements that follows the **Last-In, First-Out (LIFO)** principle: the last element added is the first one to be removed.\n\nElements are **pushed** onto the stack and **popped** from the stack. Both operations take **O(1)** time.\n\nVisualize a stack as a vertical column where all operations happen at the top."
+    },
+    {
+      "heading": "Using an Array as a Stack",
+      "body": "Arrays are commonly used to implement stacks, with the end of the array acting as the top of the stack.\n\nIn Python, use `append()` to push and `pop()` to pop elements:\n\n```python\nstack = []\nstack.append(9)  # Push 9\nstack.append(8)  # Push 8\nstack.pop()      # Pop 8\nstack.append(7)  # Push 7\n```"
+    },
+    {
+      "heading": "Nested Sequences",
+      "body": "Stacks excel at managing **nested sequences** because the order in which we must process them matches the LIFO order of the stack.\n\n**Example: Valid Parentheses**\n\nGiven a string with brackets `(){}[]`, determine if every opening bracket has a matching closing bracket in the correct order.\n\n- Valid: `\"(){({})}\"`\n- Invalid: `\"(){({}})\"` (mismatched order)\n\nThe most recently opened bracket must be the first to close—a natural fit for a stack."
+    },
+    {
+      "heading": "Classic Use Cases",
+      "body": "Stacks are ideal for:\n\n- **Matching/nesting validation**: Parentheses, brackets, tags\n- **Undo operations**: Track actions in reverse order\n- **Process most recent first**: Function call stacks, backtracking, expression evaluation"
+    }
+  ],
+  "approach": [
+    "Problem involves matching or nesting (parentheses, brackets, tags)",
+    "Need to process items in reverse order of arrival",
+    "Most recently added element must be accessed first",
+    "Undo/backtracking behavior required",
+    "LIFO order naturally fits the problem structure"
+  ],
+  "complexity": {
+    "time": "O(n) for processing n elements with O(1) push/pop",
+    "space": "O(n) for storing up to n elements"
+  },
+  "code": "# Stack implementation using Python list\n\ndef stack_template():\n    stack = []\n    \n    # Push element onto stack\n    stack.append(element)\n    \n    # Check if stack is not empty\n    if stack:\n        # Peek at top element\n        top = stack[-1]\n        \n        # Pop element from stack\n        popped = stack.pop()\n    \n    # Check if stack is empty\n    if not stack:\n        # Stack is empty\n        pass\n    \n    return stack\n\n# Example: Valid Parentheses\ndef isValid(s):\n    stack = []\n    mapping = {\")\": \"(\", \"}\": \"{\", \"]\": \"[\"}\n    \n    for char in s:\n        if char in mapping:\n            # Closing bracket\n            if not stack or stack[-1] != mapping[char]:\n                return False\n            stack.pop()\n        else:\n            # Opening bracket\n            stack.append(char)\n    \n    return len(stack) == 0",
+  "quiz": [
+    {
+      "q": "What is the time complexity of push and pop operations on a stack?",
+      "options": [
+        "O(1) for both operations",
+        "O(n) for push, O(1) for pop",
+        "O(1) for push, O(n) for pop",
+        "O(log n) for both operations"
+      ],
+      "answer": 0,
+      "explain": "Both push and pop operations on a stack take O(1) constant time because they only modify the top of the stack."
+    },
+    {
+      "q": "Why are stacks particularly well-suited for validating nested parentheses?",
+      "options": [
+        "Stacks can store unlimited elements",
+        "The LIFO property matches the requirement that the most recent opening bracket must close first",
+        "Stacks provide O(1) search for matching brackets",
+        "Stacks automatically sort the brackets"
+      ],
+      "answer": 1,
+      "explain": "The Last-In, First-Out property of stacks perfectly matches nested structures where the most recently opened bracket must be closed before any earlier brackets."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": 24,
+  "slug": "valid-parentheses",
+  "title": "Valid Parentheses",
+  "pattern": "stack",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Check if brackets are properly nested using a stack to match opening and closing pairs in correct LIFO order.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an input string `s` consisting solely of the characters `(`, `)`, `{`, `}`, `[` and `]`, determine whether `s` is a valid string. A string is considered valid if every opening bracket is closed by a matching type of bracket and in the correct order, and every closing bracket has a corresponding opening bracket of the same type.\n\n**Example 1:**\n- Input: `s = \"(){({})}\"`\n- Output: `True`\n\n**Example 2:**\n- Input: `s = \"(){({}}\"`\n- Output: `False`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The input string can contain nested brackets which must adhere to a Last-In, First-Out ordering (i.e. if our input string is `{[`, then the closing `]` must come before the closing `}`). This LIFO property makes a stack the natural data structure for this problem.\n\nYou might wonder if we can avoid the stack and just count brackets. We can't — counting only tells us that the number of opens and closes match, not that they're properly nested. For example, `([)]` has equal opens and closes, but the brackets interleave instead of nesting. Only a stack can catch that, which is why this problem requires O(n) space."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Create an empty stack and a mapping dictionary that maps each closing bracket to its corresponding opening bracket.\n2. Iterate through each character in the string.\n3. If the character is a closing bracket, check if the stack is empty or if the top of the stack doesn't match the corresponding opening bracket. If either condition is true, return `False`.\n4. If it's a closing bracket and matches, pop from the stack.\n5. If the character is an opening bracket, push it onto the stack.\n6. After iteration, return `True` if the stack is empty, `False` otherwise."
+    }
+  ],
+  "approach": [
+    "Create an empty stack and a mapping dictionary that maps each closing bracket to its corresponding opening bracket (`{')': '(', '}': '{', ']': '['}`).",
+    "Iterate through each character in the string.",
+    "If the character is a closing bracket, check if the stack is empty or if the top doesn't match the corresponding opening bracket. If so, return `False`. Otherwise, pop from the stack.",
+    "If the character is an opening bracket, push it onto the stack.",
+    "After iteration completes, return `True` if the stack is empty, `False` otherwise."
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def isValid(s):\n    \"\"\"\n    Determine if a string of brackets is valid.\n    \n    A string is valid if every opening bracket is closed by a matching\n    type of bracket in the correct order.\n    \n    Args:\n        s: String containing only '(', ')', '{', '}', '[', ']'\n    \n    Returns:\n        True if the string is valid, False otherwise\n    \"\"\"\n    stack = []\n    mapping = {\")\": \"(\", \"}\": \"{\", \"]\": \"[\"}\n    \n    for char in s:\n        if char in mapping:\n            if not stack or stack[-1] != mapping[char]:\n                return False\n            stack.pop()\n        else:\n            stack.append(char)\n    \n    return len(stack) == 0",
+  "quiz": [
+    {
+      "q": "Why can't we simply count the number of opening and closing brackets to determine validity?",
+      "options": [
+        "Counting would be too slow and exceed O(n) time complexity",
+        "Counting only verifies equal quantities but doesn't ensure proper nesting order",
+        "We need to track the specific types of brackets, not just their count",
+        "Python dictionaries don't support efficient counting operations"
+      ],
+      "answer": 1,
+      "explain": "Counting only tells us that the number of opens and closes match, but not that they're properly nested. For example, `([)]` has equal opens and closes, but the brackets interleave instead of nesting. A stack is required to verify LIFO ordering."
+    },
+    {
+      "q": "What should the algorithm return if the stack is not empty after processing all characters?",
+      "options": [
+        "True, because all closing brackets were matched",
+        "True, only if the stack contains opening brackets",
+        "False, because there are unmatched opening brackets",
+        "It should pop remaining elements and then return True"
+      ],
+      "answer": 2,
+      "explain": "If the stack is not empty after processing all characters, it means there are opening brackets that were never closed. The string is only valid if every opening bracket has a matching closing bracket, so we must return False."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": 22,
+  "slug": "employee-free-time",
+  "title": "Employee Free Time",
+  "pattern": "intervals",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Find common free-time intervals across all employees by merging busy intervals and identifying gaps.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a list of employee schedules where each employee's schedule is a list of non-overlapping intervals sorted by start time, find all common free time intervals when all employees are available. Return the intervals in sorted order.\n\n**Example:**\n- Input: `[[[2,4],[7,10]],[[1,5]],[[6,9]]]`\n- Output: `[[5,6]]`\n- Explanation: The three employees collectively have only one common free time interval from 5 to 6.\n\n**Important:** Only consider gaps between busy intervals as free time. Do not include time before the earliest busy interval or after the latest busy interval."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This problem builds upon interval merging. The key insight is that common free time corresponds to the **gaps between merged busy intervals**. By flattening all employee schedules into a single list, sorting by start time, and merging overlapping intervals, the free times become the gaps between consecutive merged intervals."
+    },
+    {
+      "heading": "Approach",
+      "body": "**1. Flatten all intervals:** Combine all employee schedules into a single list of intervals.\n\n**2. Sort by start time:** Sort the flattened list by the start time of each interval to prepare for merging.\n\n**3. Merge overlapping intervals:** Iterate through the sorted intervals and merge any that overlap or touch. If the current interval's start is less than or equal to the last merged interval's end, extend the merged interval. Otherwise, add the current interval as a new merged interval.\n\n**4. Find gaps:** Iterate through the merged intervals and create free-time intervals from the end of one interval to the start of the next.\n\n**5. Return free times:** Return the list of gap intervals representing common free time."
+    }
+  ],
+  "approach": [
+    "Flatten all employee schedules into a single list of intervals",
+    "Sort the flattened intervals by start time",
+    "Merge overlapping or touching intervals by comparing each interval's start with the previous merged interval's end",
+    "Identify gaps between consecutive merged intervals as free time",
+    "Return the list of free-time intervals"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "code": "def employeeFreeTime(schedule):\n    \"\"\"\n    Find common free time intervals for all employees.\n    \n    Args:\n        schedule: List of employee schedules, where each schedule is a list of\n                  [start, end] intervals sorted by start time.\n    \n    Returns:\n        List of [start, end] intervals representing common free time, sorted by start time.\n    \"\"\"\n    # Flatten all intervals into a single list\n    flattened = [interval for employee in schedule for interval in employee]\n    \n    # Sort intervals by start time\n    intervals = sorted(flattened, key=lambda x: x[0])\n    \n    # Merge overlapping intervals\n    merged = []\n    for interval in intervals:\n        if not merged or merged[-1][1] < interval[0]:\n            merged.append(interval)\n        else:\n            merged[-1][1] = max(merged[-1][1], interval[1])\n    \n    # Find gaps between merged intervals\n    free_times = []\n    for i in range(1, len(merged)):\n        start = merged[i - 1][1]\n        end = merged[i][0]\n        free_times.append([start, end])\n    \n    return free_times",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n³)",
+        "O(n log n)",
+        "O(n²)",
+        "O(4ⁿ)"
+      ],
+      "answer": 1,
+      "explain": "The dominant operation is sorting the flattened intervals, which takes O(n log n) time where n is the total number of intervals across all employees. Flattening, merging, and finding gaps are all O(n) operations."
+    },
+    {
+      "q": "Why do we not consider time before the earliest busy interval or after the latest busy interval as free time?",
+      "options": [
+        "Because the problem requires all returned intervals to have non-zero length",
+        "Because we only have information about scheduled busy intervals within a working timeframe",
+        "Because it would increase the time complexity to O(n²)",
+        "Because those times are already counted in the merged intervals"
+      ],
+      "answer": 1,
+      "explain": "We only consider gaps between busy intervals as free time because the problem asks for common free time when all employees are available, and we are only given their scheduled busy intervals within a certain working timeframe. Time outside these bounds is not part of the defined schedule."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": 28,
+  "slug": "daily-temperatures",
+  "title": "Daily Temperatures",
+  "pattern": "stack",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the number of days to wait for a warmer temperature after each day using a monotonic decreasing stack of indices.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `temps` representing daily temperatures, write a function to calculate the number of days one has to wait for a warmer temperature after each given day. The function should return an array `answer` where `answer[i]` represents the wait time for a warmer day after the i-th day. If no warmer day is expected in the future, set `answer[i]` to 0.\n\n**Example:**\n- Input: `[73, 74, 75, 71, 69, 72, 76, 73]`\n- Output: `[1, 1, 4, 2, 1, 1, 0, 0]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **monotonically decreasing stack** to store indices of temperatures that are waiting for a higher temperature. The stack maintains indices where the temperature values decrease from bottom to top. When we encounter a temperature greater than the temperature at the stack's top index, we've found the next warmer day for that index (and potentially multiple indices below it). This reduces time complexity from O(n²) brute-force to O(n)."
+    },
+    {
+      "heading": "Approach",
+      "body": "The monotonic decreasing stack efficiently finds the next greatest temperature by:\n\n1. **Pushing to stack:** If the current temperature is less than or equal to the temperature at the top index in the stack (or the stack is empty), push the current index onto the stack.\n\n2. **Popping from stack:** When the current temperature is greater than the temperature at the top index, we've found the next warmer day. Pop the index, calculate the wait time as `current_index - popped_index`, and store it in the result array.\n\n3. **Multiple pops:** Because the stack is monotonically decreasing, the current temperature might be the answer for multiple indices. Continue popping while the current temperature is greater than the temperature at the stack's top.\n\n**Why this is efficient:** The monotonic property means we only compare with the stack top. If the current temperature is not greater than the top, it cannot be greater than any element below (avoiding unnecessary comparisons)."
+    }
+  ],
+  "approach": [
+    "Initialize an empty stack (to store indices) and a result array filled with zeros",
+    "Iterate through each index in the temperatures array",
+    "While the stack is not empty and the current temperature is greater than the temperature at the stack's top index: pop the index, calculate wait time as (current index - popped index), and store in result[popped index]",
+    "Push the current index onto the stack",
+    "After iterating through all temperatures, return the result array"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def dailyTemperatures(temps):\n    \"\"\"\n    Calculate the number of days to wait for a warmer temperature.\n    \n    Args:\n        temps: List[int] - daily temperatures\n    \n    Returns:\n        List[int] - wait days for each temperature\n    \"\"\"\n    n = len(temps)\n    result = [0] * n\n    stack = []  # Stack stores indices\n    \n    for i in range(n):\n        # Pop indices while current temp is greater\n        while stack and temps[i] > temps[stack[-1]]:\n            idx = stack.pop()\n            result[idx] = i - idx\n        \n        # Push current index to stack\n        stack.append(i)\n    \n    return result",
+  "quiz": [
+    {
+      "q": "What does the stack store in this solution?",
+      "options": [
+        "Temperature values in decreasing order",
+        "Indices of temperatures waiting for a warmer day",
+        "The differences between consecutive temperatures",
+        "The result array values"
+      ],
+      "answer": 1,
+      "explain": "The stack stores indices (not values) of temperatures that haven't yet found a warmer day. When we find a warmer temperature, we pop the index and calculate the wait time as current_index - popped_index."
+    },
+    {
+      "q": "Why is the time complexity O(n) and not O(n²) despite the nested while loop?",
+      "options": [
+        "The while loop only runs once per iteration",
+        "Each index is pushed and popped at most once throughout the entire algorithm",
+        "The stack never contains more than one element",
+        "We skip comparisons using binary search"
+      ],
+      "answer": 1,
+      "explain": "Although there's a nested while loop, each element is pushed onto the stack exactly once and popped at most once. This means the total number of push and pop operations across all iterations is at most 2n, resulting in O(n) time complexity."
+    }
+  ]
+}

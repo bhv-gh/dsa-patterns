@@ -1,0 +1,72 @@
+{
+  "id": 26,
+  "slug": "longest-valid-parentheses",
+  "title": "Longest Valid Parentheses",
+  "pattern": "stack",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Find the length of the longest well-formed parentheses substring using a stack to track unmatched indices.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string containing just the characters `'('` and `')'`, find the length of the longest valid (well-formed) parentheses substring.\n\nA well-formed parentheses string follows the rule that open brackets must be closed by a matching pair in the correct order.\n\n**Examples:**\n- `\"(()\"` → 2 (the substring `\"()\"` has length 2)\n- `\")()())\"` → 4 (the substring `\"()()\"` has length 4)\n- `\"((()()())\"` → 8 (the substring `\"(()()())\"` has length 8)\n- `\"\"` → 0"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Each closing parenthesis `')'` has the potential to complete a valid substring. By maintaining a stack of indices, we can track:\n\n1. The index of the last **unmatched** opening parenthesis `'('`\n2. The **start** of the current valid substring (initialized to `-1` as a sentinel)\n\nWhen we encounter a `')'`, we pop from the stack. If the stack is not empty after popping, the top element tells us where the current valid substring began, allowing us to calculate its length as `current_index - stack.top()`. If the stack becomes empty, it means the `')'` is unmatched, so we push its index as the new start marker."
+    },
+    {
+      "heading": "Approach",
+      "body": "The stack-based algorithm processes each character once:\n\n1. **Initialize** a stack with `-1` as a base marker (represents the start of a valid substring)\n2. **For each character** in the string:\n   - If it's `'('`: push its index onto the stack (potential opening to be matched)\n   - If it's `')'`:\n     - **Pop** the top of the stack (this `')'` attempts to close a substring)\n     - **Check if stack is empty** after popping:\n       - If **empty**: this `')'` is unmatched → push its index as the new start marker\n       - If **not empty**: calculate the valid substring length as `i - stack[-1]` and update the maximum length\n3. **Return** the maximum length found"
+    }
+  ],
+  "approach": [
+    "Initialize a stack with -1 as the base marker and set max_len to 0",
+    "Iterate through each character with its index",
+    "If the character is '(', push its index onto the stack",
+    "If the character is ')', pop from the stack",
+    "After popping, if the stack is empty, push the current index as the new start marker",
+    "If the stack is not empty, calculate the length as current_index - stack[-1] and update max_len",
+    "Return max_len as the final answer"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def longest_valid_parentheses(s):\n    \"\"\"\n    Find the length of the longest valid parentheses substring.\n    \n    Args:\n        s: String containing only '(' and ')' characters\n        \n    Returns:\n        Integer length of the longest valid substring\n        \n    Examples:\n        >>> longest_valid_parentheses(\"(()\")\n        2\n        >>> longest_valid_parentheses(\")()())\")\n        4\n        >>> longest_valid_parentheses(\"((()()())\")\n        8\n    \"\"\"\n    max_len = 0\n    stack = [-1]\n    \n    for i, char in enumerate(s):\n        if char == '(':\n            stack.append(i)\n        else:\n            stack.pop()\n            if not stack:\n                stack.append(i)\n            else:\n                max_len = max(max_len, i - stack[-1])\n    \n    return max_len",
+  "quiz": [
+    {
+      "q": "Why do we initialize the stack with -1 instead of starting with an empty stack?",
+      "options": [
+        "The -1 acts as a base marker so that when we find the first valid pair starting from index 0, the calculation i - stack[-1] correctly gives us the length",
+        "We use -1 to mark the end of the string for boundary checking",
+        "Python requires non-empty stacks for the pop() operation to work",
+        "The -1 represents the maximum possible value of invalid parentheses"
+      ],
+      "answer": 0,
+      "explain": "The -1 sentinel value serves as a reference point before index 0. When a valid substring starts from the beginning of the string, calculating i - (-1) gives us the correct length. Without it, we'd need special logic to handle valid substrings that start at index 0."
+    },
+    {
+      "q": "What does it mean when the stack becomes empty after popping a closing parenthesis?",
+      "options": [
+        "We have found a complete valid substring spanning the entire string",
+        "The closing parenthesis is unmatched and we need to mark it as a new start point",
+        "We need to reset the maximum length counter to zero",
+        "The algorithm has finished processing the string"
+      ],
+      "answer": 1,
+      "explain": "When the stack is empty after popping, it means the current ')' has no matching '(' and cannot be part of a valid substring. We push its index onto the stack to mark it as the boundary for future valid substrings—any valid substring found later will be measured from this point."
+    },
+    {
+      "q": "In the string \"(())\", when we process the final ')' at index 3, what is on top of the stack and what length do we calculate?",
+      "options": [
+        "Stack top is 0, length = 3 - 0 = 3",
+        "Stack top is -1, length = 3 - (-1) = 4",
+        "Stack top is 1, length = 3 - 1 = 2",
+        "Stack is empty, so we push index 3"
+      ],
+      "answer": 1,
+      "explain": "When we reach index 3, the stack contains [-1, 0]. We pop index 0 (matched by the ')' at index 3), leaving [-1] on the stack. Since the stack is not empty, we calculate 3 - (-1) = 4, which is the length of the entire valid substring."
+    }
+  ]
+}

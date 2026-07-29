@@ -1,0 +1,72 @@
+{
+  "id": 29,
+  "slug": "largest-rectangle-in-histogram",
+  "title": "Largest Rectangle in Histogram",
+  "pattern": "stack",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Find the largest rectangular area in a histogram using a monotonically increasing stack to track bar indices in O(n) time.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `heights` representing the heights of histogram bars (each with width 1), find the largest rectangular area possible in the histogram.\n\n**Example:**\n- Input: `heights = [2,8,5,6,2,3]`\n- Output: `15`\n- Explanation: The largest rectangle has height 5 and spans from index 0 to index 3 (excluding the bar at index 0), giving area 5 × 3 = 15."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "To calculate the largest rectangle containing each bar, we need the indices of the first shorter bar to both the left and right. A **monotonically increasing stack** allows us to find these boundaries in O(n) time.\n\nWhen we encounter a bar shorter than the stack top:\n- The current index `i` is the **right boundary** (first shorter bar to the right)\n- The index below the popped element is the **left boundary** (first shorter bar to the left)\n- Width = `right - left - 1`, Height = `heights[popped_index]`\n\nThis avoids the O(n²) brute-force approach of scanning left and right for each bar."
+    },
+    {
+      "heading": "Approach",
+      "body": "The algorithm uses a stack to maintain indices of bars in increasing height order:\n\n1. **Initialize**: Create an empty stack and variables for `max_area` and pointer `i`\n2. **Iterate** through the array:\n   - If the stack is empty or `heights[i] >= heights[stack[-1]]`, push `i` and increment `i`\n   - Otherwise, pop the stack top and calculate area:\n     - `right = i - 1` (current bar is the right boundary)\n     - `left = stack[-1]` if stack is non-empty, else `-1`\n     - `area = heights[popped] × (right - left)`\n     - Update `max_area` if this area is larger\n   - Don't increment `i` after popping (the current bar may bound other stack elements)\n3. **Empty the stack**: After iterating, process remaining indices using the array end as the right boundary\n4. **Return** the maximum area found"
+    }
+  ],
+  "approach": [
+    "Initialize an empty stack to store indices, set max_area = 0, and pointer i = 0",
+    "While i < len(heights): if stack is empty or heights[i] >= heights[stack[-1]], push i to stack and increment i",
+    "If heights[i] < heights[stack[-1]], pop the top index and calculate area: right = i - 1, left = stack[-1] (or -1 if empty), area = heights[popped] × (right - left)",
+    "Update max_area if the calculated area is larger, but don't increment i (current bar may bound other elements)",
+    "After the main loop, empty the remaining stack: for each popped index, calculate width = i - stack[-1] - 1 (or i if stack empty)",
+    "Compute area = heights[popped] × width and update max_area",
+    "Return max_area"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def largest_rectangle_area(heights):\n    \"\"\"\n    Find the largest rectangular area in a histogram.\n    \n    Args:\n        heights: List[int] - heights of histogram bars (width 1 each)\n    \n    Returns:\n        int - maximum rectangular area\n    \n    Example:\n        >>> largest_rectangle_area([2, 1, 5, 6, 2, 3])\n        10\n        >>> largest_rectangle_area([2, 8, 5, 6, 2, 3])\n        15\n    \"\"\"\n    stack = []\n    max_area = 0\n    i = 0\n    \n    while i < len(heights):\n        if not stack or heights[i] >= heights[stack[-1]]:\n            stack.append(i)\n            i += 1\n        else:\n            top = stack.pop()\n            right = i - 1\n            left = stack[-1] if stack else -1\n            area = heights[top] * (right - left)\n            max_area = max(max_area, area)\n    \n    while stack:\n        top = stack.pop()\n        width = i - stack[-1] - 1 if stack else i\n        area = heights[top] * width\n        max_area = max(max_area, area)\n    \n    return max_area",
+  "quiz": [
+    {
+      "q": "After popping index `top` from the stack when heights[i] < heights[stack[-1]], how is the width of the rectangle calculated?",
+      "options": [
+        "width = i - top",
+        "width = (i - 1) - (stack[-1] if stack else -1)",
+        "width = i - stack[-1] - 1",
+        "width = top - stack[-1]"
+      ],
+      "answer": 1,
+      "explain": "The right boundary is i - 1 (the last bar >= heights[top]), and the left boundary is stack[-1] (or -1 if empty). Width = right - left = (i - 1) - (stack[-1] if stack else -1)."
+    },
+    {
+      "q": "Why don't we increment `i` after popping an element from the stack?",
+      "options": [
+        "To avoid skipping elements in the heights array",
+        "Because the current bar at index i may also be the right boundary for other elements still on the stack",
+        "To ensure the stack remains monotonically increasing",
+        "Because we need to push i back onto the stack immediately"
+      ],
+      "answer": 1,
+      "explain": "After popping, the new stack top might also be taller than heights[i], so i could be the right boundary for multiple bars. We keep i fixed until we can push it (when heights[i] >= heights[stack[-1]])."
+    },
+    {
+      "q": "What is the purpose of the second while loop that empties the remaining stack?",
+      "options": [
+        "To handle bars that never found a shorter bar to their right",
+        "To reverse the order of elements for final processing",
+        "To validate that all bars were processed correctly",
+        "To reset the stack for the next test case"
+      ],
+      "answer": 0,
+      "explain": "Bars remaining on the stack after the main loop haven't encountered a shorter bar to their right. We treat the end of the array (index i) as their right boundary and calculate their areas accordingly."
+    }
+  ]
+}

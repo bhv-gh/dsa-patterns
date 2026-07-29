@@ -1,0 +1,68 @@
+{
+  "id": 27,
+  "slug": "monotonic-stack",
+  "title": "Monotonic Stack",
+  "pattern": "stack",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "A stack variant that maintains elements in sorted order to efficiently find next greater/smaller elements in O(n) time.",
+  "sections": [
+    {
+      "heading": "What is a Monotonic Stack?",
+      "body": "A **monotonic stack** is a special type of stack in which all elements are sorted in either **descending** or **ascending** order. The ordering can be:\n\n- **Strict**: no duplicates allowed\n- **Non-strict**: duplicates allowed (most common in practice)\n\nMonotonic stacks are used to solve problems that require finding the **next greater** or **next smaller** element in an array. The key insight is that by maintaining the monotonic property, we can answer these queries efficiently in O(n) time instead of O(n²)."
+    },
+    {
+      "heading": "The Invariant: Maintaining Monotonicity",
+      "body": "The core operation is maintaining the monotonic property when pushing a new element:\n\n1. **Before pushing** a new index `i` onto the stack, **pop all elements** that violate the monotonic property with `nums[i]`\n2. For a **decreasing stack** (next greater): pop while `nums[i] > nums[stack[-1]]`\n3. For an **increasing stack** (next smaller): pop while `nums[i] < nums[stack[-1]]`\n\nEach popped index has found its answer—the current element `nums[i]` is its next greater/smaller element. After popping, push `i` onto the stack to continue processing."
+    },
+    {
+      "heading": "Why O(n) Time Complexity?",
+      "body": "At first glance, the nested `while` loop inside the `for` loop looks like O(n²), but it's actually **O(n)** amortized:\n\n- Each index is pushed onto the stack **exactly once**\n- Each index is popped from the stack **at most once**\n- Total operations: n pushes + n pops = **O(n)**\n\nThis makes monotonic stacks a powerful technique for problems that would otherwise require O(n²) brute force (checking every element against every other element)."
+    },
+    {
+      "heading": "Next Greater vs Next Smaller",
+      "body": "The pattern adapts based on what you're looking for:\n\n**Next Greater Element** → Use a **monotonically decreasing** stack:\n```python\nwhile stack and nums[i] > nums[stack[-1]]:\n    index = stack.pop()\n    result[index] = nums[i]  # nums[i] is the next greater\n```\n\n**Next Smaller Element** → Use a **monotonically increasing** stack:\n```python\nwhile stack and nums[i] < nums[stack[-1]]:\n    index = stack.pop()\n    result[index] = nums[i]  # nums[i] is the next smaller\n```\n\nThe stack stores **indexes** (not values) so you can update the result array for the correct position."
+    },
+    {
+      "heading": "Recognition Cues",
+      "body": "Use a monotonic stack when you see:\n\n- Finding the **next greater/smaller/larger** element to the right (or left if you iterate backwards)\n- Problems involving **temperature changes**, **stock spans**, **histogram heights**\n- Questions asking for the **first element to the right** that satisfies a condition\n- When a brute force O(n²) solution compares each element with all elements to its right\n- Problems involving **visibility** (e.g., buildings with ocean view, people who can see the sunset)"
+    }
+  ],
+  "approach": [
+    "Initialize a stack (stores indexes) and result array (default -1 or appropriate sentinel)",
+    "Iterate through the array with index i",
+    "Pop indexes from stack while the monotonic property is violated (current element is greater/smaller than stack top)",
+    "For each popped index, current element is its answer—update result array",
+    "Push current index i onto stack",
+    "Remaining indexes on stack have no answer (keep default -1)"
+  ],
+  "complexity": {
+    "time": "O(n) - each element pushed and popped at most once",
+    "space": "O(n) - stack can hold all n indexes in worst case (e.g., sorted descending array)"
+  },
+  "code": "def nextGreaterElement(nums):\n    n = len(nums)\n    result = [-1] * n\n    stack = []  # stores indexes\n    \n    for i in range(n):\n        # Pop all indexes whose next greater element is nums[i]\n        while stack and nums[i] > nums[stack[-1]]:\n            index = stack.pop()\n            result[index] = nums[i]\n        \n        # Push current index onto stack\n        stack.append(i)\n    \n    return result\n\n# Example: [2, 1, 3, 2, 4, 3] -> [3, 3, 4, 4, -1, -1]\n# For next smaller: change condition to nums[i] < nums[stack[-1]]",
+  "quiz": [
+    {
+      "q": "What is the key reason a monotonic stack achieves O(n) time complexity instead of O(n²)?",
+      "options": [
+        "The stack is never larger than log(n) elements",
+        "Each element is pushed and popped at most once",
+        "The while loop only runs when the stack is empty",
+        "We skip processing duplicate elements"
+      ],
+      "answer": 1,
+      "explain": "Each of the n elements is pushed onto the stack exactly once and popped at most once, giving O(n) total operations (n pushes + n pops), despite the nested while loop appearance."
+    },
+    {
+      "q": "To find the next SMALLER element for each element in an array, what type of monotonic stack should you use?",
+      "options": [
+        "Monotonically decreasing stack with condition nums[i] > nums[stack[-1]]",
+        "Monotonically increasing stack with condition nums[i] < nums[stack[-1]]",
+        "Monotonically decreasing stack with condition nums[i] < nums[stack[-1]]",
+        "Either increasing or decreasing works the same"
+      ],
+      "answer": 1,
+      "explain": "For next smaller elements, use a monotonically increasing stack and pop while nums[i] < nums[stack[-1]]. This ensures that when nums[i] is smaller than the top of the stack, nums[i] becomes the next smaller element for the popped indexes."
+    }
+  ]
+}

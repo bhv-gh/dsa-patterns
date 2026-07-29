@@ -1,0 +1,60 @@
+{
+  "id": 18,
+  "slug": "can-attend-meetings",
+  "title": "Can Attend Meetings",
+  "pattern": "intervals",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Check if a person can attend all meetings without conflicts by detecting overlapping intervals.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to check if a person can attend all the meetings scheduled without any time conflicts. Given an array `intervals`, where each element `[s, e]` represents a meeting starting at time `s` and ending at time `e`, determine if there are any overlapping meetings. If there is no overlap between any meetings, return `true`; otherwise, return `false`.\n\nNote that meetings ending and starting at the same time, such as `(0,5)` and `(5,10)`, do not conflict.\n\n**Example 1:**\n- Input: `intervals = [(1,5),(3,9),(6,8)]`\n- Output: `false`\n- Explanation: The meetings `(1,5)` and `(3,9)` overlap.\n\n**Example 2:**\n- Input: `intervals = [(10,12),(6,9),(13,15)]`\n- Output: `true`\n- Explanation: There are no overlapping meetings, so the person can attend all."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A person can attend all meetings if and only if none of the meetings overlap. By sorting the intervals by start time, we can easily check if any two consecutive intervals overlap by comparing the start time of the current interval with the end time of the previous interval."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Handle edge case**: If the intervals list is empty, return `true` (no meetings means no conflicts).\n\n2. **Sort intervals**: Sort the intervals by their start time.\n\n3. **Check for overlaps**: Iterate through the sorted intervals starting from the second interval. For each interval, compare its start time with the end time of the previous interval.\n\n4. **Detect conflict**: If the start time of the current interval is less than the end time of the previous interval, the intervals overlap and we return `false`.\n\n5. **Return result**: If we complete the iteration without finding any overlaps, return `true`."
+    }
+  ],
+  "approach": [
+    "Handle edge case: if intervals is empty, return true",
+    "Sort intervals by start time",
+    "Iterate through sorted intervals starting from index 1",
+    "For each interval, check if it starts before the previous interval ends",
+    "If overlap detected (current start < previous end), return false; otherwise continue",
+    "If no overlaps found after checking all intervals, return true"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(1)"
+  },
+  "code": "def canAttendMeetings(intervals):\n    \"\"\"\n    Determine if a person can attend all meetings without conflicts.\n    \n    Args:\n        intervals: List of meeting intervals [start, end]\n    \n    Returns:\n        bool: True if no overlapping meetings, False otherwise\n    \"\"\"\n    if not intervals:\n        return True\n    \n    intervals.sort(key=lambda x: x[0])\n    \n    for i in range(1, len(intervals)):\n        if intervals[i][0] < intervals[i-1][1]:\n            return False\n    \n    return True",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(n^2)",
+        "O(1)"
+      ],
+      "answer": 1,
+      "explain": "The dominant operation is sorting the intervals, which takes O(n log n) time. The subsequent iteration through the intervals is O(n), but the overall complexity is dominated by the sorting step."
+    },
+    {
+      "q": "Why do we only need to check consecutive intervals after sorting?",
+      "options": [
+        "Because all overlaps will be adjacent after sorting by start time",
+        "To save time by checking fewer pairs",
+        "Because the problem only requires checking adjacent meetings",
+        "Because sorting guarantees no overlaps exist"
+      ],
+      "answer": 0,
+      "explain": "After sorting by start time, if two intervals overlap, they must be consecutive in the sorted list. If interval A overlaps with interval C (not adjacent), then the interval B between them must also overlap with A, making them consecutive overlapping pairs."
+    }
+  ]
+}

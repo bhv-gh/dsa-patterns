@@ -1,0 +1,61 @@
+{
+  "id": 25,
+  "slug": "decode-string",
+  "title": "Decode String",
+  "pattern": "stack",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Decode an encoded string where k[encoded_string] means repeat the string k times. Brackets can be nested.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an encoded string `s`, return its decoded string.\n\nThe encoding rule is `k[encoded_string]`, where the `encoded_string` inside the square brackets is repeated exactly `k` times. `k` is always a positive integer, and the brackets can be nested.\n\n**Constraints:**\n- `1 <= s.length`\n- `s` consists of lowercase English letters, digits, and the square brackets `[` and `]`\n- All repeat counts `k` are positive integers and may have more than one digit (e.g., `10[a]`)\n- The input string is guaranteed to be valid\n\n**Examples:**\n- `\"3[a]2[bc]\"` → `\"aaabcbc\"`\n- `\"3[a2[c]]\"` → `\"accaccacc\"`\n- `\"2[abc]3[cd]ef\"` → `\"abcabccdcdcdef\"`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a stack to handle nested sequences. When we encounter `[`, we save our current context (the string built so far and the repeat count) and start fresh. When we encounter `]`, we pop the saved context, repeat the current string by the saved count, and prepend the saved string.\n\nThe stack stores pairs of values: the previous string and the repeat count for the current sequence."
+    },
+    {
+      "heading": "Approach",
+      "body": "We process each character in the input string while maintaining a stack to handle nesting:\n\n1. **Initialize** a stack, `curr_string` (empty string), and `current_number` (0)\n2. **For each character:**\n   - **Digit**: Build the repeat count by multiplying `current_number` by 10 and adding the digit\n   - **`[`**: Push `curr_string` and `current_number` onto the stack, then reset both to empty string and 0\n   - **Letter**: Append it to `curr_string`\n   - **`]`**: Pop the repeat count and previous string from the stack, repeat `curr_string` by the count, prepend the previous string, and update `curr_string`\n3. **Return** `curr_string` as the final decoded result"
+    }
+  ],
+  "approach": [
+    "Initialize a stack, curr_string as empty string, and current_number as 0",
+    "Iterate through each character in the input string",
+    "If character is a digit, update current_number by multiplying by 10 and adding the digit value",
+    "If character is '[', push curr_string and current_number onto stack, then reset both",
+    "If character is a letter, append it to curr_string",
+    "If character is ']', pop repeat count and previous string from stack, repeat curr_string by the count, prepend previous string, and update curr_string",
+    "Return curr_string as the decoded result"
+  ],
+  "complexity": {
+    "time": "O(S)",
+    "space": "O(S)"
+  },
+  "code": "def decodeString(s):\n    \"\"\"Decode an encoded string where k[encoded_string] means repeat k times.\n    \n    Args:\n        s: Encoded string with pattern k[encoded_string]\n        \n    Returns:\n        Decoded string with all patterns expanded\n        \n    Example:\n        >>> decodeString(\"3[a2[c]]\")\n        'accaccacc'\n        >>> decodeString(\"2[abc]3[cd]ef\")\n        'abcabccdcdcdef'\n    \"\"\"\n    stack = []\n    curr_string = \"\"\n    current_number = 0\n    \n    for char in s:\n        if char == \"[\":\n            stack.append(curr_string)\n            stack.append(current_number)\n            curr_string = \"\"\n            current_number = 0\n        elif char == \"]\":\n            num = stack.pop()\n            prev_string = stack.pop()\n            curr_string = prev_string + num * curr_string\n        elif char.isdigit():\n            current_number = current_number * 10 + int(char)\n        else:\n            curr_string += char\n    \n    return curr_string",
+  "quiz": [
+    {
+      "q": "What values are pushed onto the stack when we encounter an opening bracket '['?",
+      "options": [
+        "The current character and the stack size",
+        "The current string and the current repeat count",
+        "Only the current repeat count",
+        "The previous character and the next character"
+      ],
+      "answer": 1,
+      "explain": "When we encounter '[', we push both curr_string (the string built so far) and current_number (the repeat count) to save the context before starting a new nested sequence. We then reset both to start decoding the new sequence."
+    },
+    {
+      "q": "Why do we multiply current_number by 10 before adding each new digit?",
+      "options": [
+        "To handle multi-digit repeat counts like 10, 25, 100",
+        "To make the algorithm run faster",
+        "To ensure the number is always positive",
+        "To match the ASCII value of the digit"
+      ],
+      "answer": 0,
+      "explain": "Multiplying by 10 before adding each digit allows us to build multi-digit numbers. For example, when processing '12', we start with 0, process '1' to get 1, then multiply by 10 and add 2 to get 12. This handles repeat counts that are more than one digit."
+    }
+  ]
+}

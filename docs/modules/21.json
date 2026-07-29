@@ -1,0 +1,60 @@
+{
+  "id": 21,
+  "slug": "merge-intervals",
+  "title": "Merge Intervals",
+  "pattern": "intervals",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Consolidate overlapping intervals by sorting by start time, then merging intervals that share any common time into single ranges.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to consolidate overlapping intervals within a given array `intervals`, where each interval `intervals[i]` consists of a start time and an end time.\n\nTwo intervals are considered overlapping if they share any common time, including if one ends exactly when another begins (e.g., `[1,4]` and `[4,5]` overlap and should be merged into `[1,5]`).\n\nThe function should return an array of the merged intervals so that no two intervals overlap and all the intervals collectively cover all the time ranges in the original input.\n\n**Example:**\n- Input: `[[3,5],[1,4],[7,9],[6,8]]`\n- Output: `[[1,5],[6,9]]`\n- Explanation: The intervals `[3,5]` and `[1,4]` overlap and are merged into `[1,5]`. Similarly, `[7,9]` and `[6,8]` overlap and are merged into `[6,9]`."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "By sorting intervals by their start time, we can process them sequentially and easily determine if consecutive intervals overlap. If the current interval's start is less than or equal to the last merged interval's end, they overlap and should be merged by extending the end time to the maximum of both ends."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Sort the intervals** by their start time to enable sequential processing.\n\n2. **Initialize a merged list** to store the consolidated intervals.\n\n3. **Iterate through sorted intervals**: For each interval, check if it overlaps with the last interval in the merged list.\n\n4. **Check for overlap**: If the merged list is empty or the current interval's start is greater than the last merged interval's end, no overlap exists.\n\n5. **Merge overlapping intervals**: If overlap exists (current start ≤ last merged end), update the last merged interval's end to be the maximum of both end times.\n\n6. **Add non-overlapping intervals**: If no overlap, append the current interval directly to the merged list."
+    }
+  ],
+  "approach": [
+    "Sort the intervals by their start time",
+    "Initialize an empty merged list",
+    "Iterate through each sorted interval",
+    "If merged is empty or current start > last merged end, append current interval",
+    "Otherwise, extend last merged end to max(current end, last merged end)",
+    "Return the merged list"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "code": "def merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping intervals into consolidated ranges.\n    \n    Args:\n        intervals: List of [start, end] pairs representing time intervals\n        \n    Returns:\n        List of merged intervals with no overlaps\n        \n    Example:\n        >>> merge_intervals([[3,5],[1,4],[7,9],[6,8]])\n        [[1, 5], [6, 9]]\n    \"\"\"\n    if not intervals:\n        return []\n    \n    # Sort intervals by start time\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = []\n    \n    for interval in sorted_intervals:\n        # If merged is empty or no overlap, add interval\n        if not merged or interval[0] > merged[-1][1]:\n            merged.append(interval)\n        else:\n            # Merge by extending the end time\n            merged[-1][1] = max(interval[1], merged[-1][1])\n    \n    return merged",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the merge intervals solution?",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(n²)",
+        "O(n³)"
+      ],
+      "answer": 1,
+      "explain": "The time complexity is O(n log n) due to the sorting step, which dominates the O(n) iteration through the intervals. Sorting is required to process intervals in start-time order."
+    },
+    {
+      "q": "When merging two overlapping intervals [a, b] and [c, d] where a ≤ c ≤ b, what should the merged end time be?",
+      "options": [
+        "Always b",
+        "Always d",
+        "min(b, d)",
+        "max(b, d)"
+      ],
+      "answer": 3,
+      "explain": "The merged end time should be max(b, d) to ensure the merged interval covers the full range of both original intervals. If d > b, the second interval extends beyond the first, so we need d as the end."
+    }
+  ]
+}
