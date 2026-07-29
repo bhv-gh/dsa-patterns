@@ -1,0 +1,12 @@
+# Source PDFs — keep private, do not publish
+*.pdf
+
+# Raw extracted PDF text (near-verbatim source content) — keep private
+.extracted/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

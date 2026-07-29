@@ -1,0 +1,59 @@
+{
+  "id": 3,
+  "slug": "container-with-most-water",
+  "title": "Container With Most Water",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Pick two vertical lines from an array to form a container. Return the maximum water area (width × shorter wall).",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array `heights` where each element represents the height of a vertical line, pick two lines to form a container. Return the maximum area (amount of water) the container can hold.\n\n**What is area?** Width × height, where:\n- **Width**: distance between the two walls (`right_index - left_index`)\n- **Height**: the shorter wall (`min(heights[left], heights[right])`)\n\nWhy the shorter wall? Water overflows at the shorter wall's level.\n\n**Example:**\n```\nheights = [3, 4, 1, 2, 2, 4, 1, 3, 2]\nOutput: 21\n# walls at indices 0 and 7 (both height 3): width=7, height=3, area=21\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Two-pointers works here even though the array isn't sorted. We start with the **widest possible container** (pointers at both ends) and eliminate suboptimal containers.\n\n**Why move the shorter wall?**\nMoving the taller wall inward **can never help** because:\n1. Width decreases\n2. Height is still limited by the shorter wall\n\nSo we always move the pointer at the shorter wall, hoping to find a taller one that increases area."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Initialize two pointers: `left = 0`, `right = len(heights) - 1`\n2. Calculate current area: `width × min(heights[left], heights[right])`\n3. Track the maximum area seen so far\n4. Move the pointer pointing to the shorter wall inward\n5. Repeat until pointers meet"
+    }
+  ],
+  "approach": [
+    "Start with pointers at both ends (widest container)",
+    "Calculate area: width × min(left_height, right_height)",
+    "Update maximum area if current is larger",
+    "Move the pointer at the shorter wall inward",
+    "Repeat until pointers meet"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def max_area(heights):\n    \"\"\"\n    Find maximum water container area using two pointers.\n    \"\"\"\n    left, right = 0, len(heights) - 1\n    current_max = 0\n    \n    while left < right:\n        width = right - left\n        height = min(heights[left], heights[right])\n        current_area = width * height\n        \n        current_max = max(current_max, current_area)\n        \n        if heights[left] < heights[right]:\n            left += 1\n        else:\n            right -= 1\n    \n    return current_max",
+  "quiz": [
+    {
+      "q": "Why do we always move the pointer at the shorter wall?",
+      "options": [
+        "Because the shorter wall determines the maximum height, and moving the taller wall can only decrease area",
+        "Because the taller wall should stay fixed to maximize height",
+        "Because we want to minimize the width as quickly as possible",
+        "Because the array must be sorted for two pointers to work"
+      ],
+      "answer": 0,
+      "explain": "Moving the taller wall inward decreases width while height remains capped by the shorter wall—this can never improve area. We move the shorter wall hoping to find a taller one."
+    },
+    {
+      "q": "What is the time complexity and why?",
+      "options": [
+        "O(n²) because we check all pairs of walls",
+        "O(n log n) because we sort the heights first",
+        "O(n) because each pointer moves at most n steps total",
+        "O(1) because we only track the maximum area"
+      ],
+      "answer": 2,
+      "explain": "Each pointer moves inward at most n times, and we process each position once. The left and right pointers together make exactly n moves, giving O(n) time."
+    }
+  ]
+}

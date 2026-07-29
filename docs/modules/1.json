@@ -1,0 +1,57 @@
+{
+  "id": 1,
+  "slug": "intro",
+  "title": "Data Structures & Algorithms: Introduction",
+  "pattern": "intro",
+  "type": "intro",
+  "difficulty": null,
+  "summary": "A visual guide to the most important algorithm patterns for coding interviews.",
+  "sections": [
+    {
+      "heading": "Welcome to Visual DSA Learning",
+      "body": "This course uses **interactive visualizations** to teach you the most important algorithm patterns for coding interviews.\n\nRather than memorizing hundreds of isolated problems, you'll master **15 core patterns** that unlock solutions to entire categories of interview questions."
+    },
+    {
+      "heading": "Why Pattern-Based Learning?",
+      "body": "Most coding interview problems fall into recognizable patterns. Once you understand a pattern:\n\n- You can solve **dozens of problems** using the same approach\n- You'll **recognize** which technique to apply during interviews\n- You build **transferable intuition** rather than memorizing solutions\n\nThis course covers 15 patterns with 100+ curated problems."
+    },
+    {
+      "heading": "Two Pointers Pattern",
+      "body": "The **Two Pointers** pattern uses two indices to traverse data structures, typically arrays or strings.\n\nCommon use cases:\n- Finding pairs in sorted arrays\n- Partitioning arrays in-place\n- Solving optimization problems without extra space\n\nYou'll solve 7 problems including **Container With Most Water**, **3-Sum**, and **Trapping Rain Water**."
+    },
+    {
+      "heading": "Sliding Window Pattern",
+      "body": "The **Sliding Window** pattern maintains a dynamic window over array elements to solve subarray/substring problems efficiently.\n\nTypical applications:\n- Finding maximum/minimum subarrays of size k\n- Longest substring with constraints\n- Variable-size windows with conditions\n\nYou'll master this through 5 problems including **Longest Substring Without Repeating Characters** and **Maximum Sum of Subarrays**."
+    },
+    {
+      "heading": "Course Structure",
+      "body": "Each pattern module includes:\n- **Visual explanations** of the core technique\n- **Step-by-step walkthroughs** of example problems\n- **Practice problems** ranging from Easy to Hard\n- **Complexity analysis** to understand efficiency\n\nLet's begin with Two Pointers!"
+    }
+  ],
+  "complexity": null,
+  "code": null,
+  "quiz": [
+    {
+      "q": "What is the main advantage of learning algorithm patterns instead of memorizing individual solutions?",
+      "options": [
+        "Patterns help you solve one specific problem faster",
+        "You can apply the same technique to entire categories of problems",
+        "Patterns eliminate the need to understand time complexity",
+        "You only need to learn 5 patterns total"
+      ],
+      "answer": 1,
+      "explain": "Pattern-based learning gives you transferable techniques that work across dozens of similar problems, rather than memorizing solutions to individual questions."
+    },
+    {
+      "q": "Which pattern would you most likely use to find the longest substring without repeating characters?",
+      "options": [
+        "Two Pointers for finding pairs in sorted arrays",
+        "Stack for validating parentheses",
+        "Sliding Window for dynamic subarray problems",
+        "Binary Search for finding elements"
+      ],
+      "answer": 2,
+      "explain": "Sliding Window is designed for subarray/substring problems with constraints, maintaining a dynamic window that expands and contracts as needed."
+    }
+  ]
+}

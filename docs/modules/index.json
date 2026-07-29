@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "patterns": [
+    {
+      "id": "two-pointers",
+      "title": "Two Pointers",
+      "blurb": "Use two indices moving through data to solve array/string problems in O(n) time and O(1) space."
+    },
+    {
+      "id": "sliding-window",
+      "title": "Sliding Window",
+      "blurb": "Maintain a moving window over a sequence to answer subarray/substring questions efficiently."
+    }
+  ],
+  "modules": [
+    {
+      "id": 1,
+      "slug": "intro",
+      "title": "Data Structures & Algorithms: Introduction",
+      "pattern": "intro",
+      "type": "intro",
+      "difficulty": null,
+      "summary": "A visual guide to the most important algorithm patterns for coding interviews."
+    },
+    {
+      "id": 2,
+      "slug": "two-pointers-overview",
+      "title": "Two Pointers: Overview",
+      "pattern": "two-pointers",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Use two pointers starting at opposite ends of a sorted array to find pairs that meet criteria in O(n) time."
+    },
+    {
+      "id": 3,
+      "slug": "container-with-most-water",
+      "title": "Container With Most Water",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Pick two vertical lines from an array to form a container. Return the maximum water area (width × shorter wall)."
+    },
+    {
+      "id": 4,
+      "slug": "two-sum-sorted",
+      "title": "Two Sum (Sorted Array)",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find if a pair of numbers in a sorted array sums to a target using two pointers to eliminate unnecessary pairs."
+    },
+    {
+      "id": 5,
+      "slug": "3-sum",
+      "title": "3-Sum",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find all unique triplets in an array that sum to zero using sorting and two pointers."
+    },
+    {
+      "id": 6,
+      "slug": "valid-triangle-number",
+      "title": "Valid Triangle Number",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Count triplets in an array that can form valid triangle sides using the triangle inequality after sorting."
+    },
+    {
+      "id": 7,
+      "slug": "move-zeroes",
+      "title": "Move Zeroes",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Rearrange array by moving all zeros to end while preserving non-zero element order in-place."
+    },
+    {
+      "id": 8,
+      "slug": "sort-colors",
+      "title": "Sort Colors",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Sort array of 0s, 1s, and 2s in-place using three-pointer Dutch National Flag partition in one pass."
+    },
+    {
+      "id": 9,
+      "slug": "trapping-rain-water",
+      "title": "Trapping Rain Water",
+      "pattern": "two-pointers",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Calculate total rainwater trapped between bars using two pointers and running max heights from each end."
+    },
+    {
+      "id": 10,
+      "slug": "fixed-length-sliding-window",
+      "title": "Fixed-Length Sliding Window",
+      "pattern": "sliding-window",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Slide a window of fixed size k through an array, updating state incrementally in O(1) per element."
+    },
+    {
+      "id": 11,
+      "slug": "max-sum-subarrays-size-k",
+      "title": "Maximum Sum of Subarrays of Size K",
+      "pattern": "sliding-window",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Find the maximum sum among all contiguous subarrays of size k using a fixed-size sliding window with incremental sum updates."
+    },
+    {
+      "id": 12,
+      "slug": "max-points-from-cards",
+      "title": "Max Points You Can Obtain From Cards",
+      "pattern": "sliding-window",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Maximize score by picking k cards from array ends by finding minimum sum window of size n-k in middle"
+    },
+    {
+      "id": 13,
+      "slug": "max-sum-distinct-subarrays-k",
+      "title": "Max Sum of Distinct Subarrays of Length K",
+      "pattern": "sliding-window",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the maximum sum of a subarray of length k where all elements are distinct, or return 0 if no such subarray exists."
+    },
+    {
+      "id": 14,
+      "slug": "variable-length-sliding-window",
+      "title": "Variable-Length Sliding Window",
+      "pattern": "sliding-window",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Expand and contract a window to find the longest/shortest subarray satisfying a condition in O(n) time."
+    },
+    {
+      "id": 15,
+      "slug": "longest-substring-no-repeat",
+      "title": "Longest Substring Without Repeating Characters",
+      "pattern": "sliding-window",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the length of the longest substring with all distinct characters using a variable-length sliding window."
+    },
+    {
+      "id": 16,
+      "slug": "longest-repeating-char-replacement",
+      "title": "Longest Repeating Character Replacement",
+      "pattern": "sliding-window",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the longest substring of identical letters after replacing at most k characters in a string of uppercase English letters."
+    }
+  ]
+}

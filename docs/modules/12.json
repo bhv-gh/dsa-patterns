@@ -1,0 +1,60 @@
+{
+  "id": 12,
+  "slug": "max-points-from-cards",
+  "title": "Max Points You Can Obtain From Cards",
+  "pattern": "sliding-window",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Maximize score by picking k cards from array ends by finding minimum sum window of size n-k in middle",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array of integers representing card values, calculate the maximum score you can achieve by picking exactly **k cards**.\n\nYou must pick cards in order from either end. You can take some cards from the beginning, then switch to taking cards from the end, but you cannot skip cards or pick from the middle.\n\n**Example 1:**\n```\nInput: cards = [2,11,4,5,3,9,2], k = 3\nOutput: 17\n```\nExplanation:\n- First 3 cards: 2 + 11 + 4 = 17\n- Last 3 cards: 3 + 9 + 2 = 14\n- First 1 + last 2: 2 + 9 + 2 = 13\n- First 2 + last 1: 2 + 11 + 2 = 15\n\nMaximum score is 17.\n\n**Example 2:**\n```\nInput: cards = [1,100,10,0,4,5,6], k = 3\nOutput: 111\n```\nExplanation: Take the first three cards: 1 + 100 + 10 = 111.\n\n**Constraints:** 1 ≤ k ≤ cards.length"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "When you pick **k cards from either end** of the array, you're actually leaving behind **n - k consecutive cards in the middle** that you didn't pick.\n\nEvery possible way to pick k cards from the ends corresponds to a different window of (n - k) cards in the middle that we're NOT picking.\n\n**Why This Matters:**\n\nSince we know the total sum of all cards:\n```\nSum of picked cards = Total sum - Sum of unpicked cards\n```\n\nTo **maximize** the sum of picked cards, we need to **minimize** the sum of unpicked cards.\n\nThis transforms the problem: instead of trying all combinations of picking from ends, we find the **minimum sum of any window of size n - k**."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use a **fixed-length sliding window** of size n - k to find the minimum sum of any consecutive (n - k) cards.\n\nFor each window position, calculate `total - window_sum` to get the corresponding score, and track the maximum."
+    }
+  ],
+  "approach": [
+    "Calculate the total sum of all cards",
+    "Handle edge case: if k equals the array length, return the total sum",
+    "Use a sliding window of size n - k to track the sum of unpicked cards",
+    "Slide the window across the array, maintaining the window sum",
+    "For each valid window, calculate max_points = total - window_sum",
+    "Return the maximum points found across all window positions"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def maxScore(cards, k):\n    \"\"\"Find max score by picking k cards from either end.\"\"\"\n    total = sum(cards)\n    if k == len(cards):\n        return total\n    \n    window_sum = 0\n    max_points = 0\n    start = 0\n    \n    for end in range(len(cards)):\n        window_sum += cards[end]\n        \n        if end - start + 1 == len(cards) - k:\n            max_points = max(total - window_sum, max_points)\n            window_sum -= cards[start]\n            start += 1\n    \n    return max_points",
+  "quiz": [
+    {
+      "q": "Why do we find the minimum sum window of size n-k instead of directly trying all combinations of picking from the ends?",
+      "options": [
+        "Because picking k cards from ends leaves n-k cards in middle, and maximizing picked cards means minimizing unpicked cards",
+        "Because the minimum window is always at the beginning of the array",
+        "Because we need to avoid using extra space for tracking all combinations",
+        "Because the sliding window technique is faster than any other approach"
+      ],
+      "answer": 0,
+      "explain": "The key insight is the mathematical relationship: sum of picked cards = total sum - sum of unpicked cards. When we pick k cards from the ends, we leave exactly n-k consecutive cards in the middle. To maximize what we pick, we minimize what we leave behind."
+    },
+    {
+      "q": "What is the time complexity of this sliding window solution?",
+      "options": [
+        "O(k) because we only pick k cards",
+        "O(n) because we traverse the array once with the sliding window",
+        "O(n*k) because we need to check k cards at each position",
+        "O(n²) because we need to check all possible combinations"
+      ],
+      "answer": 1,
+      "explain": "We traverse the array exactly once with a single pass of the sliding window, making it O(n) where n is the length of the cards array. Each window operation (adding/removing elements) is O(1)."
+    }
+  ]
+}

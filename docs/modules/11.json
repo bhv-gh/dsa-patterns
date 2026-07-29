@@ -1,0 +1,59 @@
+{
+  "id": 11,
+  "slug": "max-sum-subarrays-size-k",
+  "title": "Maximum Sum of Subarrays of Size K",
+  "pattern": "sliding-window",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Find the maximum sum among all contiguous subarrays of size k using a fixed-size sliding window with incremental sum updates.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array of integers `nums` and an integer `k`, find the maximum sum of any contiguous subarray of size `k`.\n\n**Example:**\n\nInput: `nums = [2, 1, 5, 1, 3, 2]`, `k = 3`\n\nOutput: `9`\n\nExplanation: The subarray with the maximum sum is `[5, 1, 3]` with a sum of 9."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a fixed-size sliding window to efficiently calculate subarray sums. Instead of recalculating the entire sum for each window from scratch (which would be O(n*k)), update the sum incrementally:\n\n- **Add** the new element entering the window\n- **Subtract** the old element leaving the window\n\nThis reduces the work per window to constant time, achieving O(n) overall time complexity."
+    },
+    {
+      "heading": "Approach",
+      "body": "The sliding window technique maintains a window of exactly k elements:\n\n1. Initialize `max_sum` to negative infinity and `current_sum` to 0\n2. Expand the window by adding elements one at a time\n3. When the window reaches size k, update `max_sum` with the current sum\n4. Slide the window by removing the leftmost element and incrementing the start pointer\n5. Continue until all windows have been evaluated"
+    }
+  ],
+  "approach": [
+    "Initialize max_sum to negative infinity, current_sum to 0, and start pointer to 0",
+    "Iterate through the array with an end pointer, adding each element to current_sum",
+    "When window size reaches k (end - start + 1 == k), compare current_sum with max_sum",
+    "Slide the window by subtracting nums[start] from current_sum and incrementing start",
+    "Return max_sum after processing all windows"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def max_subarray_sum(nums, k):\n    \"\"\"Find maximum sum of any contiguous subarray of size k.\"\"\"\n    max_sum = float('-inf')\n    current_sum = 0\n    start = 0\n    \n    for end in range(len(nums)):\n        current_sum += nums[end]\n        \n        if end - start + 1 == k:\n            max_sum = max(max_sum, current_sum)\n            current_sum -= nums[start]\n            start += 1\n    \n    return max_sum",
+  "quiz": [
+    {
+      "q": "Why is the sliding window approach O(n) instead of O(n*k)?",
+      "options": [
+        "It uses a hash map to cache previous sums",
+        "It updates the sum incrementally by adding one element and removing one element per window",
+        "It processes only k elements total instead of n elements",
+        "It uses binary search to find the maximum sum"
+      ],
+      "answer": 1,
+      "explain": "The sliding window does constant work per window by adding the entering element and subtracting the leaving element. This avoids recalculating the entire k-element sum for each window, reducing complexity from O(n*k) to O(n)."
+    },
+    {
+      "q": "What should max_sum be initialized to handle negative numbers correctly?",
+      "options": [
+        "0, since sums cannot be negative",
+        "The first element of the array",
+        "float('-inf'), to ensure any valid sum is larger",
+        "k, the size of the window"
+      ],
+      "answer": 2,
+      "explain": "Initializing to float('-inf') ensures that even if all subarrays have negative sums, we still return the correct maximum. Initializing to 0 would fail for arrays where all elements are negative."
+    }
+  ]
+}

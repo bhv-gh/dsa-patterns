@@ -1,0 +1,63 @@
+{
+  "id": 2,
+  "slug": "two-pointers-overview",
+  "title": "Two Pointers: Overview",
+  "pattern": "two-pointers",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Use two pointers starting at opposite ends of a sorted array to find pairs that meet criteria in O(n) time.",
+  "sections": [
+    {
+      "heading": "The Core Idea",
+      "body": "The **two-pointer technique** uses two pointers that start at opposite ends of a **sorted array** and gradually move towards each other.\n\nInstead of checking all O(n²) pairs with nested loops, we eliminate unnecessary pairs by leveraging the sorted property. Each pointer movement eliminates multiple pairs from consideration, reducing time complexity to **O(n)**.\n\nThe pointers represent the **current pair** being considered. Based on how the current pair compares to our target, we move one pointer to eliminate all pairs that can't possibly work."
+    },
+    {
+      "heading": "How It Works: Two Sum Example",
+      "body": "Given a sorted array `[1, 3, 4, 6, 8, 10, 13]` and `target = 13`:\n\n1. Initialize `left = 0`, `right = len(nums) - 1`\n2. Calculate `current_sum = nums[left] + nums[right]`\n3. If `current_sum == target`: **found it!**\n4. If `current_sum > target`: move `right` pointer left (all pairs with current right are too large)\n5. If `current_sum < target`: move `left` pointer right (all pairs with current left are too small)\n6. Repeat until pointers meet or pair is found\n\nThis works because the array is **sorted** - if a sum is too large, every pair involving larger numbers will also be too large."
+    },
+    {
+      "heading": "Pattern Variants",
+      "body": "**Opposite Ends** (most common)\n- Pointers start at `0` and `len(nums) - 1`\n- Move toward each other based on comparison logic\n- Used for: pair sum, triplet sum, container with most water\n\n**Same Direction / Fast-Slow**\n- Both pointers start at the beginning\n- One moves faster than the other\n- Used for: removing duplicates, partitioning arrays, cycle detection"
+    },
+    {
+      "heading": "When to Use Two Pointers",
+      "body": "Consider this technique when you see:\n- **Sorted array** (or can be sorted)\n- Searching for **pairs or triplets** meeting criteria\n- Problems involving **comparing elements** from opposite ends\n- Need to **reduce O(n²) to O(n)** by eliminating pairs\n\nCommon problem types: pair sum, triplet sum, container problems, partitioning, removing elements."
+    }
+  ],
+  "approach": [
+    "Input array is sorted (or can be sorted without violating constraints)",
+    "Need to find pairs/triplets that satisfy a condition (sum, product, difference)",
+    "Naive nested loop solution would be O(n²)",
+    "Can eliminate multiple candidates based on sorted property",
+    "Problem involves comparing elements from opposite ends or tracking regions"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def two_pointers_opposite_ends(nums, target):\n    \"\"\"\n    Template: Two pointers starting at opposite ends.\n    Example: Find if pair exists that sums to target.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    \n    while left < right:\n        current = nums[left] + nums[right]\n        \n        if current == target:\n            return True  # Found the pair\n        elif current < target:\n            left += 1  # Need larger sum, move left pointer right\n        else:\n            right -= 1  # Need smaller sum, move right pointer left\n    \n    return False  # No pair found",
+  "quiz": [
+    {
+      "q": "At any point during the two-pointer search for Two Sum, what do the positions of the two pointers represent?",
+      "options": [
+        "The pairs that have already been eliminated",
+        "The smallest and largest values seen so far",
+        "The pair of numbers currently being considered",
+        "The bounds of the portion of the array that is already sorted"
+      ],
+      "answer": 2,
+      "explain": "The two pointers always represent the current pair being evaluated. When we move a pointer, we're eliminating all pairs involving the old position and moving to the next candidate pair."
+    },
+    {
+      "q": "Why does the two-pointer technique require the array to be sorted?",
+      "options": [
+        "To ensure the algorithm runs in O(n log n) time",
+        "To guarantee that moving a pointer eliminates multiple pairs based on comparison logic",
+        "To allow binary search within the two-pointer loop",
+        "To prevent infinite loops when pointers meet"
+      ],
+      "answer": 1,
+      "explain": "The sorted property lets us reason about entire groups of pairs at once. If current sum is too large, we know ALL pairs with the current right value are too large, so we can eliminate them by moving right pointer left."
+    }
+  ]
+}

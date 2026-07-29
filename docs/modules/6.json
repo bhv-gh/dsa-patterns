@@ -1,0 +1,60 @@
+{
+  "id": 6,
+  "slug": "valid-triangle-number",
+  "title": "Valid Triangle Number",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Count triplets in an array that can form valid triangle sides using the triangle inequality after sorting.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums`, count how many triplets of values could form the sides of a valid triangle.\n\nFor three sides to form a valid triangle, the **triangle inequality** must hold:\n- `a + b > c`\n- `a + c > b`\n- `b + c > a`\n\nIn other words, the sum of any two sides must exceed the third side.\n\n**Example:**\n```\nInput: nums = [11, 4, 9, 6, 15, 18]\nOutput: 10\n\nValid triplets: (4,15,18), (6,15,18), (9,15,18), (11,15,18), (9,11,18), (6,11,15), (9,11,15), (4,9,11), (6,9,11), (4,6,9)\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "After **sorting** three numbers `a ≤ b ≤ c`, we only need to check if `a + b > c`. The other two conditions are automatically satisfied because:\n- `a + c > b` is true since `c ≥ b`\n- `b + c > a` is true since `b ≥ a` and `c > 0`\n\nThis simplification allows us to:\n1. **Sort the array** first\n2. **Fix the largest side** `c` (iterate from the end)\n3. Use **two pointers** to find all valid pairs `(a, b)` where `a + b > c`\n\n**Critical optimization:** When `nums[left] + nums[right] > nums[i]`, all elements between `left` and `right` also form valid triplets with `right` and `i`, giving us `right - left` triplets in one step."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Sort the array** to enable the triangle inequality simplification.\n2. **Iterate backwards** from index `i = len(nums) - 1` down to `i = 2`, treating `nums[i]` as the largest side.\n3. **Initialize two pointers:** `left = 0` and `right = i - 1` to search for valid pairs.\n4. **If `nums[left] + nums[right] > nums[i]`:** All indices from `left` to `right - 1` form valid triplets with `right` and `i`. Add `right - left` to the count and decrement `right`.\n5. **If `nums[left] + nums[right] ≤ nums[i]`:** The sum is too small, so increment `left` to try a larger value.\n6. **Return the total count** after all iterations."
+    }
+  ],
+  "approach": [
+    "Sort the input array to enable triangle inequality simplification",
+    "Iterate from the end of the array (index i) down to index 2, fixing nums[i] as the largest side",
+    "For each i, use two pointers (left=0, right=i-1) to find all valid pairs where nums[left] + nums[right] > nums[i]",
+    "When the condition holds, add (right - left) to the count and decrement right",
+    "When the condition fails, increment left to try a larger value",
+    "Return the total count of valid triplets"
+  ],
+  "complexity": {
+    "time": "O(n²)",
+    "space": "O(1)"
+  },
+  "code": "def triangleNumber(nums):\n    \"\"\"\n    Count triplets that can form valid triangle sides.\n    \n    Uses triangle inequality: for sorted a ≤ b ≤ c, only check a + b > c.\n    \"\"\"\n    nums.sort()\n    count = 0\n    \n    for i in range(len(nums) - 1, 1, -1):\n        left = 0\n        right = i - 1\n        \n        while left < right:\n            if nums[left] + nums[right] > nums[i]:\n                count += right - left\n                right -= 1\n            else:\n                left += 1\n    \n    return count",
+  "quiz": [
+    {
+      "q": "After sorting the array, why do we only need to check if a + b > c (where a ≤ b ≤ c)?",
+      "options": [
+        "Because the other two conditions (a + c > b and b + c > a) are always false for sorted values",
+        "Because the other two conditions are automatically satisfied when c ≥ b ≥ a",
+        "Because sorting guarantees that all triplets form valid triangles",
+        "Because we only care about the largest side when checking triangle validity"
+      ],
+      "answer": 1,
+      "explain": "When a ≤ b ≤ c, if a + b > c holds, then a + c > b (since c ≥ b) and b + c > a (since b ≥ a) are automatically true. This simplification reduces three checks to one."
+    },
+    {
+      "q": "When nums[left] + nums[right] > nums[i], why can we add (right - left) to the count instead of just 1?",
+      "options": [
+        "Because we need to account for duplicate values in the array",
+        "Because there are (right - left) different ways to arrange the triplet",
+        "Because all elements between left and right also form valid triplets with right and i",
+        "Because the two-pointer technique requires counting all indices in the range"
+      ],
+      "answer": 2,
+      "explain": "Since the array is sorted, if nums[left] + nums[right] > nums[i], then every index from left to right-1 also satisfies the condition when paired with right and i. This gives us (right - left) valid triplets in one step."
+    }
+  ]
+}

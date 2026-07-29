@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
+  <meta name="description" content="Learn the most important coding-interview patterns on the go. Works fully offline." />
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DSA Patterns" />
+  <title>DSA Patterns — Interview Prep</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar" id="topbar">
+    <button class="icon-btn back-btn" id="backBtn" aria-label="Back" hidden>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="topbar-title" id="topbarTitle">DSA Patterns</div>
+    <div class="topbar-actions">
+      <span class="net-dot" id="netDot" title="Offline ready"></span>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path id="themeIcon" fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="view" class="view" aria-live="polite"></main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <button id="installBtn" class="install-fab" hidden>Install app</button>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "id": 16,
+  "slug": "longest-repeating-char-replacement",
+  "title": "Longest Repeating Character Replacement",
+  "pattern": "sliding-window",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the longest substring of identical letters after replacing at most k characters in a string of uppercase English letters.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string `s` of uppercase English letters and an integer `k`, find the length of the longest substring containing the same letter after performing at most `k` operations where you can change any character to any other uppercase letter.\n\n**Example:**\n- Input: `s = \"BBABCCDD\"`, `k = 2`\n- Output: `5`\n- Explanation: Replace the first 'A' and 'C' with 'B' to form \"BBBBBCDD\". The longest substring with identical letters is \"BBBBB\", which has length 5."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A window is **valid** if the number of replacements needed is at most `k`. The number of replacements needed equals `window_length - max_frequency_of_any_character_in_window`.\n\nIn other words: `k + max_freq >= window_length` must hold for the window to be valid.\n\nFor example, with `k = 2` and substring \"AABBB\":\n- Most frequent character is 'B' (appears 3 times)\n- Window length is 5\n- Replacements needed = 5 - 3 = 2, which equals `k`, so the window is valid\n\nWe use a **variable-length sliding window** to track all valid substrings and return the maximum length found."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize**: Create a frequency map `state`, track `max_freq` (highest frequency of any character seen in any window), `max_length` (result), and `start` pointer.\n\n2. **Expand window**: Iterate through the string with an `end` pointer, adding each character to `state` and updating `max_freq` with the frequency of the newly added character.\n\n3. **Check validity**: After expanding, check if the window is invalid: `k + max_freq < end - start + 1`. This means we need more than `k` replacements to make all characters in the window identical.\n\n4. **Shrink window**: If invalid, increment `start` and decrement the frequency of `s[start]` in `state` to shrink the window by one character from the left. (Note: We don't need to update `max_freq` downward; it represents a historical maximum that helps us avoid shrinking more than necessary.)\n\n5. **Track maximum**: After each expansion (and potential shrink), update `max_length` with the current window size.\n\n6. **Return result**: After processing all characters, return `max_length`."
+    }
+  ],
+  "approach": [
+    "Initialize a frequency map, max_freq to track the highest character frequency, max_length for the result, and a start pointer",
+    "Expand the window by iterating with an end pointer, adding each character to the frequency map and updating max_freq",
+    "Check if the window is invalid: k + max_freq < window_length means too many replacements are needed",
+    "If invalid, shrink the window from the left by incrementing start and decrementing the character frequency",
+    "Update max_length with the current valid window size after each iteration",
+    "Return max_length after processing the entire string"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def characterReplacement(s, k):\n    \"\"\"\n    Find longest substring of same character after at most k replacements.\n    \"\"\"\n    state = {}\n    max_freq = 0\n    max_length = 0\n    start = 0\n    \n    for end in range(len(s)):\n        # Add current character to window\n        state[s[end]] = state.get(s[end], 0) + 1\n        max_freq = max(max_freq, state[s[end]])\n        \n        # Shrink window if invalid (need more than k replacements)\n        if k + max_freq < end - start + 1:\n            state[s[start]] -= 1\n            start += 1\n        \n        # Track maximum valid window size\n        max_length = max(max_length, end - start + 1)\n    \n    return max_length",
+  "quiz": [
+    {
+      "q": "Why does the condition `k + max_freq < window_length` determine if a window is invalid?",
+      "options": [
+        "Because window_length - max_freq equals the number of characters that need to be replaced to make all characters identical",
+        "Because max_freq represents the total number of replacements available",
+        "Because k must always be greater than the window length for the window to be valid",
+        "Because we can only replace characters that appear less frequently than max_freq"
+      ],
+      "answer": 0,
+      "explain": "The number of replacements needed is window_length - max_freq (all characters except the most frequent one). If this exceeds k, we need more than k replacements, making the window invalid."
+    },
+    {
+      "q": "Why don't we need to decrease max_freq when we shrink the window?",
+      "options": [
+        "Because max_freq tracks the highest frequency ever seen, not just in the current window, and this historical maximum helps us efficiently find the longest valid window",
+        "Because decreasing max_freq would make the algorithm incorrect",
+        "Because the frequency map automatically updates max_freq",
+        "Because max_freq only increases when we expand the window"
+      ],
+      "answer": 0,
+      "explain": "max_freq serves as a historical maximum. Even if the character with max_freq leaves the window, we only care about finding windows as long or longer than what we've already found. This optimization keeps the algorithm O(n) without affecting correctness."
+    },
+    {
+      "q": "What is the time complexity of this algorithm and why?",
+      "options": [
+        "O(n²) because we have nested loops for expanding and shrinking",
+        "O(n log n) because we update the frequency map at each step",
+        "O(n) because each character is visited at most twice (once by end pointer, once by start pointer)",
+        "O(n × k) because we perform up to k replacements for each character"
+      ],
+      "answer": 2,
+      "explain": "The algorithm is O(n) because each character enters the window once (via end pointer) and leaves at most once (via start pointer). Dictionary operations are O(1), so total time is linear in the string length."
+    }
+  ]
+}

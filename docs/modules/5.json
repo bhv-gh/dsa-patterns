@@ -1,0 +1,76 @@
+{
+  "id": 5,
+  "slug": "3-sum",
+  "title": "3-Sum",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find all unique triplets in an array that sum to zero using sorting and two pointers.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums`, find all unique triplets `[nums[i], nums[j], nums[k]]` where the three elements sum to zero. The indices must be distinct, and the result must not contain duplicate triplets.\n\n**Example:**\n\n```\nInput: nums = [-1,0,1,2,-1,-1]\nOutput: [[-1,-1,2],[-1,0,1]]\n```\n\n**Explanation:** Both `nums[0], nums[1], nums[2]` and `nums[1], nums[2], nums[4]` include `[-1, 0, 1]` and sum to 0. `nums[0], nums[3], nums[4]` gives `[-1,-1,2]` which also sums to 0. Since we need unique triplets, we return `[[-1,-1,2], [-1,0,1]]`. The order of triplets and elements within triplets does not matter."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The problem can be reduced to a two-pointer approach by first sorting the array. For each element `nums[i]`, we need to find two numbers in the remaining array that sum to `-nums[i]`, which is the same logic as the Two Sum (Sorted Array) problem.\n\nSorting enables us to:\n- Use two pointers efficiently to find pairs\n- Skip duplicates systematically to ensure unique triplets"
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Sort the array** to enable two-pointer technique and efficient duplicate skipping\n2. **Iterate through each element** `nums[i]` (up to `n-2` to leave room for two more elements)\n3. **Skip duplicate values** at the outer level: if `nums[i] == nums[i-1]`, continue to the next iteration\n4. **Initialize two pointers**: `left = i + 1` and `right = n - 1`\n5. **While `left < right`**, calculate the sum `nums[i] + nums[left] + nums[right]`:\n   - If sum < 0, increment `left`\n   - If sum > 0, decrement `right`\n   - If sum == 0, add the triplet to results\n6. **After finding a valid triplet**, skip duplicates by moving both pointers past any repeated values\n7. **Move both pointers** inward after handling duplicates and continue searching"
+    },
+    {
+      "heading": "Avoiding Duplicates",
+      "body": "To ensure unique triplets, we must skip duplicates at two levels:\n\n**Outer loop (fixed element):** Before processing `nums[i]`, check if `i > 0 and nums[i] == nums[i-1]`. If true, skip this iteration since we've already processed triplets starting with this value.\n\n**Inner loop (two-pointer pairs):** After finding a valid triplet with sum = 0:\n- Move `left` pointer forward while `nums[left] == nums[left+1]`\n- Move `right` pointer backward while `nums[right] == nums[right-1]`\n- Then move both pointers one more step to point to new values\n\nThis ensures we don't generate duplicate triplets like `[-1, 0, 1]` multiple times."
+    }
+  ],
+  "approach": [
+    "Sort the input array to enable two-pointer technique",
+    "Iterate through each element i from 0 to n-2 (need space for left and right pointers)",
+    "Skip duplicate values: if i > 0 and nums[i] == nums[i-1], continue to next iteration",
+    "Initialize two pointers: left = i+1, right = n-1",
+    "While left < right, calculate sum = nums[i] + nums[left] + nums[right]",
+    "If sum < 0, move left pointer right; if sum > 0, move right pointer left",
+    "If sum == 0, add triplet to result, then skip duplicates by advancing both pointers past repeated values"
+  ],
+  "complexity": {
+    "time": "O(n²)",
+    "space": "O(1)"
+  },
+  "code": "def threeSum(nums: List[int]) -> List[List[int]]:\n    \"\"\"Find all unique triplets that sum to zero.\"\"\"\n    nums.sort()\n    result = []\n    \n    for i in range(len(nums) - 2):\n        # Skip duplicate values for the first element\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        \n        left = i + 1\n        right = len(nums) - 1\n        \n        while left < right:\n            total = nums[i] + nums[left] + nums[right]\n            \n            if total < 0:\n                left += 1\n            elif total > 0:\n                right -= 1\n            else:\n                result.append([nums[i], nums[left], nums[right]])\n                \n                # Skip duplicates for left and right pointers\n                while left < right and nums[left] == nums[left + 1]:\n                    left += 1\n                while left < right and nums[right] == nums[right - 1]:\n                    right -= 1\n                \n                left += 1\n                right -= 1\n    \n    return result",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the 3-Sum solution?",
+      "options": [
+        "O(n log n)",
+        "O(n²)",
+        "O(n³)",
+        "O(n)"
+      ],
+      "answer": 1,
+      "explain": "Sorting takes O(n log n), but the nested loop (outer loop iterates n times, inner two-pointer scan is O(n)) dominates with O(n²). Total: O(n log n) + O(n²) = O(n²)."
+    },
+    {
+      "q": "Why do we check `if i > 0 and nums[i] == nums[i-1]: continue` in the outer loop?",
+      "options": [
+        "To improve performance by skipping small numbers",
+        "To avoid duplicate triplets when the same value appears multiple times as the first element",
+        "To ensure the array stays sorted",
+        "To prevent index out of bounds errors"
+      ],
+      "answer": 1,
+      "explain": "This check skips duplicate values at the first position of triplets. If nums[i] equals nums[i-1], we've already found all triplets starting with this value in the previous iteration, so we skip to avoid duplicates."
+    },
+    {
+      "q": "After finding a valid triplet (sum = 0), what must we do before continuing the search?",
+      "options": [
+        "Reset both pointers to the start and end of the array",
+        "Only increment the left pointer",
+        "Skip duplicate values on both pointers, then move both pointers inward",
+        "Sort the result array"
+      ],
+      "answer": 2,
+      "explain": "We must skip past any duplicate values on both the left and right pointers (while nums[left] == nums[left+1] and while nums[right] == nums[right-1]), then move both pointers one more step inward to continue searching for new triplets."
+    }
+  ]
+}

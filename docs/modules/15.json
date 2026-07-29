@@ -1,0 +1,60 @@
+{
+  "id": 15,
+  "slug": "longest-substring-no-repeat",
+  "title": "Longest Substring Without Repeating Characters",
+  "pattern": "sliding-window",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the length of the longest substring with all distinct characters using a variable-length sliding window.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to return the length of the longest substring in a provided string `s` where all characters in the substring are distinct.\n\n**Example 1:**\n```\nInput: s = \"eghghhgg\"\nOutput: 3\n```\nThe longest substring without repeating characters is \"egh\" with length of 3.\n\n**Example 2:**\n```\nInput: s = \"substring\"\nOutput: 8\n```\nThe answer is \"ubstring\" with length of 8."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **variable-length sliding window** with a dictionary tracking the last index of each character. When you encounter a duplicate, jump the left pointer past the previous occurrence in one operation instead of incrementally shrinking. This ensures each character is visited at most twice (once by right pointer, once when removing from window)."
+    },
+    {
+      "heading": "Approach",
+      "body": "The optimized solution maintains a dictionary mapping each character to its most recent index, allowing us to contract the window in constant time when duplicates are found.\n\n1. **Initialize variables**: `state` (dict mapping char → last index), `start` (left boundary), `max_length` (result)\n2. **Expand window**: For each position `end`, check if `s[end]` already exists in `state`\n3. **Handle duplicates**: If `s[end]` is a duplicate, move `start` to `max(start, state[s[end]] + 1)` to jump past the previous occurrence\n4. **Update state**: Store the current index of `s[end]` in `state`\n5. **Track maximum**: Update `max_length = max(max_length, end - start + 1)`\n6. **Return result**: After processing all characters, return `max_length`"
+    }
+  ],
+  "approach": [
+    "Initialize `state` as an empty dict, `start = 0`, and `max_length = 0`",
+    "Use a for-loop to expand the window by incrementing `end` from 0 to `len(s) - 1`",
+    "If `s[end]` exists in `state`, contract the window by setting `start = max(start, state[s[end]] + 1)`",
+    "Update `state[s[end]] = end` to record the current character's index",
+    "Update `max_length = max(max_length, end - start + 1)` to track the longest valid window",
+    "Return `max_length` after the loop completes"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(min(n, k))"
+  },
+  "code": "def longestSubstringWithoutRepeat(s):\n    \"\"\"Return length of longest substring with all distinct characters.\"\"\"\n    state = {}\n    start = 0\n    max_length = 0\n    \n    for end in range(len(s)):\n        if s[end] in state:\n            start = max(start, state[s[end]] + 1)\n        state[s[end]] = end\n        max_length = max(max_length, end - start + 1)\n    \n    return max_length",
+  "quiz": [
+    {
+      "q": "Why do we use `start = max(start, state[s[end]] + 1)` instead of just `start = state[s[end]] + 1`?",
+      "options": [
+        "To ensure start never moves backward when the duplicate is outside the current window",
+        "To handle edge cases where the string is empty",
+        "To optimize the time complexity from O(n²) to O(n)",
+        "To prevent index out of bounds errors"
+      ],
+      "answer": 0,
+      "explain": "The max() ensures start only moves forward. If the previous occurrence of s[end] is before the current window (left of start), we don't want to move start backward."
+    },
+    {
+      "q": "What does the `state` dictionary map in the optimized solution?",
+      "options": [
+        "Each character to the number of times it appears in the current window",
+        "Each character to its last seen index in the string",
+        "Each index to the character at that position",
+        "Each character to a boolean indicating if it's in the window"
+      ],
+      "answer": 1,
+      "explain": "The optimized solution maps each character to its most recent index (state[s[end]] = end), allowing us to jump the start pointer directly past duplicates instead of incrementally shrinking."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": 7,
+  "slug": "move-zeroes",
+  "title": "Move Zeroes",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Rearrange array by moving all zeros to end while preserving non-zero element order in-place.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums`, write a function to rearrange the array by moving all zeros to the end while keeping the order of non-zero elements unchanged. Perform this operation **in-place** without creating a copy of the array.\n\n**Example:**\n\n```\nInput:  nums = [2,0,4,0,9]\nOutput: [2,4,9,0,0]\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use two pointers: one (`i`) to iterate through the array, and another (`nextNonZero`) to track where the next non-zero element should be placed. When a non-zero element is found, swap it with the position at `nextNonZero` and increment `nextNonZero`. This maintains relative order of non-zero elements while moving all zeros to the end."
+    },
+    {
+      "heading": "Approach",
+      "body": "The two-pointer technique allows us to solve this in a single pass:\n\n1. Initialize `nextNonZero` pointer at index 0 to track where the next non-zero should go\n2. Iterate through array with pointer `i` from 0 to end\n3. When `nums[i]` is non-zero, swap `nums[i]` with `nums[nextNonZero]`\n4. After each swap, increment `nextNonZero` to point to the next available position\n5. Continue until all elements are processed\n\nThis ensures non-zero elements are moved forward in order, while zeros naturally accumulate at the end."
+    }
+  ],
+  "approach": [
+    "Initialize pointer `nextNonZero = 0` to track position for next non-zero element",
+    "Iterate through array with pointer `i` from 0 to length-1",
+    "If `nums[i]` is non-zero, swap `nums[i]` with `nums[nextNonZero]` and increment `nextNonZero`",
+    "If `nums[i]` is zero, leave it and continue (it will be overwritten or stay at end)",
+    "After iteration completes, all zeros will be at the end with non-zero order preserved"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def moveZeroes(nums):\n    \"\"\"\n    Move all zeros to end while preserving non-zero element order in-place.\n    \"\"\"\n    nextNonZero = 0\n    for i in range(len(nums)):\n        if nums[i] != 0:\n            nums[nextNonZero], nums[i] = nums[i], nums[nextNonZero]\n            nextNonZero += 1",
+  "quiz": [
+    {
+      "q": "Why do we swap elements instead of just assigning non-zero values forward?",
+      "options": [
+        "Swapping is faster than assignment in Python",
+        "Swapping ensures zeros naturally move to the end without extra logic",
+        "Assignment would require tracking zero positions separately",
+        "The problem specifically requires using swap operations"
+      ],
+      "answer": 1,
+      "explain": "Swapping allows us to simultaneously move non-zero elements forward while pushing zeros backward. If we only assigned non-zero values forward, we'd need additional logic to fill the remaining positions with zeros."
+    },
+    {
+      "q": "What is the purpose of the `nextNonZero` pointer?",
+      "options": [
+        "It marks the boundary between processed and unprocessed elements",
+        "It tracks the position where the next non-zero element should be placed",
+        "It counts how many non-zero elements have been found",
+        "It prevents infinite loops during the swap operations"
+      ],
+      "answer": 1,
+      "explain": "`nextNonZero` maintains the index where we should place the next non-zero element we find. It starts at 0 and increments each time we place a non-zero element, ensuring they maintain their relative order at the front of the array."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": 14,
+  "slug": "variable-length-sliding-window",
+  "title": "Variable-Length Sliding Window",
+  "pattern": "sliding-window",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Expand and contract a window to find the longest/shortest subarray satisfying a condition in O(n) time.",
+  "sections": [
+    {
+      "heading": "What is a Variable-Length Sliding Window?",
+      "body": "A **variable-length sliding window** is a technique for solving problems involving subarrays or substrings where the size of the window is not known in advance. Instead of a fixed-size window, you dynamically **expand** the window by moving the right pointer and **contract** it by moving the left pointer when a constraint is violated.\n\nThe window \"slides\" through the input while maintaining state about the current subarray. This allows you to find optimal subarrays (e.g., longest, shortest) in **O(n)** time instead of checking all **O(n²)** subarrays."
+    },
+    {
+      "heading": "How It Works",
+      "body": "The algorithm uses two pointers (`start` and `end`) and a data structure (often a dictionary or set) to track the window's state:\n\n1. **Initialize**: Set `start = 0`, `end = 0`, and an empty state container.\n2. **Expand**: Increment `end` and add `nums[end]` to the state.\n3. **Contract**: While the window is invalid (constraint violated), remove `nums[start]` from state and increment `start`.\n4. **Update Answer**: After each expansion, if the window is valid, update the maximum/minimum length.\n\nBoth `start` and `end` traverse the array at most once, giving **O(n)** time complexity."
+    },
+    {
+      "heading": "Fixed vs. Variable-Length Windows",
+      "body": "**Fixed-length sliding window**: Use when the size of the subarray is known (e.g., \"find max sum of subarray of size k\"). You move both pointers together to maintain a constant window size.\n\n**Variable-length sliding window**: Use when the size is unknown and depends on a condition (e.g., \"longest substring with at most 2 distinct characters\"). You expand the window greedily and contract it only when the condition breaks.\n\nVariable-length windows are more flexible and handle problems where the optimal window size must be discovered."
+    },
+    {
+      "heading": "Recognition Cues",
+      "body": "Use a variable-length sliding window when you see:\n\n- **Longest** or **shortest** subarray/substring satisfying a condition\n- Constraints like \"at most k distinct elements\", \"without repeating characters\", or \"sum ≥ target\"\n- The problem asks for a **contiguous** subarray or substring\n- You need to optimize over all possible subarrays efficiently\n\nExamples: longest substring without repeating characters, smallest subarray with sum ≥ S, longest substring with at most k replacements."
+    },
+    {
+      "heading": "Choosing the Right State",
+      "body": "The **state** data structure must support:\n\n1. Adding/removing elements in **O(1)** time\n2. Checking validity in **O(1)** time\n\n**Common choices**:\n- **Dictionary (hash map)**: Track counts or indices of elements (e.g., character frequencies)\n- **Set**: Track distinct elements (e.g., unique characters in window)\n- **Integer/Counter**: Track simple properties (e.g., count of zeros)\n\nFor the \"Fruit Into Baskets\" problem, a dictionary mapping fruit type → count allows O(1) validity checks (len(state) ≤ 2)."
+    }
+  ],
+  "approach": [
+    "Problem asks for **longest** or **shortest** subarray/substring satisfying a condition",
+    "Constraint involves \"at most k\", \"without duplicates\", \"sum ≥ target\", etc.",
+    "You need a **contiguous** subarray or substring (not subsequence)",
+    "Brute force checking all O(n²) subarrays would be too slow",
+    "The window size is not known in advance (unlike fixed-length sliding window)"
+  ],
+  "complexity": {
+    "time": "O(n) — each element is visited at most twice (once by end, once by start)",
+    "space": "O(k) — where k is the size of the state (e.g., number of distinct elements)"
+  },
+  "code": "def variable_length_sliding_window(nums):\n    start = 0\n    state = {}  # or set, counter, etc.\n    max_length = 0\n    \n    for end in range(len(nums)):\n        # Expand: add nums[end] to state\n        state[nums[end]] = state.get(nums[end], 0) + 1\n        \n        # Contract: shrink window while invalid\n        while is_invalid(state):  # replace with actual condition\n            state[nums[start]] -= 1\n            if state[nums[start]] == 0:\n                del state[nums[start]]\n            start += 1\n        \n        # Update answer (window is valid here)\n        max_length = max(max_length, end - start + 1)\n    \n    return max_length",
+  "quiz": [
+    {
+      "q": "What is the key difference between fixed-length and variable-length sliding windows?",
+      "options": [
+        "Fixed-length uses one pointer, variable-length uses two pointers",
+        "Fixed-length has a known window size, variable-length discovers the optimal size dynamically",
+        "Fixed-length runs in O(n²), variable-length runs in O(n)",
+        "Fixed-length uses arrays, variable-length uses hash maps"
+      ],
+      "answer": 1,
+      "explain": "Fixed-length windows maintain a constant size (e.g., \"subarray of size k\"), while variable-length windows expand and contract to find the optimal size based on a condition. Both use two pointers and run in O(n)."
+    },
+    {
+      "q": "In the variable-length sliding window template, when do you contract the window (increment start)?",
+      "options": [
+        "After every expansion to keep the window balanced",
+        "When the current element is a duplicate",
+        "While the window violates the problem's constraint (is invalid)",
+        "When end reaches the middle of the array"
+      ],
+      "answer": 2,
+      "explain": "You contract the window (move start forward) only when the current window becomes invalid according to the problem's constraint (e.g., too many distinct elements, sum too large). You keep contracting until the window is valid again."
+    }
+  ]
+}

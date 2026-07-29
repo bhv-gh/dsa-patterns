@@ -1,0 +1,60 @@
+{
+  "id": 8,
+  "slug": "sort-colors",
+  "title": "Sort Colors",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Sort array of 0s, 1s, and 2s in-place using three-pointer Dutch National Flag partition in one pass.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array `nums` containing only `0`, `1`, and `2` (representing red, white, and blue), sort the array in-place without using the built-in sort function. The sorted array should have all 0s first, then all 1s, then all 2s.\n\n**Example:**\n```\nInput: nums = [2,1,2,0,1,0,1,0,1]\nOutput: [0,0,0,1,1,1,1,2,2]\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The Dutch National Flag algorithm uses three pointers to partition the array in one pass:\n\n- **left**: boundary of 0s region (everything before is 0)\n- **i**: current element being examined\n- **right**: boundary of 2s region (everything after is 2)\n\n**Invariants maintained:**\n1. Elements `[0...left-1]` are 0s\n2. Elements `[left...i-1]` are 1s\n3. Elements `[i...right]` are unsorted\n4. Elements `[right+1...end]` are 2s\n\n**Critical detail:** When swapping `nums[i]` with `nums[right]`, we don't increment `i` because the new value at `i` comes from the unsorted region and needs to be examined in the next iteration."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Initialize three pointers: `left = 0`, `i = 0`, `right = len(nums) - 1`\n2. While `i <= right`, examine `nums[i]`:\n   - If `nums[i] == 0`: swap with `nums[left]`, increment both `left` and `i` (we know the swapped value is 1 or we're swapping with ourselves)\n   - If `nums[i] == 1`: already in correct region, increment `i`\n   - If `nums[i] == 2`: swap with `nums[right]`, decrement `right`, **don't increment `i`** (new value needs examination)\n3. Continue until `i` passes `right` (unsorted region is empty)\n4. Array is now partitioned: all 0s, then 1s, then 2s"
+    }
+  ],
+  "approach": [
+    "Initialize three pointers: left=0 (boundary of 0s), i=0 (current), right=len(nums)-1 (boundary of 2s)",
+    "Iterate while i <= right",
+    "If nums[i]==0: swap with nums[left], increment both left and i",
+    "If nums[i]==1: increment i only (already in correct position)",
+    "If nums[i]==2: swap with nums[right], decrement right, keep i unchanged to examine swapped value",
+    "Terminate when i > right (unsorted region empty)"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def sortColors(nums):\n    \"\"\"Sort array of 0s, 1s, 2s in-place using Dutch National Flag.\"\"\"\n    left, right = 0, len(nums) - 1\n    i = 0\n    while i <= right:\n        if nums[i] == 0:\n            nums[i], nums[left] = nums[left], nums[i]\n            left += 1\n            i += 1\n        elif nums[i] == 2:\n            nums[i], nums[right] = nums[right], nums[i]\n            right -= 1\n        else:\n            i += 1",
+  "quiz": [
+    {
+      "q": "Why don't we increment i after swapping nums[i] with nums[right] when nums[i]==2?",
+      "options": [
+        "Because the right pointer needs to be decremented first",
+        "Because the new value at i came from the unsorted region and must be examined",
+        "Because incrementing i would skip examining nums[right]",
+        "Because we need to swap twice to move 2s to the end"
+      ],
+      "answer": 1,
+      "explain": "After swapping nums[i] with nums[right], the new value at position i came from the unsorted region [i...right]. We don't know if it's a 0, 1, or 2, so we must examine it in the next iteration. Only after swapping with left can we safely increment i, because we know elements in [left...i-1] are all 1s."
+    },
+    {
+      "q": "What is the time complexity of the Dutch National Flag algorithm for this problem?",
+      "options": [
+        "O(n log n) because we're sorting",
+        "O(n²) because of nested pointer movements",
+        "O(n) because we traverse the array once",
+        "O(1) because we use constant pointers"
+      ],
+      "answer": 2,
+      "explain": "The algorithm runs in O(n) time because each element is visited at most once by the i pointer. Even when we don't increment i after a swap with right, we're shrinking the unsorted region, ensuring the total iterations never exceed n."
+    }
+  ]
+}

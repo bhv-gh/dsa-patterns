@@ -1,0 +1,60 @@
+{
+  "id": 13,
+  "slug": "max-sum-distinct-subarrays-k",
+  "title": "Max Sum of Distinct Subarrays of Length K",
+  "pattern": "sliding-window",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the maximum sum of a subarray of length k where all elements are distinct, or return 0 if no such subarray exists.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums` and an integer `k`, find the highest possible sum of a subarray within `nums` where:\n\n- The subarray length is exactly `k`\n- All elements in the subarray are distinct (no duplicates)\n\nIf no such subarray exists, return 0.\n\n**Example 1:**\n```\nInput: nums = [3, 2, 2, 3, 4, 6, 7, 7, -1], k = 4\nOutput: 20\nExplanation: The subarray [3, 4, 6, 7] has all distinct elements and sum of 20.\n```\n\n**Example 2:**\n```\nInput: nums = [5, 5, 5, 5, 5], k = 3\nOutput: 0\nExplanation: Every subarray of length 3 contains duplicate elements.\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **fixed-length sliding window** of size `k` combined with a **hash map** to track element frequencies. The window is valid only when `len(state) == k`, meaning all `k` elements are distinct. Maintain a running sum to avoid recalculating the sum for each window.\n\nThis approach iterates through the array once in O(n) time while using O(k) space to track the window state."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize state**: Create variables `max_sum` (initialized to `-inf`), `curr_sum` (running sum of current window), `state` (dictionary tracking element frequencies), and `start` (left boundary of window).\n\n2. **Expand window**: For each element at index `end`, add it to `state` (increment count) and add its value to `curr_sum`.\n\n3. **Check window size**: When the window reaches size `k` (i.e., `end - start + 1 == k`):\n   - Check if all elements are distinct by comparing `len(state) == k`\n   - If distinct, update `max_sum = max(max_sum, curr_sum)`\n\n4. **Contract window**: Remove the leftmost element from the window:\n   - Subtract `nums[start]` from `curr_sum`\n   - Decrement the count of `nums[start]` in `state`\n   - If count becomes 0, delete it from `state`\n   - Increment `start` to maintain fixed window size\n\n5. **Handle edge case**: Return 0 if `max_sum` is still `-inf` (no valid subarray found), otherwise return `max_sum`."
+    }
+  ],
+  "approach": [
+    "Initialize max_sum to -inf, curr_sum to 0, state dictionary to {}, and start to 0",
+    "Iterate through nums with end pointer, adding each element to state and curr_sum",
+    "When window size reaches k, check if len(state) == k (all distinct)",
+    "If distinct, update max_sum with the maximum of max_sum and curr_sum",
+    "Contract window by removing nums[start] from state and curr_sum, then increment start",
+    "Return 0 if max_sum is -inf, otherwise return max_sum"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(k)"
+  },
+  "code": "def maxSum(nums, k):\n    \"\"\"Find max sum of distinct subarray of length k.\"\"\"\n    max_sum = float(\"-inf\")\n    start = 0\n    state = {}\n    curr_sum = 0\n    \n    for end in range(len(nums)):\n        curr_sum = curr_sum + nums[end]\n        state[nums[end]] = state.get(nums[end], 0) + 1\n        \n        if end - start + 1 == k:\n            if len(state) == k:\n                max_sum = max(max_sum, curr_sum)\n            curr_sum = curr_sum - nums[start]\n            state[nums[start]] = state[nums[start]] - 1\n            if state[nums[start]] == 0:\n                del state[nums[start]]\n            start += 1\n    \n    return 0 if max_sum == float(\"-inf\") else max_sum",
+  "quiz": [
+    {
+      "q": "Why do we compare len(state) == k to determine if all elements are distinct?",
+      "options": [
+        "Because len(state) counts the total number of elements in the window",
+        "Because if k elements are in the window and state has k keys, each element appears exactly once",
+        "Because state automatically removes duplicates from the array",
+        "Because len(state) returns the sum of all frequencies in the dictionary"
+      ],
+      "answer": 1,
+      "explain": "If the window has k elements and the state dictionary has k keys, it means each element in the window is unique (no element appears more than once). If there were duplicates, state would have fewer than k keys since duplicate values would share the same key."
+    },
+    {
+      "q": "What happens if we forget to delete nums[start] from state when its count becomes 0?",
+      "options": [
+        "The algorithm will return incorrect sums",
+        "The space complexity increases to O(n) instead of O(k)",
+        "Future windows may incorrectly appear to have duplicates when checking len(state) == k",
+        "The curr_sum calculation will be wrong"
+      ],
+      "answer": 2,
+      "explain": "If we don't delete keys with count 0, state accumulates all previously seen elements. When checking len(state) == k for distinctness, state might have more than k keys (including old elements with count 0), causing valid distinct windows to be incorrectly rejected."
+    }
+  ]
+}

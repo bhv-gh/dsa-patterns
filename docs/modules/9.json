@@ -1,0 +1,71 @@
+{
+  "id": 9,
+  "slug": "trapping-rain-water",
+  "title": "Trapping Rain Water",
+  "pattern": "two-pointers",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Calculate total rainwater trapped between bars using two pointers and running max heights from each end.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to calculate the total amount of water trapped between bars on an elevation map, where each bar's width is 1. The input is given as an array of n non-negative integers `height` representing the height of each bar.\n\n**Example:**\n```\nheight = [3, 4, 1, 2, 2, 5, 1, 0, 2]\nOutput: 10\n```\n\nWater accumulates at each index based on the minimum of the highest bars to its left and right, minus the bar's own height."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "You don't need to know the *exact* heights of both the highest left and right bars for every index. If you know:\n1. The highest bar to the right of an index has height `rightMax`\n2. There exists a bar taller than `rightMax` *anywhere* to the left\n\nThen `min(leftMax, rightMax) = rightMax`, and you can compute trapped water at that index as `rightMax - height[i]`.\n\nThis insight enables the two-pointer technique: maintain running max heights from both ends, and process whichever side has the smaller max (because that side's max is the bottleneck)."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Initialize two pointers** `left` at index 0 and `right` at the last index\n2. **Track running maximums** `leftMax` and `rightMax` starting with `height[left]` and `height[right]`\n3. **Compare maximums:** if `leftMax < rightMax`, process the left side; otherwise process the right side\n4. **Move the pointer** on the side being processed (increment `left` or decrement `right`)\n5. **Calculate water:** if the new bar is shorter than the side's max, add `(sideMax - height[pointer])` to the total; otherwise update the side's max\n6. **Repeat** until `left` meets `right`\n7. **Return** the total water trapped"
+    }
+  ],
+  "approach": [
+    "Initialize left and right pointers at array ends, and leftMax/rightMax to initial heights",
+    "While left < right, compare leftMax and rightMax",
+    "Move the pointer with the smaller max (left++ if leftMax < rightMax, else right--)",
+    "If new height >= current side max, update the max; otherwise add (max - height) to water count",
+    "Continue until pointers meet",
+    "Return total water count"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def trapping_water(heights):\n    \"\"\"Calculate total rainwater trapped between elevation bars.\"\"\"\n    if not heights:\n        return 0\n    \n    left, right = 0, len(heights) - 1\n    left_max, right_max = heights[left], heights[right]\n    water = 0\n    \n    while left < right:\n        if left_max < right_max:\n            left += 1\n            if heights[left] >= left_max:\n                left_max = heights[left]\n            else:\n                water += left_max - heights[left]\n        else:\n            right -= 1\n            if heights[right] >= right_max:\n                right_max = heights[right]\n            else:\n                water += right_max - heights[right]\n    \n    return water",
+  "quiz": [
+    {
+      "q": "Why do we move the pointer with the smaller max height?",
+      "options": [
+        "To minimize the number of comparisons needed",
+        "Because we have enough information to calculate water at that side (the other side guarantees a higher bar exists)",
+        "To ensure we always process bars from shortest to tallest",
+        "Because it reduces space complexity"
+      ],
+      "answer": 1,
+      "explain": "When leftMax < rightMax, we know the trapped water at the left pointer is limited by leftMax (since a taller bar exists on the right). This gives us enough information to calculate water at that position."
+    },
+    {
+      "q": "What is the space complexity of the two-pointer solution?",
+      "options": [
+        "O(n) because we store water values for each index",
+        "O(log n) due to the two pointers",
+        "O(1) because we only use a constant number of variables",
+        "O(n) because we iterate through the array"
+      ],
+      "answer": 2,
+      "explain": "We only use a fixed number of variables (left, right, leftMax, rightMax, water) regardless of input size, giving us O(1) space complexity."
+    },
+    {
+      "q": "At index i, how much water can be trapped?",
+      "options": [
+        "max(leftMax, rightMax) - height[i]",
+        "leftMax + rightMax - height[i]",
+        "min(leftMax, rightMax) - height[i] (if positive)",
+        "height[i] - min(leftMax, rightMax)"
+      ],
+      "answer": 2,
+      "explain": "Water level at index i is determined by the shorter of the two walls (min of max heights on left and right). Subtract the bar's own height to get trapped water."
+    }
+  ]
+}
