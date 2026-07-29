@@ -208,6 +208,10 @@ Also update **Max module id** and the **Last updated** date. Keep the table sort
 
 ## 6. Deploy
 
+**Bump the version** so users can confirm they're on the latest: increment `APP_VERSION`
+in `docs/app.js` AND `CACHE` in `docs/sw.js` to the same new value (e.g. `v4` → `v5`).
+The value shows as a chip in the app's top bar; the refresh button clears caches to fetch it.
+
 GitHub Pages rebuilds automatically on push to `main`:
 ```bash
 cd /Users/bhv/Documents/personal/HI

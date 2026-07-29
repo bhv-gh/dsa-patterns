@@ -2,6 +2,9 @@
 (() => {
   'use strict';
 
+  // Bump this on every deploy (keep in sync with CACHE in sw.js). Shown in the top bar.
+  const APP_VERSION = 'v4';
+
   const view = document.getElementById('view');
   const topbarTitle = document.getElementById('topbarTitle');
   const backBtn = document.getElementById('backBtn');
@@ -415,6 +418,32 @@
       navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW failed', e));
     });
   }
+
+  /* ---------- version chip ---------- */
+  const verChip = document.getElementById('verChip');
+  if (verChip) verChip.textContent = APP_VERSION;
+  console.log('DSA Patterns ' + APP_VERSION);
+
+  /* ---------- hard refresh (clear caches + SW, reload latest) ---------- */
+  const refreshBtn = document.getElementById('refreshBtn');
+  if (refreshBtn) refreshBtn.addEventListener('click', async () => {
+    refreshBtn.classList.add('spin');
+    toast('Updating to latest…');
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+      }
+    } catch (e) { /* ignore — reload anyway */ }
+    // cache-busted reload so the HTML/JS come fresh from the network
+    const u = new URL(location.href);
+    u.searchParams.set('_r', String(Date.now()));
+    location.replace(u.toString());
+  });
 
   /* ---------- go ---------- */
   route();
