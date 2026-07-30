@@ -170,10 +170,10 @@
           <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
         </div>
         <div class="launchers">
-          <button class="launch reels" data-nav="#/reels">
+          <button class="launch" data-nav="#/reels">
             <span class="lx-ic">🎬</span><span class="lx-tx"><b>Reels</b><small>Scroll &amp; learn</small></span>
           </button>
-          <button class="launch saved" data-nav="#/saved">
+          <button class="launch" data-nav="#/saved">
             <span class="lx-ic">🔖</span><span class="lx-tx"><b>Saved</b><small>${bookmarkCount()} bookmarked</small></span>
           </button>
         </div>
@@ -476,11 +476,7 @@
     }).join('');
 
     view.innerHTML = `<div class="reels" id="reels">
-      <div class="reels-bar">
-        <button class="icon-btn" data-nav="#/" aria-label="Close reels">✕</button>
-        <div class="reels-title">${savedOnly ? 'Saved reels 🔖' : 'Reels 🧿'}</div>
-        <button class="reels-filter ${savedOnly ? 'on' : ''}" data-nav="${savedOnly ? '#/reels' : '#/reels/saved'}">${savedOnly ? 'All' : 'Saved'}</button>
-      </div>
+      ${bar}
       <div class="reels-scroll">${reelsHtml}</div>
     </div>`;
     window.scrollTo(0, 0);

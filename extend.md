@@ -144,6 +144,35 @@ version. Every non-intro module's anim file must be precached for offline use.
 
 ---
 
+## 3c. Author Reels cards per new module (one sub-agent per module)
+
+Reels mode is a swipeable mixed feed (concept / code / quiz cards). Each module gets
+hand-authored cards in `docs/reels/<id>.json`, then they're merged into `docs/reels.json`.
+
+For a big batch, orchestrate with a **workflow** (one sub-agent per new module); for a few,
+just fire one Agent per module. Give each agent this task (fill `<id>`):
+
+```
+You author REEL cards (swipeable, glanceable, TikTok/Instagram-style) for ONE DSA lesson.
+READ /Users/bhv/Documents/personal/HI/docs/modules/<id>.json (title,type,difficulty,
+sections,approach,complexity,code,quiz).
+WRITE a JSON ARRAY (only) to /Users/bhv/Documents/personal/HI/docs/reels/<id>.json.
+Produce 3-4 PUNCHY cards optimized for scroll-learning. Exact keys:
+- {"type":"concept","heading":"<=6-word hook","body":"<=280 chars, ONE key idea, markdown ok"}  (1-2: core idea + a recognition tip/gotcha)
+- {"type":"code","label":"Crux · Python","code":"shortest CORRECT Python showing the trick"}  (skip for pure intro; must compile on its own)
+- {"type":"quiz","q":"...","options":["a","b","c","d"],"answer":<0-idx>,"explain":"one line"}  (adapt the module's quiz)
+Order concept(s) -> code -> quiz. Valid JSON only (double quotes, no trailing commas; \n escaped).
+```
+
+Notes:
+- Do NOT set id/moduleId/slug/pattern/title — `merge_reels.py` stamps those (stable id
+  `type:moduleId:index`). Authors only write the content fields above.
+- Code snippets must be self-contained and compile; the merge self-heals any that don't by
+  substituting the module's full solution, but aim for correct-and-tight.
+- After authoring, run `uv run python merge_reels.py` (see step 4).
+
+---
+
 ## 4. Verify (do NOT skip)
 
 ```bash
@@ -183,10 +212,15 @@ EOF
 > module order within a pattern makes pedagogical sense (guide/overview before problems,
 > easy → hard). Reorder the `sorted(...)` or post-sort `mods` if needed.
 
-Also **regenerate the Reels feed** `docs/reels.json` (the mixed concept/code/quiz feed is
-derived from the modules): re-run the generator that builds one concept card + one code card
-+ one quiz card per module in `index.json` order. If you change the generator or add modules,
-rebuild it so new lessons appear in Reels, then keep `./reels.json` in the SW precache list.
+Also **rebuild the Reels feed** (see step 3c) by running the merge:
+```bash
+cd /Users/bhv/Documents/personal/HI
+uv run python merge_reels.py   # per-module docs/reels/<id>.json -> docs/reels.json
+```
+`merge_reels.py` stamps stable ids/metadata, self-heals code snippets that don't compile
+(falls back to the module's full solution), and falls back to mechanically-generated cards
+for any module missing an authored `docs/reels/<id>.json`. Keep `./reels.json` in the SW
+precache list. Verify: all quiz answers in range, all code cards compile, ids unique.
 
 Finally, **update the service worker** `docs/sw.js`:
 - The line `Array.from({ length: 16 }, ...)` assumes module ids are `1..N` contiguous.
