@@ -3,7 +3,7 @@
   'use strict';
 
   // Bump this on every deploy (keep in sync with CACHE in sw.js). Shown in the top bar.
-  const APP_VERSION = 'v12';
+  const APP_VERSION = 'v14';
 
   const view = document.getElementById('view');
   const topbarTitle = document.getElementById('topbarTitle');
