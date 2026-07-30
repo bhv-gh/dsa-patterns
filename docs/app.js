@@ -110,6 +110,36 @@
     moduleCache.set(id, data);
     return data;
   }
+  let REELS = null;
+  async function loadReels() {
+    if (REELS) return REELS;
+    const res = await fetch('./reels.json', { cache: 'no-cache' });
+    REELS = await res.json();
+    return REELS;
+  }
+
+  /* ---------- bookmarks ---------- */
+  const LS_BOOKMARKS = 'dsa.bookmarks.v1';
+  const getBookmarks = () => {
+    try { return JSON.parse(localStorage.getItem(LS_BOOKMARKS)) || []; }
+    catch { return []; }
+  };
+  const isBookmarked = (id) => getBookmarks().includes(id);
+  const bookmarkCount = () => getBookmarks().length;
+  function toggleBookmark(id) {
+    const b = getBookmarks();
+    const i = b.indexOf(id);
+    if (i >= 0) b.splice(i, 1); else b.unshift(id);
+    localStorage.setItem(LS_BOOKMARKS, JSON.stringify(b));
+    return i < 0; // true if now bookmarked
+  }
+
+  // per-pattern accent (hue) for reel backgrounds
+  const PATTERN_HUE = {
+    'intro': 250, 'two-pointers': 222, 'sliding-window': 275, 'intervals': 200,
+    'stack': 155, 'linked-list': 330, 'binary-search': 35, 'heap': 10, 'depth-first-search': 190,
+  };
+  const hueFor = (p) => (PATTERN_HUE[p] != null ? PATTERN_HUE[p] : 240);
 
   /* ---------- badge helpers ---------- */
   function badge(m) {
@@ -138,6 +168,14 @@
         <div class="progress-wrap">
           <div class="progress-row"><span>${done} of ${total} complete</span><span>${pct}%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="launchers">
+          <button class="launch reels" data-nav="#/reels">
+            <span class="lx-ic">🎬</span><span class="lx-tx"><b>Reels</b><small>Scroll &amp; learn</small></span>
+          </button>
+          <button class="launch saved" data-nav="#/saved">
+            <span class="lx-ic">🔖</span><span class="lx-tx"><b>Saved</b><small>${bookmarkCount()} bookmarked</small></span>
+          </button>
         </div>
       </section>`;
 
@@ -168,6 +206,8 @@
     window.scrollTo(0, 0);
     view.querySelectorAll('[data-goto]').forEach((el) =>
       el.addEventListener('click', () => { location.hash = `#/m/${el.dataset.goto}`; }));
+    view.querySelectorAll('[data-nav]').forEach((el) =>
+      el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
     const reset = document.getElementById('resetBtn');
     if (reset) reset.addEventListener('click', () => {
       if (confirm('Reset all progress?')) { localStorage.removeItem(LS_PROGRESS); renderHome(); }
@@ -245,6 +285,9 @@
 
     // complete button
     html += `<button class="complete-btn ${isDone ? 'done' : ''}" id="completeBtn">${isDone ? '✓ Completed — tap to undo' : 'Mark as complete'}</button>`;
+
+    // reels for this lesson
+    if (m.type !== 'intro') html += `<a class="reels-link" href="#/reels/m/${m.id}">🎬 Reels for this lesson</a>`;
 
     // pager
     html += pagerHtml(m.id);
@@ -357,12 +400,185 @@
     </nav>`;
   }
 
+  /* ---------- REELS (mixed feed, vertical scroll, double-tap bookmark) ---------- */
+  function reelInner(c) {
+    const chip = `<div class="reel-tag">${esc(c.patternTitle)} · ${c.type === 'quiz' ? 'Quiz' : c.type === 'code' ? 'Code' : 'Concept'}</div>`;
+    if (c.type === 'concept') {
+      return `${chip}<div class="reel-title">${esc(c.title)}</div>
+        ${c.heading ? `<div class="reel-h">${esc(c.heading)}</div>` : ''}
+        <div class="reel-body">${mdBlock(c.body)}</div>`;
+    }
+    if (c.type === 'code') {
+      return `${chip}<div class="reel-title">${esc(c.title)}</div>
+        <div class="reel-h">${esc(c.label || 'Code')}</div>
+        <pre class="code reel-code"><code>${highlightPy(c.code)}</code></pre>`;
+    }
+    // quiz
+    const opts = c.options.map((o, oi) => `<button class="opt" data-oi="${oi}">${esc(o)}<span class="mark"></span></button>`).join('');
+    return `${chip}<div class="reel-title">${esc(c.title)}</div>
+      <div class="reel-q">${esc(c.q)}</div>${opts}
+      ${c.explain ? `<div class="explain" hidden>${mdInline(c.explain)}</div>` : ''}`;
+  }
+
+  // filter: {mode:'all'|'saved'|'completed'|'module', id?}
+  async function renderReels(filter) {
+    backBtn.hidden = true;
+    let data;
+    try { data = await loadReels(); }
+    catch { view.innerHTML = `<div class="empty">Couldn't load reels.</div>`; return; }
+    let cards = data.cards;
+    let heading = 'Reels 🧿', emptyMsg = 'No reels available.', moduleTitle = '';
+    if (filter.mode === 'saved') {
+      const bm = new Set(getBookmarks());
+      cards = cards.filter((c) => bm.has(c.id));
+      heading = 'Saved reels 🔖'; emptyMsg = 'No bookmarks yet.<br>Double-tap a reel to save it.';
+    } else if (filter.mode === 'completed') {
+      const prog = getProgress();
+      cards = cards.filter((c) => prog[c.moduleId]);
+      heading = 'Completed reels ✓'; emptyMsg = "No completed lessons yet.<br>Finish a lesson to see its reels here.";
+    } else if (filter.mode === 'module') {
+      cards = cards.filter((c) => c.moduleId === filter.id);
+      const m = INDEX && INDEX.modules.find((x) => x.id === filter.id);
+      moduleTitle = m ? m.title : '';
+      heading = 'Reels · this lesson'; emptyMsg = 'No reels for this lesson.';
+    }
+
+    // filter chips shown in the bar
+    const chip = (mode, label, hash) =>
+      `<button class="reels-filter ${filter.mode === mode ? 'on' : ''}" data-nav="${hash}">${label}</button>`;
+    const bar = `<div class="reels-bar">
+        <button class="icon-btn" data-nav="${filter.mode === 'module' ? '#/m/' + filter.id : '#/'}" aria-label="Close reels">✕</button>
+        <div class="reels-title">${heading}${moduleTitle ? ` · ${esc(moduleTitle)}` : ''}</div>
+        <div class="reels-filters">
+          ${chip('all', 'All', '#/reels')}${chip('saved', '🔖', '#/reels/saved')}${chip('completed', '✓', '#/reels/completed')}
+        </div>
+      </div>`;
+
+    if (!cards.length) {
+      view.innerHTML = `<div class="reels">${bar}<div class="reels-empty">
+        <div class="nazar" style="font-size:32px">🧿</div>
+        <p>${emptyMsg}</p>
+        <button class="complete-btn" data-nav="#/">Back home</button></div></div>`;
+      view.querySelectorAll('[data-nav]').forEach((el) => el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
+      return;
+    }
+
+    const reelsHtml = cards.map((c) => {
+      const saved = isBookmarked(c.id);
+      return `<section class="reel" data-id="${esc(c.id)}" data-module="${c.moduleId}" style="--hue:${hueFor(c.pattern)}">
+        <div class="reel-inner">${reelInner(c)}</div>
+        <div class="reel-actions">
+          <button class="reel-bm ${saved ? 'on' : ''}" aria-label="Bookmark">${saved ? '🔖' : '🏷️'}</button>
+          <button class="reel-open" aria-label="Open lesson">↗</button>
+        </div>
+        <div class="reel-heart" aria-hidden="true">🧿</div>
+      </section>`;
+    }).join('');
+
+    view.innerHTML = `<div class="reels" id="reels">
+      <div class="reels-bar">
+        <button class="icon-btn" data-nav="#/" aria-label="Close reels">✕</button>
+        <div class="reels-title">${savedOnly ? 'Saved reels 🔖' : 'Reels 🧿'}</div>
+        <button class="reels-filter ${savedOnly ? 'on' : ''}" data-nav="${savedOnly ? '#/reels' : '#/reels/saved'}">${savedOnly ? 'All' : 'Saved'}</button>
+      </div>
+      <div class="reels-scroll">${reelsHtml}</div>
+    </div>`;
+    window.scrollTo(0, 0);
+
+    view.querySelectorAll('[data-nav]').forEach((el) =>
+      el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
+
+    view.querySelectorAll('.reel').forEach((reel) => {
+      const id = reel.dataset.id;
+      const bmBtn = reel.querySelector('.reel-bm');
+      const setBm = (on) => { bmBtn.classList.toggle('on', on); bmBtn.textContent = on ? '🔖' : '🏷️'; };
+      const doBookmark = (viaTap) => {
+        const nowOn = toggleBookmark(id);
+        setBm(nowOn);
+        if (nowOn && viaTap) {
+          reel.classList.remove('pop'); void reel.offsetWidth; reel.classList.add('pop');
+        }
+        toast(nowOn ? 'Saved 🧿' : 'Removed');
+      };
+      bmBtn.addEventListener('click', (e) => { e.stopPropagation(); doBookmark(false); });
+      reel.querySelector('.reel-open').addEventListener('click', (e) => {
+        e.stopPropagation(); location.hash = `#/m/${reel.dataset.module}`;
+      });
+      // double-tap anywhere to bookmark
+      let lastTap = 0;
+      reel.addEventListener('click', (e) => {
+        if (e.target.closest('.opt') || e.target.closest('button')) return;
+        const now = e.timeStamp;
+        if (now - lastTap < 320) { doBookmark(true); lastTap = 0; } else { lastTap = now; }
+      });
+      // quiz interactivity
+      const q = reel.querySelector('.reel-q');
+      if (q) {
+        const cardData = cards.find((c) => c.id === id);
+        reel.querySelectorAll('.opt').forEach((opt, oi) => {
+          opt.addEventListener('click', () => {
+            reel.querySelectorAll('.opt').forEach((o) => o.classList.add('disabled'));
+            const correct = oi === cardData.answer;
+            opt.classList.add(correct ? 'correct' : 'wrong');
+            opt.querySelector('.mark').textContent = correct ? '✓' : '✕';
+            if (!correct) { const r = reel.querySelectorAll('.opt')[cardData.answer]; r.classList.add('correct'); r.querySelector('.mark').textContent = '✓'; }
+            const ex = reel.querySelector('.explain'); if (ex) ex.hidden = false;
+          });
+        });
+      }
+    });
+  }
+
+  /* ---------- SAVED list ---------- */
+  async function renderSaved() {
+    backBtn.hidden = false;
+    topbarTitle.textContent = 'Saved 🔖';
+    const data = await loadReels();
+    const bm = getBookmarks();
+    const byId = Object.fromEntries(data.cards.map((c) => [c.id, c]));
+    const saved = bm.map((id) => byId[id]).filter(Boolean);
+    if (!saved.length) {
+      view.innerHTML = `<div class="empty"><div style="font-size:32px">🧿</div>
+        <p>Nothing saved yet.<br>Open <b>Reels</b> and double-tap a card to bookmark it.</p>
+        <button class="complete-btn" data-nav="#/reels">Open Reels 🎬</button></div>`;
+      view.querySelectorAll('[data-nav]').forEach((el) => el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
+      return;
+    }
+    const items = saved.map((c) => {
+      const kind = c.type === 'quiz' ? 'Quiz' : c.type === 'code' ? 'Code' : 'Concept';
+      const sub = c.type === 'quiz' ? c.q : (c.heading || c.summary || '');
+      return `<button class="card" data-goto="${c.moduleId}">
+        <span class="idx" style="font-size:15px">${c.type === 'quiz' ? '❓' : c.type === 'code' ? '💻' : '💡'}</span>
+        <span class="card-body">
+          <span class="card-title"><span class="t">${esc(c.title)}</span><span class="badge lesson">${kind}</span></span>
+          <span class="card-sub">${esc(c.patternTitle)} · ${esc(sub)}</span>
+        </span>${chevSvg}</button>`;
+    }).join('');
+    view.innerHTML = `<div class="saved-head"><h1>Saved 🔖</h1><p>${saved.length} bookmarked · tap to open the lesson</p></div>
+      <div class="cards">${items}</div>
+      <button class="reset-link" id="clearBm">Clear all bookmarks</button>
+      <div class="nazar" aria-hidden="true">🧿</div>`;
+    window.scrollTo(0, 0);
+    view.querySelectorAll('[data-goto]').forEach((el) =>
+      el.addEventListener('click', () => { location.hash = `#/m/${el.dataset.goto}`; }));
+    const clr = document.getElementById('clearBm');
+    if (clr) clr.addEventListener('click', () => {
+      if (confirm('Clear all bookmarks?')) { localStorage.removeItem(LS_BOOKMARKS); renderSaved(); }
+    });
+  }
+
   /* ---------- router ---------- */
   async function route() {
     const hash = location.hash || '#/';
     const mMatch = hash.match(/^#\/m\/(\d+)/);
+    const reelModule = hash.match(/^#\/reels\/m\/(\d+)/);
     try {
-      if (mMatch) await renderModule(parseInt(mMatch[1], 10));
+      if (reelModule) { await loadIndex(); await renderReels({ mode: 'module', id: parseInt(reelModule[1], 10) }); }
+      else if (hash.startsWith('#/reels/saved')) await renderReels({ mode: 'saved' });
+      else if (hash.startsWith('#/reels/completed')) await renderReels({ mode: 'completed' });
+      else if (hash.startsWith('#/reels')) await renderReels({ mode: 'all' });
+      else if (hash.startsWith('#/saved')) await renderSaved();
+      else if (mMatch) await renderModule(parseInt(mMatch[1], 10));
       else await renderHome();
     } catch (e) {
       view.innerHTML = `<div class="empty">Something went wrong loading content.</div>`;

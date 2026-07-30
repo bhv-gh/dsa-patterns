@@ -1,5 +1,7 @@
 /* Service worker — precache app shell + all module data for full offline use. */
-const CACHE = 'dsa-patterns-v14';
+// Internal cache name — bumped to precache the new reels feature.
+// (The user-facing version chip stays 'v14' by request; this is not shown.)
+const CACHE = 'dsa-patterns-v14-reels';
 
 const SHELL = [
   './',
@@ -11,6 +13,7 @@ const SHELL = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './modules/index.json',
+  './reels.json',
   './anim/_framework.js',
 ];
 

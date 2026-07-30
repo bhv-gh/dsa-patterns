@@ -183,6 +183,11 @@ EOF
 > module order within a pattern makes pedagogical sense (guide/overview before problems,
 > easy → hard). Reorder the `sorted(...)` or post-sort `mods` if needed.
 
+Also **regenerate the Reels feed** `docs/reels.json` (the mixed concept/code/quiz feed is
+derived from the modules): re-run the generator that builds one concept card + one code card
++ one quiz card per module in `index.json` order. If you change the generator or add modules,
+rebuild it so new lessons appear in Reels, then keep `./reels.json` in the SW precache list.
+
 Finally, **update the service worker** `docs/sw.js`:
 - The line `Array.from({ length: 16 }, ...)` assumes module ids are `1..N` contiguous.
   If your ids are contiguous, change `16` to the new **max id**.
