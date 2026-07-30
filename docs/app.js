@@ -123,7 +123,7 @@
   /* ---------- HOME view ---------- */
   async function renderHome() {
     backBtn.hidden = true;
-    topbarTitle.textContent = 'DSA Patterns';
+    topbarTitle.textContent = 'DSA Patterns 🧿';
     const idx = await loadIndex();
     const progress = getProgress();
     const total = idx.modules.length;
@@ -133,7 +133,7 @@
     const intro = idx.modules.find((m) => m.type === 'intro');
     let html = `
       <section class="hero">
-        <h1>Master coding-interview patterns</h1>
+        <h1>Master coding-interview patterns <span class="nz">🧿</span></h1>
         <p>Bite-sized, visual-first lessons you can study anywhere — fully offline.</p>
         <div class="progress-wrap">
           <div class="progress-row"><span>${done} of ${total} complete</span><span>${pct}%</span></div>
@@ -159,6 +159,9 @@
     if (done > 0) {
       html += `<button class="reset-link" id="resetBtn">Reset progress</button>`;
     }
+
+    // nazar — wards off the evil eye while you grind 🧿
+    html += `<div class="nazar" aria-hidden="true">🧿 &nbsp; happy studying &nbsp; 🧿</div>`;
 
     view.innerHTML = html;
     view.scrollTo?.(0, 0);
@@ -283,7 +286,7 @@
       setDone(m.id, nowDone);
       cbtn.classList.toggle('done', nowDone);
       cbtn.textContent = nowDone ? '✓ Completed — tap to undo' : 'Mark as complete';
-      if (nowDone) toast('Nice — progress saved');
+      if (nowDone) toast('Nice — progress saved 🧿');
     });
 
     // wire pager — REPLACE the history entry (don't push) so the phone's
@@ -428,7 +431,7 @@
   /* ---------- version chip ---------- */
   const verChip = document.getElementById('verChip');
   if (verChip) verChip.textContent = APP_VERSION;
-  console.log('DSA Patterns ' + APP_VERSION);
+  console.log('DSA Patterns ' + APP_VERSION + ' 🧿');
 
   /* ---------- hard refresh (clear caches + SW, reload latest) ---------- */
   const refreshBtn = document.getElementById('refreshBtn');
