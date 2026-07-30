@@ -420,6 +420,26 @@
       ${c.explain ? `<div class="explain" hidden>${mdInline(c.explain)}</div>` : ''}`;
   }
 
+  function fxEmojis(type) {
+    if (type === 'code') return ['💻', '⚡', '🧩', '⚙️', '✨', '🧿'];
+    if (type === 'quiz') return ['❓', '🧠', '✅', '🎯', '✨', '🧿'];
+    return ['💡', '✨', '🧿', '📘', '⚡', '🌟'];
+  }
+  function fxLayer(type) {
+    const em = fxEmojis(type);
+    let out = '';
+    for (let i = 0; i < 6; i++) {
+      const left = 6 + i * 15 + (i % 2 ? 4 : -3);
+      const size = 16 + (i % 3) * 6;
+      const dur = (7 + (i * 1.3) % 6).toFixed(1);
+      const delay = ((i * 1.7) % 6).toFixed(1);
+      const dx = (i % 2 ? 1 : -1) * (20 + i * 8);
+      const rot = (i % 2 ? 1 : -1) * (15 + i * 10);
+      out += `<span class="fx" style="left:${left}%;font-size:${size}px;--dur:${dur}s;--delay:${delay}s;--dx:${dx}px;--rot:${rot}deg">${em[i % em.length]}</span>`;
+    }
+    return `<div class="reel-fx" aria-hidden="true">${out}</div>`;
+  }
+
   // filter: {mode:'all'|'saved'|'completed'|'module', id?}
   async function renderReels(filter) {
     backBtn.hidden = true;
@@ -466,6 +486,7 @@
     const reelsHtml = cards.map((c) => {
       const saved = isBookmarked(c.id);
       return `<section class="reel" data-id="${esc(c.id)}" data-module="${c.moduleId}" style="--hue:${hueFor(c.pattern)}">
+        ${fxLayer(c.type)}
         <div class="reel-inner">${reelInner(c)}</div>
         <div class="reel-actions">
           <button class="reel-bm ${saved ? 'on' : ''}" aria-label="Bookmark">${saved ? '🔖' : '🏷️'}</button>
@@ -523,6 +544,23 @@
         });
       }
     });
+
+    // activate the reel currently in view (drives entrance + floating emojis)
+    const scroller = view.querySelector('.reels-scroll');
+    const reelEls = Array.from(view.querySelectorAll('.reel'));
+    if (reelEls[0]) reelEls[0].classList.add('active');
+    try {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            reelEls.forEach((r) => r.classList.toggle('active', r === en.target));
+          }
+        });
+      }, { root: scroller, threshold: [0.55, 0.9] });
+      reelEls.forEach((r) => io.observe(r));
+    } catch (e) {
+      reelEls.forEach((r) => r.classList.add('active')); // no IO support → animate all
+    }
   }
 
   /* ---------- SAVED list ---------- */

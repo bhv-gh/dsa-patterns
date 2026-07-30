@@ -530,4 +530,44 @@ pre.code .tok-def { color: #82aaff; }
 .reels-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; color: var(--text-dim); padding: 30px; }
 .reels-empty .complete-btn { max-width: 240px; }
 .toast { z-index: 1000; }  /* keep bookmark toast above the reels overlay */
+
+/* ---------- Reels: make them feel ALIVE (not flashcards) ---------- */
+.reels { overflow: hidden; }               /* clip decorative bleed */
+.reel { isolation: isolate; }              /* own stacking context */
+.reel > .reel-inner { position: relative; z-index: 2; }
+.reel-actions { z-index: 3; }
+
+/* flowing gradient blob behind each card */
+@media (prefers-reduced-motion: no-preference) {
+  .reel::before {
+    content: ''; position: absolute; inset: -18%; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(38% 38% at 28% 30%, hsl(var(--hue) 85% 55% / .34), transparent 70%),
+      radial-gradient(44% 44% at 72% 72%, hsl(calc(var(--hue) + 55) 85% 55% / .28), transparent 70%);
+    filter: blur(36px);
+    animation: reelflow 20s ease-in-out infinite alternate;
+  }
+  @keyframes reelflow {
+    0%   { transform: translate(-6%, -4%) scale(1); }
+    50%  { transform: translate(7%, 5%) scale(1.18); }
+    100% { transform: translate(-3%, 7%) scale(1.06); }
+  }
+}
+
+/* ambient emojis drifting up — only on the active reel */
+.reel-fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.reel-fx .fx { position: absolute; bottom: -8%; opacity: 0; will-change: transform, opacity; }
+@media (prefers-reduced-motion: no-preference) {
+  .reel.active .reel-fx .fx { animation: floatup var(--dur, 9s) linear var(--delay, 0s) infinite; }
+  @keyframes floatup {
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    12%  { opacity: .5; }
+    85%  { opacity: .5; }
+    100% { transform: translateY(-120vh) translateX(var(--dx, 0px)) rotate(var(--rot, 24deg)); opacity: 0; }
+  }
+  .reel.active > .reel-inner { animation: reelpop .5s ease both; }
+  @keyframes reelpop { from { opacity: .3; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .reel.active .reel-tag { animation: tagglow 2.6s ease-in-out infinite alternate; }
+  @keyframes tagglow { from { box-shadow: 0 0 0 0 hsl(var(--hue) 80% 60% / 0); } to { box-shadow: 0 0 18px 0 hsl(var(--hue) 85% 60% / .35); } }
+}
 .reset-link { display: block; text-align: center; margin-top: 20px; color: var(--text-faint); font-size: 13px; background: none; border: none; width: 100%; cursor: pointer; }
