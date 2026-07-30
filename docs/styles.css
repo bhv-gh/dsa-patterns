@@ -37,7 +37,10 @@
 html, body {
   margin: 0; padding: 0;
   width: 100%; max-width: 100%;
-  overflow-x: hidden;                 /* no sideways scroll — feel native */
+  /* clip (not hidden): stops sideways overflow WITHOUT turning body into a
+     scroll container. `overflow-x: hidden` forces overflow-y to `auto`, which
+     breaks touch/vertical scrolling on iOS. clip preserves normal page scroll. */
+  overflow-x: clip;
   -webkit-text-size-adjust: 100%;     /* stop iOS auto-inflating text */
   text-size-adjust: 100%;
 }
