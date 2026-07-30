@@ -37,20 +37,22 @@
 html, body {
   margin: 0; padding: 0;
   width: 100%; max-width: 100%;
-  /* clip (not hidden): stops sideways overflow WITHOUT turning body into a
-     scroll container. `overflow-x: hidden` forces overflow-y to `auto`, which
-     breaks touch/vertical scrolling on iOS. clip preserves normal page scroll. */
-  overflow-x: clip;
   -webkit-text-size-adjust: 100%;     /* stop iOS auto-inflating text */
   text-size-adjust: 100%;
 }
+/* IMPORTANT: never set overflow on <html> — it owns the viewport scroll and
+   browsers disagree about propagating vertical scroll when the root is
+   clipped/hidden (broke desktop OR mobile depending on the value). Put the
+   horizontal-overflow backstop on <body> only. `clip` (not `hidden`) avoids
+   making <body> a scroll container, so vertical page scroll works everywhere. */
 body {
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
   position: relative;
 }
 /* nothing may exceed the viewport width */
