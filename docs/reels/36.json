@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Cut the search space in half",
+    "body": "Binary Search works by **repeatedly halving** the search space.\n\nCompare target with middle element:\n- `target > mid` → search right half\n- `target < mid` → search left half\n\nEach step eliminates half the remaining elements: **O(log n)** vs O(n) for linear search."
+  },
+  {
+    "type": "concept",
+    "heading": "The pointer crossing tells you when done",
+    "body": "Track three pointers: `left`, `right`, and `mid = (left + right) // 2`.\n\nLoop while `left <= right` (search space non-empty).\n\n**Common bug**: Use `right = len(nums) - 1` (not `len(nums)`), and update `left = mid + 1` / `right = mid - 1` (not just `mid`) to avoid infinite loops."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def binary_search(nums, target):\n    left, right = 0, len(nums) - 1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        \n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must we use `left = mid + 1` and `right = mid - 1` instead of `left = mid` or `right = mid`?",
+    "options": [
+      "To avoid infinite loops when the search space has two elements",
+      "To improve the time complexity from O(n) to O(log n)",
+      "To handle duplicate elements correctly",
+      "To ensure the mid calculation doesn't overflow"
+    ],
+    "answer": 0,
+    "explain": "Using `left = mid` can cause infinite loops—we must exclude `mid` since we've already checked it."
+  }
+]

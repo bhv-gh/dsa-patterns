@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Graphs Have Cycles, Trees Don't",
+    "body": "**Key difference:** Graphs can contain cycles (paths that loop back).\n\n**Critical rule:** Always use a `visited` set when doing DFS on graphs.\n\nWithout it? Infinite loops. With it? Each node processed exactly once.\n\nTrees never need this because they're acyclic by definition."
+  },
+  {
+    "type": "concept",
+    "heading": "Neighbors = Adjacency List",
+    "body": "Graph representation:\n- **Adjacency list:** `{node: [neighbors]}`\n- Most common in interviews\n\nQuickly finding neighbors is the whole game.\n\n`graph[node]` gives you all neighbors in O(1)."
+  },
+  {
+    "type": "code",
+    "label": "DFS with Visited · Python",
+    "code": "def dfs(graph, node, visited=set()):\n    visited.add(node)\n    \n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            dfs(graph, neighbor, visited)\n    \n    return visited"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is a visited set necessary when performing DFS on a graph but not on a tree?",
+    "options": [
+      "Graphs can contain cycles, which could cause infinite loops without tracking visited nodes",
+      "Trees are always smaller than graphs, so they don't need optimization",
+      "Graphs always have more edges than trees",
+      "Trees use recursion but graphs use iteration"
+    ],
+    "answer": 0,
+    "explain": "Graphs can have cycles that loop infinitely. Trees are acyclic by definition, so no visited set needed."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Kth Largest with a Min-Heap?",
+    "body": "Use a **min-heap of size k** to track the k largest elements.\n\nWhy min-heap? The root is the **smallest** of your k largest elements — that's exactly the kth largest overall. When you find a bigger element, evict the root (weakest of top-k) and insert the new one."
+  },
+  {
+    "type": "concept",
+    "heading": "When to Swap?",
+    "body": "**If heap has < k elements:** push the current element.\n\n**If heap has k elements and current > root:** pop root, push current.\n\nAfter processing all elements, `heap[0]` is your answer."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "import heapq\n\ndef kth_largest(nums, k):\n    heap = []\n    for num in nums:\n        if len(heap) < k:\n            heapq.heappush(heap, num)\n        elif num > heap[0]:\n            heapq.heappushpop(heap, num)\n    return heap[0]"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use a min-heap of size k instead of a max-heap to find the kth largest element?",
+    "options": [
+      "A min-heap of size k keeps the k largest elements, with the smallest (kth largest) at the root for easy access",
+      "A max-heap would require O(n) space while a min-heap only needs O(k) space",
+      "Min-heaps are faster than max-heaps for insertion operations",
+      "A max-heap cannot be used to find the kth largest element"
+    ],
+    "answer": 0,
+    "explain": "A min-heap of size k maintains the k largest elements seen so far. The root is the smallest among these k elements, which is exactly the kth largest overall."
+  }
+]

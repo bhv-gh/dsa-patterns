@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Go Deep, Then Backtrack",
+    "body": "**DFS explores as far down a path as possible before backtracking.** Unlike BFS (level-by-level), DFS dives deep first.\n\nUse DFS when you need to:\n- Explore all possible paths\n- Find **any** valid solution\n- Traverse hierarchical structures\n- Detect cycles or connected components"
+  },
+  {
+    "type": "concept",
+    "heading": "Trees vs. Graphs: Visited Tracking",
+    "body": "**Trees**: No cycles → no visited set needed. Focus on return values to aggregate info from subtrees.\n\n**Graphs**: Can have cycles → **must track visited nodes** to prevent infinite loops.\n\n`if node in visited: return`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node):\n    if node is None:\n        return\n    \n    # process node here\n    \n    dfs(node.left)\n    dfs(node.right)\n\n# Example: find depth\ndef max_depth(node):\n    if node is None:\n        return 0\n    return 1 + max(max_depth(node.left), max_depth(node.right))"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the key difference between DFS and BFS?",
+    "options": [
+      "DFS explores as far down a path as possible before backtracking, while BFS explores level by level",
+      "DFS always finds the shortest path, while BFS does not",
+      "DFS requires a visited set for trees, while BFS does not",
+      "DFS uses a queue, while BFS uses the call stack"
+    ],
+    "answer": 0,
+    "explain": "DFS goes deep down one path before backtracking, while BFS explores all nodes at the current level before moving to the next."
+  }
+]

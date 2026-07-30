@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "DFS Returns: The Key Question",
+    "body": "**What do I need from my left & right subtrees to solve this node?**\n\nEach `dfs(node)` call returns info about its subtree. The parent combines `left` + `right` + `node.val` to compute its own result.\n\n- Sum of tree = sum(left) + sum(right) + node.val\n- Max of tree = max(left, right, node.val)\n\nValues bubble up from leaves → root."
+  },
+  {
+    "type": "concept",
+    "heading": "Base Case: Return Type Consistency",
+    "body": "**All return paths must return the same type.**\n\nCommon mistake:\n```python\nif node is None: return None  # Wrong!\n```\n\nCrashes when parent tries `left + right + val`.\n\n**Correct:**\n```python\nif node is None: return 0  # for sum\nif node is None: return float('-inf')  # for max\n```"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node):\n    if node is None:\n        return 0  # base: empty subtree\n    \n    left = dfs(node.left)\n    right = dfs(node.right)\n    return left + right + node.val"
+  },
+  {
+    "type": "quiz",
+    "q": "When solving a binary tree problem with DFS and return values, what should you ask yourself at each node?",
+    "options": [
+      "What information do I need from my left and right subtrees to solve the problem for my subtree?",
+      "What is the value of the current node?",
+      "How many nodes are in the tree?",
+      "Should I traverse left or right first?"
+    ],
+    "answer": 0,
+    "explain": "This determines what each recursive call should return, letting you combine left + right + node to solve your subtree."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Max-heap tracks k closest elements",
+    "body": "Keep a max-heap of size `k` holding the closest elements seen. The root = furthest among the k closest. When you find a closer element, pop the root and push the new one.\n\n**Why max-heap?** So the element with the largest distance sits at the top, ready to be replaced."
+  },
+  {
+    "type": "concept",
+    "heading": "Negative distance = max-heap trick",
+    "body": "Python's `heapq` is a **min-heap** (smallest on top). To make it act like a max-heap, negate the distance:\n\n`heappush(heap, (-distance, num))`\n\nNow the largest distance becomes the smallest negative → rises to the root."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "import heapq\n\ndef k_closest(nums, k, target):\n    heap = []\n    for num in nums:\n        dist = abs(num - target)\n        if len(heap) < k:\n            heapq.heappush(heap, (-dist, num))\n        elif dist < -heap[0][0]:\n            heapq.heappushpop(heap, (-dist, num))\n    \n    result = [pair[1] for pair in heap]\n    result.sort()\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we negate the distance when pushing onto the heap?",
+    "options": [
+      "To make Python's min-heap behave like a max-heap",
+      "To handle negative numbers in the array",
+      "To sort the final result in descending order",
+      "To improve the time complexity"
+    ],
+    "answer": 0,
+    "explain": "Python's heapq is min-heap only. Negating distances makes the largest distance the smallest negative, so it rises to the root for easy removal."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Check sum only at leaves",
+    "body": "Use **DFS** to traverse root-to-leaf paths, subtracting each node's value from the target as you go deeper.\n\n**Critical:** Only check if `target == node.val` when you reach a **leaf** (no children). This ensures you're validating complete paths, not stopping early at intermediate nodes."
+  },
+  {
+    "type": "concept",
+    "heading": "The leaf check pattern",
+    "body": "**Base cases:**\n- `if not root:` → `False` (empty subtree)\n- `if not root.left and not root.right:` → check `target == root.val`\n\n**Recursive case:** subtract current value, recurse on both children with updated target, return `True` if either path works."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def hasPathSum(root, target):\n    if not root:\n        return False\n    \n    # Leaf? Check if sum matches\n    if not root.left and not root.right:\n        return target == root.val\n    \n    # Recurse with updated target\n    return (hasPathSum(root.left, target - root.val) or\n            hasPathSum(root.right, target - root.val))"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must we check the sum only at leaf nodes rather than at any node?",
+    "options": [
+      "Because the problem requires a complete root-to-leaf path, not a partial path ending at an intermediate node",
+      "Because leaf nodes have special properties that make sum checking easier",
+      "Because intermediate nodes cannot be part of valid paths",
+      "Because the recursion would fail if we checked at intermediate nodes"
+    ],
+    "answer": 0,
+    "explain": "The problem explicitly asks for a root-to-leaf path. Checking at intermediate nodes would incorrectly return true for partial paths."
+  }
+]

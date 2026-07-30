@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Turn O(n²) into O(n)",
+    "body": "**Two Pointers** starts at opposite ends of a **sorted array** and moves toward the center.\n\nInstead of checking all pairs with nested loops, each pointer move eliminates multiple impossible pairs — leveraging the sorted property to skip work.\n\nIf sum is too large? Move `right` left. Too small? Move `left` right."
+  },
+  {
+    "type": "concept",
+    "heading": "When to reach for it",
+    "body": "**Sorted array** (or can sort) + searching for **pairs/triplets** = Two Pointers.\n\nCommon clues:\n- Find pair that sums to target\n- Container/partition problems\n- Comparing elements from opposite ends\n- Need to beat O(n²) brute force"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "left, right = 0, len(nums) - 1\n\nwhile left < right:\n    current = nums[left] + nums[right]\n    \n    if current == target:\n        return True\n    elif current < target:\n        left += 1   # need larger sum\n    else:\n        right -= 1  # need smaller sum"
+  },
+  {
+    "type": "quiz",
+    "q": "At any point during the two-pointer search for Two Sum, what do the positions of the two pointers represent?",
+    "options": [
+      "The pairs that have already been eliminated",
+      "The smallest and largest values seen so far",
+      "The pair of numbers currently being considered",
+      "The bounds of the portion of the array that is already sorted"
+    ],
+    "answer": 2,
+    "explain": "The two pointers always represent the current pair being evaluated."
+  }
+]

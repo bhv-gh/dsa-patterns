@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Reverse the flow direction",
+    "body": "Instead of checking if each cell reaches both oceans (expensive), start DFS from **ocean borders** and flow **inland** to neighbors with `height >= current`.\n\nCells reachable from **both** Pacific (top/left) and Atlantic (bottom/right) borders are the answer."
+  },
+  {
+    "type": "concept",
+    "heading": "Why boundary DFS wins",
+    "body": "Each cell is visited **at most twice** (once per ocean) using a shared visited set per ocean.\n\nBrute force recalculates the same paths repeatedly when checking each cell independently — that's O((m×n)²) vs. O(m×n)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(r, c, reachable):\n    reachable.add((r, c))\n    for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n        nr, nc = r + dr, c + dc\n        if 0 <= nr < rows and 0 <= nc < cols:\n            if (nr, nc) not in reachable and grid[nr][nc] >= grid[r][c]:\n                dfs(nr, nc, reachable)\n\n# DFS from Pacific borders\nfor r in range(rows): dfs(r, 0, pacific)\nfor c in range(cols): dfs(0, c, pacific)\n\n# DFS from Atlantic borders\nfor r in range(rows): dfs(r, cols-1, atlantic)\nfor c in range(cols): dfs(rows-1, c, atlantic)\n\nreturn list(pacific & atlantic)"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is boundary DFS more efficient than checking each cell individually?",
+    "options": [
+      "It uses less memory by not storing visited cells",
+      "It eliminates redundant path calculations by sharing a visited set per ocean",
+      "It only visits cells adjacent to ocean borders",
+      "It uses BFS instead of DFS for faster traversal"
+    ],
+    "answer": 1,
+    "explain": "Boundary DFS shares a single visited set across all DFS calls from the same ocean, eliminating redundant path calculations."
+  }
+]

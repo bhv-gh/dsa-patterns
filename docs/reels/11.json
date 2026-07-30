@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Slide the window, not the sum",
+    "body": "**Fixed-size sliding window** finds max subarray sum in O(n).\n\nInstead of recalculating the entire sum for each k-element window:\n- **Add** the new element entering\n- **Subtract** the old element leaving\n\nOne pass. Constant work per window."
+  },
+  {
+    "type": "concept",
+    "heading": "When to slide the window",
+    "body": "Expand the window until it reaches size `k`.\n\nOnce `end - start + 1 == k`:\n1. Update max_sum\n2. **Slide**: subtract `nums[start]`, increment `start`\n\nRepeat until the end pointer has visited every element."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def max_subarray_sum(nums, k):\n    max_sum = float('-inf')\n    current_sum = 0\n    start = 0\n    \n    for end in range(len(nums)):\n        current_sum += nums[end]\n        \n        if end - start + 1 == k:\n            max_sum = max(max_sum, current_sum)\n            current_sum -= nums[start]\n            start += 1\n    \n    return max_sum"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is the sliding window approach O(n) instead of O(n*k)?",
+    "options": [
+      "It uses a hash map to cache previous sums",
+      "It updates the sum incrementally by adding one element and removing one element per window",
+      "It processes only k elements total instead of n elements",
+      "It uses binary search to find the maximum sum"
+    ],
+    "answer": 1,
+    "explain": "Constant work per window (add one, subtract one) avoids recalculating the entire k-element sum each time."
+  }
+]

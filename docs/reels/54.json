@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Parent-child checks aren't enough",
+    "body": "**Validating BST isn't just left < node < right.**\n\nA deep node might satisfy its parent but violate an ancestor's rule. Example: `3` in the root's right subtree must be `> root`, not just `> parent`.\n\n**Solution:** Pass `(min, max)` bounds down the tree—every node must be strictly within its inherited range."
+  },
+  {
+    "type": "concept",
+    "heading": "Thread bounds through the tree",
+    "body": "Use DFS with `(min_, max_)` parameters:\n\n- **Left child** inherits `(min_, node.val)` — must be **less** than current\n- **Right child** inherits `(node.val, max_)` — must be **greater** than current\n\nStart: `dfs(root, -∞, +∞)`  \nFails if `node.val <= min_` or `node.val >= max_`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node, min_, max_):\n    if not node:\n        return True\n    if node.val <= min_ or node.val >= max_:\n        return False\n    return dfs(node.left, min_, node.val) and \\\n           dfs(node.right, node.val, max_)\n\n# kickoff\ndfs(root, float('-inf'), float('inf'))"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is checking only `node.left.val < node.val < node.right.val` at each node insufficient?",
+    "options": [
+      "It doesn't validate the subtrees recursively",
+      "A deep descendant might violate an ancestor's constraint even if it satisfies its parent",
+      "It doesn't handle the base case correctly",
+      "It has the wrong time complexity"
+    ],
+    "answer": 1,
+    "explain": "A node deep in the tree might satisfy its immediate parent but still violate a constraint from a higher ancestor."
+  }
+]

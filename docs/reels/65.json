@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "One unvisited '1' = one island",
+    "body": "Scan the grid cell by cell. Each time you hit an unvisited land cell (`'1'`), you've found a **new island**. Use DFS to mark every connected land cell as visited (`'0'`), so they won't trigger another count.\n\n- **Count** = how many DFS you start\n- **DFS** marks the entire island as visited"
+  },
+  {
+    "type": "concept",
+    "heading": "Why mark as '0' instead of visited set?",
+    "body": "Overwriting `'1'` → `'0'` in-place prevents counting the same island twice. Once DFS finishes, all cells in that island are `'0'`, so the main loop won't trigger DFS on them again.\n\n**Bonus:** saves O(m*n) space vs. a separate visited set."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def numIslands(grid):\n    count = 0\n    \n    def dfs(r, c):\n        grid[r][c] = '0'\n        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]) and grid[nr][nc] == '1':\n                dfs(nr, nc)\n    \n    for i in range(len(grid)):\n        for j in range(len(grid[0])):\n            if grid[i][j] == '1':\n                count += 1\n                dfs(i, j)\n    \n    return count"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we mark cells as '0' during DFS instead of using a separate visited set?",
+    "options": [
+      "To save space complexity",
+      "To prevent counting the same island multiple times",
+      "To make the code run faster",
+      "To modify the grid in-place for debugging"
+    ],
+    "answer": 1,
+    "explain": "Marking cells as '0' ensures that once we've explored all connected land cells, they won't trigger a new island count again."
+  }
+]

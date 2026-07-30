@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Fixed Window + Distinct Check",
+    "body": "Track a **sliding window of size k** with a hash map. The window is valid only when `len(state) == k` — meaning all k elements are distinct.\n\n- Use `curr_sum` to track running total\n- Add element → expand; remove element → contract\n- Check distinctness before updating max"
+  },
+  {
+    "type": "concept",
+    "heading": "Why len(state) == k?",
+    "body": "If your window has **k elements** and your hash map has **k keys**, each element appears exactly once.\n\nDuplicates collapse to one key → fewer keys → `len(state) < k` → skip this window."
+  },
+  {
+    "type": "code",
+    "label": "Core Logic · Python",
+    "code": "for end in range(len(nums)):\n    curr_sum += nums[end]\n    state[nums[end]] = state.get(nums[end], 0) + 1\n    \n    if end - start + 1 == k:\n        if len(state) == k:  # all distinct\n            max_sum = max(max_sum, curr_sum)\n        # Contract window\n        curr_sum -= nums[start]\n        state[nums[start]] -= 1\n        if state[nums[start]] == 0:\n            del state[nums[start]]  # keep map clean\n        start += 1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we compare len(state) == k to determine if all elements are distinct?",
+    "options": [
+      "Because len(state) counts the total number of elements in the window",
+      "Because if k elements are in the window and state has k keys, each element appears exactly once",
+      "Because state automatically removes duplicates from the array",
+      "Because len(state) returns the sum of all frequencies in the dictionary"
+    ],
+    "answer": 1,
+    "explain": "If the window has k elements and state has k keys, each element is unique (no duplicates share a key)."
+  }
+]

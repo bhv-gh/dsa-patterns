@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Stack that stays sorted",
+    "body": "A **monotonic stack** keeps elements in descending or ascending order. When pushing, **pop everything that breaks the order**.\n\nUse it to find the **next greater/smaller** element for every index in **O(n)** instead of O(n²)."
+  },
+  {
+    "type": "concept",
+    "heading": "How to recognize it",
+    "body": "Look for:\n- Finding the **next greater/smaller** element to the right\n- Temperature changes, stock spans, histogram heights\n- Problems about **visibility** (buildings, people seeing sunset)\n- Brute force would compare every element with all elements to its right"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def nextGreaterElement(nums):\n    result = [-1] * len(nums)\n    stack = []  # stores indexes\n    \n    for i in range(len(nums)):\n        # Pop all indexes whose answer is nums[i]\n        while stack and nums[i] > nums[stack[-1]]:\n            index = stack.pop()\n            result[index] = nums[i]\n        stack.append(i)\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the key reason a monotonic stack achieves O(n) time complexity instead of O(n²)?",
+    "options": [
+      "The stack is never larger than log(n) elements",
+      "Each element is pushed and popped at most once",
+      "The while loop only runs when the stack is empty",
+      "We skip processing duplicate elements"
+    ],
+    "answer": 1,
+    "explain": "Each of the n elements is pushed once and popped at most once, giving O(n) total operations despite the nested while loop appearance."
+  }
+]

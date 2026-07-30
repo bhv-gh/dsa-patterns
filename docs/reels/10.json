@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Slide, Don't Recompute",
+    "body": "A **fixed-length sliding window** keeps exactly **k** elements. Each step: **add** the new element, **remove** the old one — in O(1).\n\n- Use when the subarray/substring length is **known**.\n- Avoids recalculating from scratch every position.\n- Turns O(nk) brute force into O(n)."
+  },
+  {
+    "type": "concept",
+    "heading": "Recognize the Pattern",
+    "body": "Use fixed-length sliding window when:\n\n- Problem asks for a **contiguous** subarray or substring\n- The **length k is given**\n- You need max/min/count over all size-k subarrays\n\n**Example**: \"Find max sum of any subarray of size k.\""
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def max_subarray_sum(nums, k):\n    max_sum = window_sum = 0\n    start = 0\n    for end in range(len(nums)):\n        window_sum += nums[end]\n        if end - start + 1 == k:\n            max_sum = max(max_sum, window_sum)\n            window_sum -= nums[start]\n            start += 1\n    return max_sum"
+  },
+  {
+    "type": "quiz",
+    "q": "When is a fixed-length sliding window the right variant to use?",
+    "options": [
+      "When the input array is sorted in ascending order",
+      "When you know the exact length of the subarray or substring you're looking for",
+      "When the elements you need aren't contiguous in the input",
+      "When the window's validity depends on satisfying a constraint rather than reaching a known size"
+    ],
+    "answer": 1,
+    "explain": "Fixed-length is for when the problem specifies exact size k; variable-length is for constraint-based sizing."
+  }
+]

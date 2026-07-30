@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "DFS goes deep, then backtracks",
+    "body": "**Depth-First Search** explores trees by diving as far down as possible before backtracking.\n\nStart at root → visit left child → keep going left until you hit `None` → backtrack → visit right → repeat.\n\nDifferent from BFS (level-by-level): DFS is depth-first."
+  },
+  {
+    "type": "concept",
+    "heading": "The call stack IS the magic",
+    "body": "DFS uses **recursion** — each call pushes a frame onto the stack.\n\n**Base case**: `if not node: return` stops going deeper.\n\n**Backtracking**: When a function returns, its frame pops off the stack, automatically returning to the parent.\n\nNo loops needed — the stack manages traversal for you."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node):\n    if node is None:\n        return\n    \n    dfs(node.left)   # go deep left\n    dfs(node.right)  # then right\n    \n    # returning here = all subtree visited"
+  },
+  {
+    "type": "quiz",
+    "q": "What happens when a DFS recursive call reaches a None node?",
+    "options": [
+      "The function returns and the call frame is popped from the stack, causing backtracking",
+      "The function continues to the next node in the tree",
+      "The function throws an error",
+      "The function starts over from the root"
+    ],
+    "answer": 0,
+    "explain": "When node is None, the base case triggers a return, popping the call frame and backtracking to the previous call."
+  }
+]

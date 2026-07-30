@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Stack saves your context",
+    "body": "When you see `[`, **push** the string-so-far and repeat count onto the stack, then start fresh.\n\nWhen you see `]`, **pop** the saved context, repeat the current string, and prepend what you saved.\n\nThis handles nested brackets like `3[a2[c]]` → `accaccacc`."
+  },
+  {
+    "type": "concept",
+    "heading": "Multi-digit numbers need building",
+    "body": "Repeat counts can be `10[a]` or `100[xyz]`.\n\nAs you scan digits, build the number:\n`current_number = current_number * 10 + digit`\n\nReset to 0 after you push it onto the stack at `[`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "stack = []\ncurr_string = \"\"\ncurrent_number = 0\n\nfor char in s:\n    if char == \"[\":\n        stack.append(curr_string)\n        stack.append(current_number)\n        curr_string = \"\"\n        current_number = 0\n    elif char == \"]\":\n        num = stack.pop()\n        prev_string = stack.pop()\n        curr_string = prev_string + num * curr_string\n    elif char.isdigit():\n        current_number = current_number * 10 + int(char)\n    else:\n        curr_string += char\n\nreturn curr_string"
+  },
+  {
+    "type": "quiz",
+    "q": "What values are pushed onto the stack when we encounter an opening bracket '['?",
+    "options": [
+      "The current character and the stack size",
+      "The current string and the current repeat count",
+      "Only the current repeat count",
+      "The previous character and the next character"
+    ],
+    "answer": 1,
+    "explain": "We push curr_string and current_number to save context before starting a new nested sequence."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Graph to dictionary via DFS",
+    "body": "Convert a node-pointer graph into a **dictionary adjacency list** using DFS. The dict serves **two roles**: builds the graph representation AND tracks visited nodes to prevent infinite loops in cycles.\n\nEach node is processed once by checking if its value already exists as a key."
+  },
+  {
+    "type": "concept",
+    "heading": "The visited check is critical",
+    "body": "Without checking `if node.value in adj_list`, your DFS will **loop forever** on cycles.\n\nExample: node 1 → node 2 → node 1. You'd recurse endlessly.\n\nThe dict lookup stops revisits: add each node once, skip if already present."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def copy_graph(node):\n    adj_list = {}\n    \n    def dfs(node):\n        if node.value in adj_list:\n            return\n        adj_list[node.value] = [n.value for n in node.neighbors]\n        for neighbor in node.neighbors:\n            dfs(neighbor)\n    \n    if node:\n        dfs(node)\n    return adj_list"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is it essential to check if a node is already in the adjacency list before processing it?",
+    "options": [
+      "To improve performance by skipping redundant work",
+      "To prevent infinite loops when the graph contains cycles",
+      "To ensure nodes are processed in the correct order",
+      "To save memory by avoiding duplicate entries"
+    ],
+    "answer": 1,
+    "explain": "The visited check prevents infinite loops in cyclic graphs - without it, DFS would continuously revisit nodes in a cycle, causing stack overflow."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Valid window = k replacements",
+    "body": "A window is **valid** when:\n`window_length - max_freq <= k`\n\n**Why?** `window_length - max_freq` = replacements needed. If the most frequent character appears 3× in a window of 5, you need **2 replacements** to make all chars identical.\n\nGoal: find the longest valid window."
+  },
+  {
+    "type": "concept",
+    "heading": "Don't update max_freq downward",
+    "body": "`max_freq` tracks the **historical maximum** frequency, not just the current window.\n\n**Why leave it?** We only care about windows *longer* than what we've found. This lets us skip unnecessary shrinks and keeps the algorithm O(n)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def characterReplacement(s, k):\n    state = {}\n    max_freq = max_length = start = 0\n    \n    for end in range(len(s)):\n        state[s[end]] = state.get(s[end], 0) + 1\n        max_freq = max(max_freq, state[s[end]])\n        \n        # Shrink if invalid\n        if k + max_freq < end - start + 1:\n            state[s[start]] -= 1\n            start += 1\n        \n        max_length = max(max_length, end - start + 1)\n    \n    return max_length"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does the condition `k + max_freq < window_length` determine if a window is invalid?",
+    "options": [
+      "window_length - max_freq equals the number of characters that need replacing",
+      "max_freq represents the total number of replacements available",
+      "k must always be greater than the window length",
+      "We can only replace characters that appear less frequently than max_freq"
+    ],
+    "answer": 0,
+    "explain": "Replacements needed = window_length - max_freq (all chars except the most frequent). If this exceeds k, the window is invalid."
+  }
+]

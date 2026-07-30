@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Insert & merge in one pass",
+    "body": "Given **sorted, non-overlapping** intervals, insert a new interval by:\n1. Add intervals **before** the new one\n2. **Merge** all overlapping intervals (track min start, max end)\n3. Add intervals **after**\n\nIntervals that **touch** (e.g., `[1,4]` and `[4,7]`) must merge into `[1,7]`."
+  },
+  {
+    "type": "concept",
+    "heading": "Three-phase scan, no re-sort",
+    "body": "**Phase 1:** While `interval[1] < new[0]` → append (ends before new starts)\n**Phase 2:** While `interval[0] <= new[1]` → merge (`<=` catches touching intervals)\n**Phase 3:** Append the rest\n\nO(n) time, no sorting needed."
+  },
+  {
+    "type": "code",
+    "label": "Core logic · Python",
+    "code": "# Phase 1: Add intervals ending before new_interval\nwhile i < n and intervals[i][1] < new_interval[0]:\n    merged.append(intervals[i])\n    i += 1\n\n# Phase 2: Merge overlapping intervals\nwhile i < n and intervals[i][0] <= new_interval[1]:\n    new_interval[0] = min(intervals[i][0], new_interval[0])\n    new_interval[1] = max(intervals[i][1], new_interval[1])\n    i += 1\n\nmerged.append(new_interval)\n\n# Phase 3: Add remaining intervals\nwhile i < n:\n    merged.append(intervals[i])\n    i += 1"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the insert interval solution?",
+    "options": [
+      "O(n log n) because we need to sort the intervals",
+      "O(n) because we process each interval exactly once",
+      "O(n²) because we may need to compare every interval with every other",
+      "O(1) because we only insert one interval"
+    ],
+    "answer": 1,
+    "explain": "We process each interval exactly once across the three phases, no sorting needed."
+  }
+]

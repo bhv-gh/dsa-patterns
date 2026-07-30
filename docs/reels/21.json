@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Sort first, merge as you go",
+    "body": "**Merge Intervals** consolidates overlapping time ranges into single intervals.\n\n**The trick:** Sort by start time first. Then walk through — if the next interval starts before or when the current one ends, they overlap. Extend the end to cover both.\n\n- `[1,4]` and `[4,5]` → `[1,5]`\n- `[1,4]` and `[5,7]` → no overlap, keep both"
+  },
+  {
+    "type": "concept",
+    "heading": "When do two intervals overlap?",
+    "body": "**Key condition:** `next_start <= current_end`\n\nIf true → merge by taking `max(next_end, current_end)`\n\nIf false → they're separate, add the next interval as-is\n\n**Common gotcha:** Intervals that touch at a single point (like `[1,3]` and `[3,5]`) **do** overlap and should merge into `[1,5]`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def merge_intervals(intervals):\n    intervals.sort(key=lambda x: x[0])\n    merged = []\n    \n    for interval in intervals:\n        if not merged or interval[0] > merged[-1][1]:\n            merged.append(interval)\n        else:\n            merged[-1][1] = max(interval[1], merged[-1][1])\n    \n    return merged"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the merge intervals solution?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(n²)",
+      "O(n³)"
+    ],
+    "answer": 1,
+    "explain": "O(n log n) from sorting; the merge pass is only O(n)."
+  }
+]

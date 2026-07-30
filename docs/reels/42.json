@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Heap = Auto-sorted Min/Max",
+    "body": "A **heap** keeps the smallest (or largest) value at the root, always. Push/pop in **O(log n)** via bubble up/down.\n\n**Top-K trick**: Use a size-K min-heap to find K largest elements in O(n log k) — evict the root when a bigger element arrives."
+  },
+  {
+    "type": "concept",
+    "heading": "Max-Heap? Negate the values",
+    "body": "Python's `heapq` only gives min-heaps. For a max-heap:\n\n```python\nheapq.heappush(max_heap, -value)\nmax_val = -heapq.heappop(max_heap)\n```\n\nNegating flips the ordering — smallest negated = largest original."
+  },
+  {
+    "type": "code",
+    "label": "Top-K Largest · Python",
+    "code": "import heapq\n\ndef k_largest(nums, k):\n    heap = nums[:k]\n    heapq.heapify(heap)  # O(k)\n    for num in nums[k:]:\n        if num > heap[0]:  # beat the Kth largest?\n            heapq.heapreplace(heap, num)\n    return heap  # O(n log k)"
+  },
+  {
+    "type": "quiz",
+    "q": "You need the 5 largest elements from a stream of 1 million numbers. What's the most efficient approach?",
+    "options": [
+      "Maintain a max-heap of all elements, pop 5 times at the end",
+      "Maintain a min-heap of size 5, replacing root when larger elements arrive",
+      "Sort the array and take the last 5 elements",
+      "Use a min-heap of all elements, pop until 5 remain"
+    ],
+    "answer": 1,
+    "explain": "Size-5 min-heap gives O(n log 5) ≈ O(n) time and O(1) space. The root is the 5th largest—evict it when a larger element arrives."
+  }
+]

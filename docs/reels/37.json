@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Binary search on the answer",
+    "body": "Not searching **in** the array—searching **for** the answer.\n\n**The trick:** Your search space is `[1, max(piles)]` (all possible speeds), not the piles themselves.\n\n**Why it works:** If speed `k` finishes in time, any speed `k' > k` also works. This monotonic property creates a sorted T/F array `[F, F, F, T, T, T]`—perfect for binary search to find the **minimum valid** speed."
+  },
+  {
+    "type": "concept",
+    "heading": "The ceiling-division gotcha",
+    "body": "For each pile, hours needed = `ceil(pile / speed)`.\n\n**Don't use:** `math.ceil(pile / speed)` (floating point can cause precision errors)\n\n**Do use:** `(pile + speed - 1) // speed` (pure integer math)\n\nExample: pile=7, speed=3 → `(7+2)//3 = 3` hours ✓"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def minEatingSpeed(piles, h):\n    def can_finish(speed):\n        hours = sum((p + speed - 1) // speed for p in piles)\n        return hours <= h\n    \n    left, right = 1, max(piles)\n    while left < right:\n        mid = (left + right) // 2\n        if can_finish(mid):\n            right = mid  # try slower\n        else:\n            left = mid + 1  # too slow\n    return left"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is the feasibility function monotonic in this problem?",
+    "options": [
+      "Because the piles array is sorted in increasing order",
+      "Because if speed k works, any speed k' > k also works (eating faster never makes it take longer)",
+      "Because we use ceiling division when calculating hours needed",
+      "Because the maximum speed is always max(piles)"
+    ],
+    "answer": 1,
+    "explain": "Eating faster never makes things worse—if speed k works, any k' > k also works, creating [F,F,F,T,T,T]."
+  }
+]

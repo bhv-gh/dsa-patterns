@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Think Reverse: Find the Safe Cells",
+    "body": "Instead of finding surrounded regions, **flip the logic**: mark which `'O'`s are safe (border-connected).\n\n- Start DFS from all **border** `'O'`s\n- Mark reachable `'O'`s as `'S'` (safe)\n- Any unmarked `'O'` → surrounded → flip to `'X'`"
+  },
+  {
+    "type": "concept",
+    "heading": "Why Border Cells Are the Key",
+    "body": "Any `'O'` reachable from a border `'O'` cannot be surrounded — it has a path to the edge.\n\n**Gotcha:** Don't start DFS from interior cells. Only border `'O'`s guarantee safety."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(x, y):\n    if x < 0 or y < 0 or x >= rows or y >= cols or grid[x][y] != 'O':\n        return\n    grid[x][y] = 'S'  # mark safe\n    dfs(x+1, y); dfs(x-1, y); dfs(x, y+1); dfs(x, y-1)\n\n# DFS from all border 'O's\nfor i in range(rows):\n    if grid[i][0] == 'O': dfs(i, 0)\n    if grid[i][cols-1] == 'O': dfs(i, cols-1)\nfor j in range(cols):\n    if grid[0][j] == 'O': dfs(0, j)\n    if grid[rows-1][j] == 'O': dfs(rows-1, j)\n\n# Final pass: unmarked 'O' → 'X', 'S' → 'O'\nfor i in range(rows):\n    for j in range(cols):\n        if grid[i][j] == 'O': grid[i][j] = 'X'\n        elif grid[i][j] == 'S': grid[i][j] = 'O'"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we start DFS from border cells instead of searching for surrounded regions directly?",
+    "options": [
+      "Because border-connected 'O's are safe by definition, making unmarked 'O's surrounded",
+      "Because DFS only works when starting from edges of a grid",
+      "Because it reduces time complexity from O(n²) to O(n)",
+      "Because we need to check all cells exactly once"
+    ],
+    "answer": 0,
+    "explain": "Border-connected 'O's can't be surrounded—they reach the edge. Reverse logic is simpler than detecting enclosure directly."
+  }
+]

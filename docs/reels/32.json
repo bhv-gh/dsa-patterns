@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Palindrome in O(1) space",
+    "body": "**Reverse the second half** in-place, then compare both halves.\n\n- Find middle with **fast/slow pointers**\n- Reverse from middle → end\n- Compare head → mid vs reversed mid → end"
+  },
+  {
+    "type": "concept",
+    "heading": "Why save `next` first?",
+    "body": "Once you reverse `curr.next = prev`, you **lose** the rest of the list.\n\n```python\nnext_ = curr.next  # save before overwriting\ncurr.next = prev   # reverse\n```\n\nWithout `next_`, you can't iterate forward anymore."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "# Find middle\nslow = fast = head\nwhile fast and fast.next:\n    fast = fast.next.next\n    slow = slow.next\n\n# Reverse second half\ncurr, prev = slow, None\nwhile curr:\n    next_ = curr.next\n    curr.next = prev\n    prev = curr\n    curr = next_\n\n# Compare halves\nleft, right = head, prev\nwhile right:\n    if left.val != right.val:\n        return False\n    left = left.next\n    right = right.next\nreturn True"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we need to store `next_` before reversing the pointer in the reversal step?",
+    "options": [
+      "To maintain a reference to the next node before we overwrite curr.next with prev",
+      "To check if we've reached the end of the list",
+      "To compare values between adjacent nodes",
+      "To restore the original list after checking"
+    ],
+    "answer": 0,
+    "explain": "Once we set curr.next = prev to reverse the pointer, we lose the reference to the rest of the list."
+  }
+]

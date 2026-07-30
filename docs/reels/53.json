@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Pass State Down, Return Up",
+    "body": "DFS problems split into **top-down** (pass ancestor context DOWN via params) vs **bottom-up** (return subtree results UP).\n\n- Need running max or path sum? → helper with extra params\n- Aggregating counts/sums? → return values\n- Collecting nodes in a list? → outer variable (`nonlocal`)"
+  },
+  {
+    "type": "concept",
+    "heading": "Why Helper Functions Exist",
+    "body": "The original function signature may lack parameters you need (e.g., `goodNodes(root)` can't track max seen so far).\n\nIntroduce a helper: `def dfs(node, max_so_far)` to pass accumulated state down. Call it: `dfs(root, -float('inf'))`.\n\n**Pro tip:** define helpers INSIDE the main function to scope outer variables locally."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def goodNodes(root):\n    def dfs(node, max_):\n        if not node:\n            return 0\n        count = 1 if node.val >= max_ else 0\n        max_ = max(max_, node.val)\n        return count + dfs(node.left, max_) + dfs(node.right, max_)\n    return dfs(root, -float('inf'))"
+  },
+  {
+    "type": "quiz",
+    "q": "When should you use a helper function with extra parameters in DFS?",
+    "options": [
+      "When you need to pass accumulated state down from parents to children",
+      "When you need to return aggregated results up from children to parents",
+      "When the tree is unbalanced",
+      "When you want to avoid recursion"
+    ],
+    "answer": 0,
+    "explain": "Helper functions with extra parameters pass information DOWN the tree (top-down), like running max or path sum."
+  }
+]

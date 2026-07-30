@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Stack finds rectangle boundaries",
+    "body": "A **monotonic increasing stack** tracks bar indices. When you hit a shorter bar, pop the stack — the current index is the **right boundary**, the index below the popped element is the **left boundary**.\n\n- Width = `right - left - 1`\n- Height = popped bar's height\n- Avoids O(n²) scanning!"
+  },
+  {
+    "type": "concept",
+    "heading": "Don't increment after popping",
+    "body": "After you pop, the current bar might **also** be shorter than the new stack top. Keep `i` fixed and keep popping until you can push `i`.\n\nThis lets one bar serve as the right boundary for multiple taller bars."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "stack = []\nmax_area = 0\ni = 0\n\nwhile i < len(heights):\n    if not stack or heights[i] >= heights[stack[-1]]:\n        stack.append(i)\n        i += 1\n    else:\n        top = stack.pop()\n        right = i - 1\n        left = stack[-1] if stack else -1\n        area = heights[top] * (right - left)\n        max_area = max(max_area, area)\n\n# Empty remaining stack\nwhile stack:\n    top = stack.pop()\n    width = i - stack[-1] - 1 if stack else i\n    area = heights[top] * width\n    max_area = max(max_area, area)"
+  },
+  {
+    "type": "quiz",
+    "q": "After popping index `top` from the stack when heights[i] < heights[stack[-1]], how is the width of the rectangle calculated?",
+    "options": [
+      "width = i - top",
+      "width = (i - 1) - (stack[-1] if stack else -1)",
+      "width = i - stack[-1] - 1",
+      "width = top - stack[-1]"
+    ],
+    "answer": 1,
+    "explain": "The right boundary is i - 1 (the last bar >= heights[top]), and the left boundary is stack[-1] (or -1 if empty). Width = right - left."
+  }
+]

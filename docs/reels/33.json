@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two pointers with a gap",
+    "body": "To remove the nth node from the end **in one pass**, create a gap of n nodes between two pointers.\n\n- Move `fast` n steps ahead first\n- Move both together until `fast` hits the end\n- `slow` lands right before the target node\n\nUse a **dummy node** so removing the head works the same as any other node."
+  },
+  {
+    "type": "concept",
+    "heading": "Why the dummy node trick works",
+    "body": "Without a dummy, removing the head is a special case (no predecessor).\n\nWith `dummy.next = head`, every node—even the head—has a predecessor. Your removal logic `slow.next = slow.next.next` works uniformly.\n\nReturn `dummy.next` to get the new head."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "dummy = ListNode(0)\ndummy.next = head\nfast = slow = dummy\n\n# Create n-node gap\nfor _ in range(n):\n    fast = fast.next\n\n# Move together until fast at end\nwhile fast.next:\n    fast = fast.next\n    slow = slow.next\n\n# Remove target\nslow.next = slow.next.next\nreturn dummy.next"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use a dummy node in this approach?",
+    "options": [
+      "To eliminate special case handling when removing the head node",
+      "To improve the time complexity from O(n²) to O(n)",
+      "To reduce the space complexity to O(1)",
+      "To avoid using two pointers"
+    ],
+    "answer": 0,
+    "explain": "The dummy node acts as a predecessor to the head, allowing us to treat all nodes uniformly—even when removing the head."
+  }
+]

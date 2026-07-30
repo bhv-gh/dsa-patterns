@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "One half is always sorted",
+    "body": "When you split a rotated sorted array, **at least one half is always sorted**. Compare `nums[left]` with `nums[mid]`: if `nums[left] <= nums[mid]`, the left half is sorted; otherwise the right half is.\n\nOnce you know which half is sorted, check if the target falls in that range—then discard the other half."
+  },
+  {
+    "type": "concept",
+    "heading": "The rotation trick",
+    "body": "**Gotcha:** Don't linear scan.\n\nEven though the array is rotated, binary search still works—you just need to figure out which half to discard. Check the sorted half's endpoints to decide:\n- `nums[left] <= target < nums[mid]` → search left\n- `nums[mid] < target <= nums[right]` → search right"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def search(nums, target):\n    left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        \n        if nums[left] <= nums[mid]:  # left half sorted\n            if nums[left] <= target < nums[mid]:\n                right = mid - 1\n            else:\n                left = mid + 1\n        else:  # right half sorted\n            if nums[mid] < target <= nums[right]:\n                left = mid + 1\n            else:\n                right = mid - 1\n    return -1"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(log n)",
+      "O(1)"
+    ],
+    "answer": 2,
+    "explain": "Binary search halves the search space each iteration, even with rotation—O(log n)."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two heaps track the median",
+    "body": "To find the median in a **stream**, use **two heaps**:\n\n- **Max-heap** for the smaller half (top = largest small value)\n- **Min-heap** for the larger half (top = smallest large value)\n\nKeep them **balanced** (sizes differ by ≤1). The median is always at the tops—O(1) lookup, O(log n) insert."
+  },
+  {
+    "type": "concept",
+    "heading": "Why not just sort?",
+    "body": "Sorting after every insert is **O(n log n)** per value—too slow for streaming data.\n\nWith two heaps, you **only need the boundary** between halves (the middle values), not a full sort. Insert in O(log n), median in O(1)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.lower = []  # max-heap (negated)\n        self.upper = []  # min-heap\n    \n    def addNum(self, num):\n        if not self.lower or num <= -self.lower[0]:\n            heapq.heappush(self.lower, -num)\n        else:\n            heapq.heappush(self.upper, num)\n        \n        # Rebalance\n        if len(self.lower) > len(self.upper) + 1:\n            heapq.heappush(self.upper, -heapq.heappop(self.lower))\n        elif len(self.upper) > len(self.lower):\n            heapq.heappush(self.lower, -heapq.heappop(self.upper))\n    \n    def findMedian(self):\n        if len(self.lower) == len(self.upper):\n            return (-self.lower[0] + self.upper[0]) / 2.0\n        return float(-self.lower[0])"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use a max-heap for the lower half and a min-heap for the upper half?",
+    "options": [
+      "To quickly access the boundary values: the largest of the lower half and the smallest of the upper half",
+      "To sort all elements in ascending order",
+      "To minimize space complexity",
+      "To avoid using extra memory for sorting"
+    ],
+    "answer": 0,
+    "explain": "The median is determined by the middle value(s). Max-heap gives the largest of lower half, min-heap gives smallest of upper half—exactly what we need in O(1)."
+  }
+]

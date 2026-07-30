@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Pick from ends, think from middle",
+    "body": "Picking **k cards from either end** leaves **(n - k) consecutive cards** in the middle.\n\n**The insight:** `sum_picked = total - sum_unpicked`\n\nTo **maximize** what you pick, **minimize** what you leave behind. Find the minimum-sum window of size **(n - k)**."
+  },
+  {
+    "type": "concept",
+    "heading": "One window, all possibilities",
+    "body": "Every way to pick k cards from the ends = one window of (n - k) cards you skip.\n\n- First 3 cards → skip window at end\n- Last 3 cards → skip window at start\n- First 1 + last 2 → skip window in middle\n\nSlide the window once, track the **min sum**, done."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "total = sum(cards)\nwindow_size = len(cards) - k\nwindow_sum = sum(cards[:window_size])\nmin_window = window_sum\n\nfor i in range(window_size, len(cards)):\n    window_sum += cards[i] - cards[i - window_size]\n    min_window = min(min_window, window_sum)\n\nreturn total - min_window"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we find the minimum sum window of size n-k instead of directly trying all combinations of picking from the ends?",
+    "options": [
+      "Because picking k cards from ends leaves n-k cards in middle, and maximizing picked cards means minimizing unpicked cards",
+      "Because the minimum window is always at the beginning of the array",
+      "Because we need to avoid using extra space for tracking all combinations",
+      "Because the sliding window technique is faster than any other approach"
+    ],
+    "answer": 0,
+    "explain": "sum of picked = total - sum of unpicked. To maximize picked, minimize unpicked."
+  }
+]

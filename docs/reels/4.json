@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two pointers eliminate impossible pairs",
+    "body": "In a **sorted** array, start pointers at both ends.\n\n- Sum too **small**? Move left → (bigger number)\n- Sum too **large**? Move right ← (smaller number)\n\nEach move eliminates an entire class of pairs. **O(n) time, O(1) space.**"
+  },
+  {
+    "type": "concept",
+    "heading": "Why sortedness matters",
+    "body": "Moving a pointer changes the sum **predictably**:\n- Left pointer → always increases sum\n- Right pointer ← always decreases sum\n\nWithout sorting, you can't decide which pointer to move."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "left, right = 0, len(nums) - 1\n\nwhile left < right:\n    s = nums[left] + nums[right]\n    if s == target:\n        return True\n    if s < target:\n        left += 1\n    else:\n        right -= 1\nreturn False"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does the two-pointer approach only work on a sorted array?",
+    "options": [
+      "Because sorting reduces the time complexity to O(1)",
+      "Because we need the array length to be even",
+      "Because sortedness guarantees that moving a pointer changes the sum predictably in one direction",
+      "Because unsorted arrays cannot contain pairs that sum to a target"
+    ],
+    "answer": 2,
+    "explain": "In a sorted array, moving the left pointer right always increases the sum, and moving the right pointer left always decreases the sum."
+  }
+]

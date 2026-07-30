@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two pointers, one job",
+    "body": "One pointer scans the array, the other tracks where to **place** the next non-zero. Swap when you find a non-zero, increment the placement pointer. Zeros naturally slide to the end — no extra pass needed."
+  },
+  {
+    "type": "concept",
+    "heading": "Why swap beats assignment",
+    "body": "Swapping kills two birds with one stone: non-zeros move forward **and** zeros move back in the same operation. If you just assigned forward, you'd need a second loop to fill the tail with zeros."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "nextNonZero = 0\nfor i in range(len(nums)):\n    if nums[i] != 0:\n        nums[nextNonZero], nums[i] = nums[i], nums[nextNonZero]\n        nextNonZero += 1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we swap elements instead of just assigning non-zero values forward?",
+    "options": [
+      "Swapping is faster than assignment in Python",
+      "Swapping ensures zeros naturally move to the end without extra logic",
+      "Assignment would require tracking zero positions separately",
+      "The problem specifically requires using swap operations"
+    ],
+    "answer": 1,
+    "explain": "Swapping moves non-zero elements forward while pushing zeros backward — no extra logic needed to fill the tail."
+  }
+]

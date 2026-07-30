@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Max-heap tracks k closest points",
+    "body": "Use a **max-heap of size k** storing negated distances. The root = **farthest** of the k closest so far.\n\nWhen a new point is closer than the root → replace it.\n\n**Trick:** Store `x² + y²` instead of `√(x² + y²)` — same ordering, no sqrt!"
+  },
+  {
+    "type": "concept",
+    "heading": "Why max-heap, not min-heap?",
+    "body": "Min-heap gives you the **closest** point instantly, but you need the **farthest of the k closest** to decide if a new point qualifies.\n\nMax-heap of size k: root = farthest of k → O(log k) to evict and insert."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "import heapq\n\ndef k_closest(points, k):\n    heap = []\n    for i, (x, y) in enumerate(points):\n        dist = x*x + y*y\n        if len(heap) < k:\n            heapq.heappush(heap, (-dist, i))\n        elif dist < -heap[0][0]:\n            heapq.heappushpop(heap, (-dist, i))\n    return [points[p[1]] for p in heap]"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use a max-heap instead of a min-heap for this problem?",
+    "options": [
+      "To keep track of the k farthest points and replace them with closer ones",
+      "To keep track of the k closest points and efficiently access the farthest of them",
+      "Because Python's heapq only supports max-heaps natively",
+      "To improve the time complexity to O(n)"
+    ],
+    "answer": 1,
+    "explain": "Max-heap of size k keeps the k closest points with the farthest at the root for O(log k) replacement."
+  }
+]

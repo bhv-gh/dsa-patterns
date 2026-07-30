@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Three pointers, one pass",
+    "body": "The **Dutch National Flag** algorithm sorts 0s, 1s, and 2s in one pass using three pointers:\n\n- **left**: boundary of 0s\n- **i**: current element\n- **right**: boundary of 2s\n\nPartition in-place by moving 0s to `left`, 2s to `right`, leaving 1s in the middle."
+  },
+  {
+    "type": "concept",
+    "heading": "Why we don't move i",
+    "body": "**Critical gotcha:** When `nums[i] == 2`, we swap with `nums[right]` and decrement `right`, but **don't increment i**.\n\nWhy? The new value at `i` came from the unsorted region — it could be 0, 1, or 2. We must examine it next iteration."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "left, right, i = 0, len(nums) - 1, 0\nwhile i <= right:\n    if nums[i] == 0:\n        nums[i], nums[left] = nums[left], nums[i]\n        left += 1\n        i += 1\n    elif nums[i] == 2:\n        nums[i], nums[right] = nums[right], nums[i]\n        right -= 1\n        # Don't increment i!\n    else:\n        i += 1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why don't we increment i after swapping nums[i] with nums[right] when nums[i]==2?",
+    "options": [
+      "Because the right pointer needs to be decremented first",
+      "Because the new value at i came from the unsorted region and must be examined",
+      "Because incrementing i would skip examining nums[right]",
+      "Because we need to swap twice to move 2s to the end"
+    ],
+    "answer": 1,
+    "explain": "The new value at i came from the unsorted region and could be 0, 1, or 2, so we must examine it next."
+  }
+]

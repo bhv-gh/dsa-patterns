@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Water = Min of Two Walls",
+    "body": "At any bar, **trapped water = min(leftMax, rightMax) - height**.\n\nThe shorter wall limits how high water can rise. Two pointers track running maxes from each end—process whichever side has the **smaller max** (you already know it's the bottleneck)."
+  },
+  {
+    "type": "concept",
+    "heading": "Move the Weaker Side",
+    "body": "**If `leftMax < rightMax`:** move `left++`\n**Else:** move `right--`\n\nWhy? The side with the smaller max already tells you the water level—you don't need to wait for the other side. This cuts O(n) space to O(1)."
+  },
+  {
+    "type": "code",
+    "label": "Core Logic · Python",
+    "code": "left, right = 0, len(h) - 1\nleft_max, right_max = h[left], h[right]\nwater = 0\n\nwhile left < right:\n    if left_max < right_max:\n        left += 1\n        if h[left] >= left_max:\n            left_max = h[left]\n        else:\n            water += left_max - h[left]\n    else:\n        right -= 1\n        if h[right] >= right_max:\n            right_max = h[right]\n        else:\n            water += right_max - h[right]"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we move the pointer with the smaller max height?",
+    "options": [
+      "To minimize the number of comparisons needed",
+      "Because we have enough information to calculate water at that side (the other side guarantees a higher bar exists)",
+      "To ensure we always process bars from shortest to tallest",
+      "Because it reduces space complexity"
+    ],
+    "answer": 1,
+    "explain": "When leftMax < rightMax, we know trapped water at the left pointer is limited by leftMax (since a taller bar exists on the right)."
+  }
+]

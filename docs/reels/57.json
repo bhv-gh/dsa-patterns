@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Collect ALL paths that match",
+    "body": "**Path Sum II** asks for **all** root-to-leaf paths that sum to target.\n\n- DFS with **backtracking** maintains one path list\n- When you hit a valid leaf, **copy** the path (`path[:]`) to results\n- Pop after each node to backtrack and explore other branches"
+  },
+  {
+    "type": "concept",
+    "heading": "Why copy the path?",
+    "body": "If you append `path` directly, all results point to the **same list**.\n\nBacktracking modifies `path` in-place — by the end, every result entry points to an empty list.\n\n**Solution:** Snapshot with `path[:]` or `list(path)` when you find a match."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node, target, path):\n    if not node:\n        return\n    \n    path.append(node.val)\n    \n    # Leaf matching target\n    if not node.left and not node.right and node.val == target:\n        result.append(path[:])  # copy!\n    \n    dfs(node.left, target - node.val, path)\n    dfs(node.right, target - node.val, path)\n    \n    path.pop()  # backtrack"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must we append `path[:]` (a copy) to the result instead of `path` directly?",
+    "options": [
+      "Because `path` is modified by backtracking, so appending the reference would result in all entries pointing to the same (eventually empty) list",
+      "To improve time complexity by avoiding pointer dereferencing",
+      "Because Python does not allow appending lists to lists without copying",
+      "To comply with the TreeNode API requirements"
+    ],
+    "answer": 0,
+    "explain": "The path list is reused and modified throughout DFS. Appending the reference would make all result entries point to the same list, which gets emptied by backtracking."
+  }
+]

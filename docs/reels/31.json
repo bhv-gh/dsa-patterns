@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two runners, one track",
+    "body": "**Floyd's Cycle Detection** uses two pointers: `slow` moves 1 step, `fast` moves 2 steps.\n\n- If they **meet** → cycle exists\n- If `fast` hits `None` → no cycle\n\nThink of a track: a faster runner will lap a slower one if it loops."
+  },
+  {
+    "type": "concept",
+    "heading": "Why O(1) space wins",
+    "body": "The two-pointer trick uses **only 2 variables**, no matter how long the list.\n\nAlternative: track visited nodes in a **set** → O(n) space.\n\nFloyd's algorithm detects cycles **without extra memory**."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def hasCycle(head):\n    slow = fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        \n        if slow == fast:\n            return True\n    \n    return False"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does Floyd's cycle detection algorithm use O(1) space instead of O(n)?",
+    "options": [
+      "It only uses two pointers regardless of list size, whereas the set-based approach stores every visited node",
+      "It modifies the linked list in-place to mark visited nodes",
+      "It uses recursion with tail-call optimization",
+      "It compresses the linked list data structure"
+    ],
+    "answer": 0,
+    "explain": "Two pointer variables = constant space. Set-based approach stores every visited node = O(n) space."
+  }
+]

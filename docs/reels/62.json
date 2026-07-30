@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Valid Tree = No Cycles + Connected",
+    "body": "A valid tree with **n nodes** must have:\n- Exactly **n-1 edges**\n- No cycles\n- All nodes in one connected component\n\n**Too few edges?** Disconnected.\n**Too many?** Cycles exist."
+  },
+  {
+    "type": "concept",
+    "heading": "Track Parent to Avoid False Cycles",
+    "body": "In undirected graphs, when you visit node A from parent B, B appears in A's neighbor list.\n\n**Without parent tracking:** you'd flag the edge A↔B as a cycle.\n\n**Key:** A cycle exists only if you hit a visited node that's NOT your parent."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def hasCycle(adj_list, node, visited, parent):\n    visited[node] = True\n    \n    for neighbor in adj_list[node]:\n        # Visited neighbor that's not parent = cycle\n        if visited[neighbor] and neighbor != parent:\n            return True\n        # Recurse on unvisited\n        if not visited[neighbor]:\n            if hasCycle(adj_list, neighbor, visited, node):\n                return True\n    return False"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must a valid tree with n nodes have exactly n-1 edges?",
+    "options": [
+      "A tree with n nodes has exactly n-1 edges by definition; fewer edges means disconnected components, more edges means cycles",
+      "It's arbitrary convention; trees can have any number of edges as long as there are no cycles",
+      "n-1 edges ensures optimal memory usage in the adjacency list representation",
+      "DFS algorithm requires n-1 edges to terminate properly without infinite loops"
+    ],
+    "answer": 0,
+    "explain": "A tree is a connected acyclic graph. For n nodes to be connected with no cycles, you need exactly n-1 edges."
+  }
+]

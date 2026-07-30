@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Jump past duplicates instantly",
+    "body": "Track the **last index** of each character in a dict. When you hit a duplicate, move your left pointer **past the previous occurrence** in one hop—no need to shrink incrementally.\n\n**Trick:** `start = max(start, state[char] + 1)` ensures the window never moves backward."
+  },
+  {
+    "type": "concept",
+    "heading": "When to use variable window",
+    "body": "Use a **variable-length sliding window** when you need to find the longest (or shortest) valid substring and the window size isn't fixed.\n\n**Pattern:** expand right, then contract left **only when** you violate a constraint (here: duplicate characters)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def longestSubstring(s):\n    state = {}\n    start = 0\n    max_len = 0\n    \n    for end in range(len(s)):\n        if s[end] in state:\n            start = max(start, state[s[end]] + 1)\n        state[s[end]] = end\n        max_len = max(max_len, end - start + 1)\n    \n    return max_len"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use `start = max(start, state[s[end]] + 1)` instead of just `start = state[s[end]] + 1`?",
+    "options": [
+      "To ensure start never moves backward when the duplicate is outside the current window",
+      "To handle edge cases where the string is empty",
+      "To optimize the time complexity from O(n²) to O(n)",
+      "To prevent index out of bounds errors"
+    ],
+    "answer": 0,
+    "explain": "The max() ensures start only moves forward. If the previous occurrence is before the current window, we don't move start backward."
+  }
+]

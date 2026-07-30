@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Diameter = Sum of Max Depths",
+    "body": "The longest path through any node equals the **sum of max depths** of its left and right subtrees.\n\n**Key trick**: DFS returns height for parent calculations, while tracking the global max diameter separately."
+  },
+  {
+    "type": "concept",
+    "heading": "Return Height, Track Diameter",
+    "body": "Why return height, not diameter?\n\n**Each parent needs child heights** to compute its own diameter (`left + right`). Track the max diameter in an outer `nonlocal` variable.\n\n- DFS returns: `1 + max(left, right)` (height)\n- Updates: `max_diameter = max(max_diameter, left + right)`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def diameterOfBinaryTree(root):\n    max_diameter = 0\n    \n    def dfs(node):\n        nonlocal max_diameter\n        if not node:\n            return 0\n        \n        left = dfs(node.left)\n        right = dfs(node.right)\n        \n        # update global max\n        max_diameter = max(max_diameter, left + right)\n        \n        # return height to parent\n        return 1 + max(left, right)\n    \n    dfs(root)\n    return max_diameter"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n log n)",
+      "O(log m * n)",
+      "O(n)",
+      "O(V + E)"
+    ],
+    "answer": 2,
+    "explain": "We visit each node exactly once during DFS, performing constant work at each node."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Path with same values everywhere",
+    "body": "Find the **longest path** where all nodes share the **same value**. It can bend at any node (connecting left + right subtrees). Return the **number of edges**, not nodes.\n\n**Key:** Use post-order DFS. Each node returns the longest same-value arm extending to its parent. Track the max sum of left + right arms globally."
+  },
+  {
+    "type": "concept",
+    "heading": "Extend arms only when values match",
+    "body": "At each node:\n- Recurse left and right to get arm lengths\n- Set `left_arrow = left_length + 1` **only if** child value == current value\n- Update global max: `left_arrow + right_arrow`\n- Return `max(left_arrow, right_arrow)` to parent\n\n**Why max?** Parent can extend only ONE arm upward."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(node):\n    if not node: return 0\n    left = dfs(node.left)\n    right = dfs(node.right)\n    left_arrow = right_arrow = 0\n    \n    if node.left and node.left.val == node.val:\n        left_arrow = left + 1\n    if node.right and node.right.val == node.val:\n        right_arrow = right + 1\n    \n    max_length = max(max_length, left_arrow + right_arrow)\n    return max(left_arrow, right_arrow)"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does the DFS function return max(left_arrow, right_arrow) instead of left_arrow + right_arrow?",
+    "options": [
+      "Because a parent can only extend one child's arm upward to form a valid path, not both",
+      "Because we want to minimize the path length for efficiency",
+      "Because the problem asks for the number of nodes, not edges",
+      "Because combining both arms would create a cycle"
+    ],
+    "answer": 0,
+    "explain": "The return value represents the longest same-value arm that the parent can extend. A parent can only extend one branch (left or right), not both."
+  }
+]

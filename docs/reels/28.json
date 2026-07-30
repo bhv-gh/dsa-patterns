@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Next Warmer Day Problem",
+    "body": "Use a **monotonic decreasing stack** to track temperatures waiting for a warmer day.\n\n- Store **indices** (not temps) in the stack\n- When current temp > stack top temp: **pop & calc wait time**\n- Reduces O(n²) brute-force to **O(n)**"
+  },
+  {
+    "type": "concept",
+    "heading": "Why Monotonic Stack Works",
+    "body": "Stack keeps indices where temps **decrease from bottom to top**.\n\nWhen you hit a warmer temp, it solves **multiple waiting days** at once by popping all colder indices.\n\nEach index pushed once, popped once → O(n) time."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dailyTemperatures(temps):\n    result = [0] * len(temps)\n    stack = []  # indices\n    \n    for i in range(len(temps)):\n        # Pop all colder days\n        while stack and temps[i] > temps[stack[-1]]:\n            idx = stack.pop()\n            result[idx] = i - idx\n        \n        stack.append(i)\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What does the stack store in this solution?",
+    "options": [
+      "Temperature values in decreasing order",
+      "Indices of temperatures waiting for a warmer day",
+      "The differences between consecutive temperatures",
+      "The result array values"
+    ],
+    "answer": 1,
+    "explain": "The stack stores indices (not values) of temperatures that haven't yet found a warmer day."
+  }
+]

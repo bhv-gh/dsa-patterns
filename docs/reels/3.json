@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two walls, max water area",
+    "body": "Pick any two vertical lines from an array to form a container. The **area** is width × height:\n- **Width**: distance between the two lines\n- **Height**: the shorter wall (water overflows there)\n\nGoal: find the max area in O(n) time."
+  },
+  {
+    "type": "concept",
+    "heading": "Always move the shorter wall",
+    "body": "Start pointers at both ends (widest container). Why move the shorter wall?\n\n**Moving the taller wall can never help** because:\n- Width decreases\n- Height is still capped by the shorter wall\n\nSo we move the shorter wall, hoping to find a taller one."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "left, right = 0, len(heights) - 1\nmax_area = 0\n\nwhile left < right:\n    width = right - left\n    height = min(heights[left], heights[right])\n    max_area = max(max_area, width * height)\n    \n    if heights[left] < heights[right]:\n        left += 1\n    else:\n        right -= 1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we always move the pointer at the shorter wall?",
+    "options": [
+      "Because the shorter wall determines the maximum height, and moving the taller wall can only decrease area",
+      "Because the taller wall should stay fixed to maximize height",
+      "Because we want to minimize the width as quickly as possible",
+      "Because the array must be sorted for two pointers to work"
+    ],
+    "answer": 0,
+    "explain": "Moving the taller wall inward decreases width while height remains capped by the shorter wall—this can never improve area."
+  }
+]

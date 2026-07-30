@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Brackets must nest, not interleave",
+    "body": "**Why a stack?** Counting opens/closes isn't enough — `([)]` has equal counts but is invalid because brackets interleave instead of nesting.\n\nA **stack** enforces **LIFO**: the last opened bracket must close first. Push opens, pop on matching closes."
+  },
+  {
+    "type": "concept",
+    "heading": "Three ways a string fails",
+    "body": "1. **Closing with empty stack** — no open to match\n2. **Wrong type closes** — `(` can't close with `]`\n3. **Non-empty stack at end** — unclosed opens remain\n\nValid = every open has a matching close in correct LIFO order."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def isValid(s):\n    stack = []\n    pairs = {\")\": \"(\", \"}\": \"{\", \"]\": \"[\"}\n    \n    for char in s:\n        if char in pairs:\n            if not stack or stack[-1] != pairs[char]:\n                return False\n            stack.pop()\n        else:\n            stack.append(char)\n    \n    return len(stack) == 0"
+  },
+  {
+    "type": "quiz",
+    "q": "Why can't we simply count the number of opening and closing brackets to determine validity?",
+    "options": [
+      "Counting would be too slow and exceed O(n) time complexity",
+      "Counting only verifies equal quantities but doesn't ensure proper nesting order",
+      "We need to track the specific types of brackets, not just their count",
+      "Python dictionaries don't support efficient counting operations"
+    ],
+    "answer": 1,
+    "explain": "Counting only tells us that the number of opens and closes match, but not that they're properly nested. For example, `([)]` has equal opens and closes, but the brackets interleave instead of nesting. A stack is required to verify LIFO ordering."
+  }
+]

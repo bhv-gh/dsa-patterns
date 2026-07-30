@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Sort first, check once",
+    "body": "For sorted sides **a ≤ b ≤ c**, valid triangles only need `a + b > c`.\n\nThe other two inequalities are **automatic**:\n- `a + c > b` holds since `c ≥ b`\n- `b + c > a` holds since `b ≥ a`\n\nSort the array, fix the largest side, and use **two pointers** to count valid pairs."
+  },
+  {
+    "type": "concept",
+    "heading": "Count in batches, not one-by-one",
+    "body": "When `nums[left] + nums[right] > nums[i]`, **every** index from `left` to `right - 1` also forms a valid triplet with `right` and `i`.\n\nAdd `right - left` to the count in **one step**, then shrink the window by decrementing `right`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "nums.sort()\ncount = 0\n\nfor i in range(len(nums) - 1, 1, -1):\n    left, right = 0, i - 1\n    \n    while left < right:\n        if nums[left] + nums[right] > nums[i]:\n            count += right - left\n            right -= 1\n        else:\n            left += 1\n\nreturn count"
+  },
+  {
+    "type": "quiz",
+    "q": "After sorting, why do we only need to check if a + b > c (where a ≤ b ≤ c)?",
+    "options": [
+      "Because the other two conditions are always false for sorted values",
+      "Because the other two conditions are automatically satisfied when c ≥ b ≥ a",
+      "Because sorting guarantees that all triplets form valid triangles",
+      "Because we only care about the largest side when checking triangle validity"
+    ],
+    "answer": 1,
+    "explain": "When a ≤ b ≤ c, if a + b > c holds, then a + c > b and b + c > a are automatically true."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Grids are graphs in disguise",
+    "body": "Each cell is a **node**. Its neighbors? The cells **up, down, left, right**.\n\n`grid[1][1]` has 4 neighbors:\n- `grid[0][1]` (up)\n- `grid[2][1]` (down)\n- `grid[1][0]` (left)\n- `grid[1][2]` (right)\n\nDFS on a matrix = DFS on a graph where edges connect adjacent cells."
+  },
+  {
+    "type": "concept",
+    "heading": "Grid DFS = bounds check + visited",
+    "body": "**Two critical checks** before visiting a cell:\n\n1. **Bounds**: `r < 0 or r >= rows or c < 0 or c >= cols`?\n2. **Visited**: `(r, c)` already in the set?\n\nUse `directions = [(-1,0), (1,0), (0,-1), (0,1)]` to loop through all 4 neighbors. No diagonals unless the problem says so!"
+  },
+  {
+    "type": "code",
+    "label": "Template · Python",
+    "code": "visited = set()\ndirections = [(-1,0), (1,0), (0,-1), (0,1)]\n\ndef dfs(r, c):\n    if (r, c) in visited:\n        return\n    if r < 0 or r >= len(matrix) or c < 0 or c >= len(matrix[0]):\n        return\n    \n    visited.add((r, c))\n    \n    for dr, dc in directions:\n        dfs(r + dr, c + dc)"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the maximum number of neighbors a cell can have in a standard grid DFS?",
+    "options": [
+      "4 (up, down, left, right)",
+      "8 (including diagonals)",
+      "3 (excluding the cell itself)",
+      "It depends on the cell's position"
+    ],
+    "answer": 0,
+    "explain": "Standard grid DFS uses 4 directions only: up, down, left, right (no diagonals)."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Track k smallest with a heap",
+    "body": "Merging k sorted lists naively takes O(Nk) — comparing k heads every time. Instead, use a **min-heap of size k** to always know which list has the next smallest element. Pop the min, append it, push its `.next` back. **O(N log k)** total."
+  },
+  {
+    "type": "concept",
+    "heading": "The (val, id, node) trick",
+    "body": "Python's `heapq` compares tuples element-by-element. If two nodes have the same value, it tries to compare the nodes themselves → **TypeError**. Solution: store `(node.val, id(node), node)` so `id()` breaks ties without custom `__lt__`."
+  },
+  {
+    "type": "code",
+    "label": "Core · Python",
+    "code": "from heapq import heappush, heappop\n\nheap = [(head.val, id(head), head) for head in lists if head]\ndummy = current = ListNode(0)\n\nwhile heap:\n    val, _, node = heappop(heap)\n    current.next = node\n    current = current.next\n    if node.next:\n        heappush(heap, (node.next.val, id(node.next), node.next))\n\nreturn dummy.next"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use `(node.val, id(node), node)` tuples instead of just `node` in the heap?",
+    "options": [
+      "To avoid comparing ListNode objects when they have equal values",
+      "To make the heap operations faster",
+      "To save memory by storing references",
+      "To maintain the original order of the lists"
+    ],
+    "answer": 0,
+    "explain": "If two nodes have the same value, heapq would try to compare the ListNode objects directly → TypeError. id(node) breaks ties."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Graph as a dictionary",
+    "body": "An **adjacency list** maps each node to its neighbors.\n\n```python\nadjList = {\n  1: [2],\n  2: [1, 3, 4],\n  3: [2, 4]\n}\n```\n\nLook up neighbors in **O(1)** — essential for DFS."
+  },
+  {
+    "type": "concept",
+    "heading": "Visited set stops infinite loops",
+    "body": "Graphs have cycles — unlike trees. Track visited nodes:\n\n```python\nvisited = set()\nif node in visited:\n    return\nvisited.add(node)\n```\n\nWithout this, DFS loops forever."
+  },
+  {
+    "type": "code",
+    "label": "Build & DFS · Python",
+    "code": "from collections import defaultdict\n\ndef build_adj_list(edges):\n    adj = defaultdict(list)\n    for u, v in edges:\n        adj[u].append(v)\n        adj[v].append(u)  # undirected\n    return adj\n\ndef dfs(adjList):\n    visited = set()\n    def helper(node):\n        if node in visited:\n            return\n        visited.add(node)\n        for nei in adjList[node]:\n            helper(nei)\n    for node in adjList:\n        if node not in visited:\n            helper(node)"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we need to add edges in both directions when building an adjacency list for an undirected graph?",
+    "options": [
+      "Because each edge connects both nodes bidirectionally, so both nodes must list each other as neighbors",
+      "To make the graph easier to visualize",
+      "To improve time complexity of DFS",
+      "To handle disconnected components"
+    ],
+    "answer": 0,
+    "explain": "Undirected edges mean both u→v and v→u, so both must appear in the adjacency list."
+  }
+]

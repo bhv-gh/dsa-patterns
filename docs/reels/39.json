@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Search the answer, not the array",
+    "body": "The answer lies between **max(nums)** and **sum(nums)**. Instead of searching for an element, we **binary search the space of possible answers**.\n\nKey insight: if max-sum X works, any value > X also works (monotonic). Find the boundary between feasible and infeasible."
+  },
+  {
+    "type": "concept",
+    "heading": "Greedy feasibility check",
+    "body": "To test if a candidate max-sum works:\n\n- Pack elements greedily into subarrays\n- Start a new subarray when adding the next element would exceed the max\n- Return true if total subarrays ≤ k\n\nThis runs in O(n), inside O(log sum) binary search iterations."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def canSplit(maxSum):\n    subarrays, currentSum = 1, 0\n    for num in nums:\n        if currentSum + num > maxSum:\n            subarrays += 1\n            currentSum = num\n        else:\n            currentSum += num\n    return subarrays <= k\n\nleft, right = max(nums), sum(nums)\nwhile left < right:\n    mid = (left + right) // 2\n    right = mid if canSplit(mid) else mid + 1\nreturn left"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(1)",
+      "O(n * log(sum))",
+      "O(n)",
+      "O(n³)"
+    ],
+    "answer": 1,
+    "explain": "Greedy check is O(n), binary search does O(log(sum)) iterations → O(n * log(sum))"
+  }
+]

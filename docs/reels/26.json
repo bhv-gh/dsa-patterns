@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Stack tracks unmatched indices",
+    "body": "Use a **stack of indices** to find the longest valid parentheses substring.\n\n- Push `(` indices\n- Pop when you hit `)`\n- If stack empties → unmatched `)` → push it as new boundary\n- Else → calculate length: `i - stack[-1]`\n\nStart with `-1` as a sentinel so substrings from index 0 work."
+  },
+  {
+    "type": "concept",
+    "heading": "Empty stack = unmatched closing",
+    "body": "When the stack is **empty after popping**, the `)` has no match.\n\nPush its index as the **new start boundary** — future valid substrings are measured from this point.\n\nIf stack is **not empty**, the top shows where the current valid run began."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def longest_valid_parentheses(s):\n    max_len = 0\n    stack = [-1]\n    \n    for i, char in enumerate(s):\n        if char == '(':\n            stack.append(i)\n        else:\n            stack.pop()\n            if not stack:\n                stack.append(i)\n            else:\n                max_len = max(max_len, i - stack[-1])\n    \n    return max_len"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we initialize the stack with -1 instead of starting with an empty stack?",
+    "options": [
+      "The -1 acts as a base marker so that when we find the first valid pair starting from index 0, the calculation i - stack[-1] correctly gives us the length",
+      "We use -1 to mark the end of the string for boundary checking",
+      "Python requires non-empty stacks for the pop() operation to work",
+      "The -1 represents the maximum possible value of invalid parentheses"
+    ],
+    "answer": 0,
+    "explain": "The -1 sentinel serves as a reference before index 0, so i - (-1) gives correct length for substrings starting at the beginning."
+  }
+]

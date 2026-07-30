@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Sort first, check neighbors",
+    "body": "To detect overlapping meetings, **sort by start time** then check if any interval starts before the previous one ends.\n\nIf `intervals[i][0] < intervals[i-1][1]` → overlap found.\n\nKey insight: after sorting, overlaps only appear between **consecutive** intervals."
+  },
+  {
+    "type": "concept",
+    "heading": "Edge case: touching endpoints",
+    "body": "Meetings like `(0,5)` and `(5,10)` do **not** conflict.\n\nWe check `start < prev_end` (strict `<`), not `<=`.\n\nOnly return `false` when intervals actually **overlap**, not just touch."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "intervals.sort(key=lambda x: x[0])\n\nfor i in range(1, len(intervals)):\n    if intervals[i][0] < intervals[i-1][1]:\n        return False\n\nreturn True"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(n^2)",
+      "O(1)"
+    ],
+    "answer": 1,
+    "explain": "Sorting the intervals takes O(n log n) time and dominates the O(n) iteration."
+  }
+]

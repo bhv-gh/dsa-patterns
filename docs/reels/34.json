@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Split, Reverse, Weave",
+    "body": "Reorder list means alternating start & end nodes: **1st → last → 2nd → 2nd-last → ...**\n\nThe trick? Break it into 3 steps:\n- **Find middle** (slow/fast pointers)\n- **Reverse 2nd half** (3-pointer reversal)\n- **Merge alternately** (weave first half + reversed 2nd half)"
+  },
+  {
+    "type": "concept",
+    "heading": "Why reverse the second half?",
+    "body": "You need **backward access** to the last nodes, but singly linked lists only go forward.\n\nReversing the 2nd half gives you a pointer at the end that moves backward as you merge.\n\nExample: `5→4→3→2→1` becomes `5→4→3` + `1→2` (reversed), then weave them."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "# 1. Find middle\nslow = fast = head\nwhile fast and fast.next:\n    slow, fast = slow.next, fast.next.next\n\n# 2. Reverse 2nd half\nprev, curr = None, slow\nwhile curr:\n    curr.next, prev, curr = prev, curr, curr.next\n\n# 3. Merge alternately\nfirst, second = head, prev\nwhile second.next:\n    first.next, first = second, first.next\n    second.next, second = first, second.next"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we need the `next_` pointer when reversing the second half of the list?",
+    "options": [
+      "To store the next node before overwriting curr.next, preventing loss of reference to the rest of the list",
+      "To improve the time complexity from O(n²) to O(n)",
+      "To keep track of the tail node for the merge phase",
+      "To handle the edge case when the list has only one node"
+    ],
+    "answer": 0,
+    "explain": "Before reversing a pointer with `curr.next = prev`, we must save the original `curr.next`. Otherwise, we lose access to remaining nodes."
+  }
+]

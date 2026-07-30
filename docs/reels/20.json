@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Greedy by End Time",
+    "body": "To maximize non-overlapping intervals, **sort by end time** and greedily keep intervals that finish earliest.\n\nWhy? An interval ending early leaves more room for future intervals. One ending late blocks more opportunities—even if it starts early."
+  },
+  {
+    "type": "concept",
+    "heading": "Flip the Question",
+    "body": "Don't count removals directly. Instead:\n- Find the **max number of intervals you can keep**\n- Subtract from total → removals needed\n\nThis reframe unlocks the greedy strategy: keep intervals finishing earliest."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "intervals.sort(key=lambda x: x[1])\nend = intervals[0][1]\ncount = 1\n\nfor i in range(1, len(intervals)):\n    if intervals[i][0] >= end:\n        end = intervals[i][1]\n        count += 1\n\nreturn len(intervals) - count"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we sort intervals by END time rather than START time?",
+    "options": [
+      "Sorting by start time is O(n²) while sorting by end time is O(n log n)",
+      "Intervals ending earliest free up the most time for future intervals, maximizing how many we can keep",
+      "End times are always smaller than start times, making the sort faster",
+      "Sorting by end time automatically handles the edge case of empty arrays"
+    ],
+    "answer": 1,
+    "explain": "Keeping intervals that end earliest leaves maximum time for future intervals—the greedy insight."
+  }
+]

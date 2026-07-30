@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Binary search on VALUES, not positions",
+    "body": "Matrix is row & column sorted but NOT globally sorted—so we can't binary search positions.\n\n**The trick:** Binary search the VALUE RANGE [min, max]. For any mid value, COUNT how many elements are ≤ mid. This count is monotonic, so we can binary search it to find the kth smallest."
+  },
+  {
+    "type": "concept",
+    "heading": "Staircase counting from bottom-left",
+    "body": "To count elements ≤ target in O(n):\n\n- Start at **bottom-left corner**\n- If `matrix[row][col] ≤ target`: all elements above are too (column sorted). Add `row + 1`, move right.\n- If `matrix[row][col] > target`: move up\n\nMax n right + n up moves = O(2n)"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def kthSmallest(matrix, k):\n    n = len(matrix)\n    left, right = matrix[0][0], matrix[n-1][n-1]\n    \n    while left < right:\n        mid = (left + right) // 2\n        count = countLessOrEqual(matrix, mid)\n        if count >= k:\n            right = mid\n        else:\n            left = mid + 1\n    return left\n\ndef countLessOrEqual(matrix, target):\n    n, count, row, col = len(matrix), 0, n-1, 0\n    while row >= 0 and col < n:\n        if matrix[row][col] <= target:\n            count += row + 1\n            col += 1\n        else:\n            row -= 1\n    return count"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we start the staircase counting from the bottom-left corner instead of top-right?",
+    "options": [
+      "Both corners work equally well; bottom-left is conventional",
+      "Bottom-left allows us to count entire columns at once when moving right",
+      "Top-right would require tracking visited cells, increasing space complexity",
+      "Bottom-left ensures we count elements in sorted order"
+    ],
+    "answer": 1,
+    "explain": "When matrix[row][col] ≤ target, ALL elements above it (row+1) are also ≤ target due to column sorting, so we add row+1 and move right."
+  }
+]

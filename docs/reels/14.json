@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Two pointers that move independently",
+    "body": "**Variable-length sliding window** expands (`end++`) and contracts (`start++`) to find the longest/shortest subarray satisfying a condition.\n\nUnlike fixed windows, the size isn't known — you discover it by greedily expanding and only contracting when the constraint breaks.\n\n**O(n) time** because each element is visited at most twice."
+  },
+  {
+    "type": "concept",
+    "heading": "When to use it",
+    "body": "Recognize it when you see:\n- **Longest** or **shortest** contiguous subarray/substring\n- Constraints like \"at most k distinct\", \"without repeating\", \"sum ≥ target\"\n- Brute force O(n²) would be too slow\n\nExamples: longest substring without repeating characters, smallest subarray with sum ≥ S."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "start = 0\nstate = {}  # track window contents\nmax_length = 0\n\nfor end in range(len(nums)):\n    state[nums[end]] = state.get(nums[end], 0) + 1\n    \n    # Contract while invalid\n    while is_invalid(state):\n        state[nums[start]] -= 1\n        if state[nums[start]] == 0:\n            del state[nums[start]]\n        start += 1\n    \n    max_length = max(max_length, end - start + 1)"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the key difference between fixed-length and variable-length sliding windows?",
+    "options": [
+      "Fixed-length uses one pointer, variable-length uses two pointers",
+      "Fixed-length has a known window size, variable-length discovers the optimal size dynamically",
+      "Fixed-length runs in O(n²), variable-length runs in O(n)",
+      "Fixed-length uses arrays, variable-length uses hash maps"
+    ],
+    "answer": 1,
+    "explain": "Fixed-length windows maintain a constant size; variable-length windows expand and contract to find the optimal size."
+  }
+]

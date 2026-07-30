@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Dummy node unlocks uniform swapping",
+    "body": "A **dummy node** pointing to the head gives every node a predecessor. Without it, swapping the first pair requires special-case logic (no node before head). With it, you rewire pointers the same way for all pairs:\n- `prev.next = second`\n- `first.next = second.next`\n- `second.next = first`"
+  },
+  {
+    "type": "concept",
+    "heading": "Three-pointer dance",
+    "body": "Track **`prev`**, **`first`**, **`second`** to swap adjacent pairs:\n1. `prev.next = second` — skip over `first`\n2. `first.next = second.next` — connect `first` to rest\n3. `second.next = first` — complete the swap\n\nThen move `prev = first` to prepare for the next pair. Loop while two nodes remain."
+  },
+  {
+    "type": "code",
+    "label": "Core Swap · Python",
+    "code": "def swapPairs(head):\n    dummy = ListNode(0)\n    dummy.next = head\n    prev = dummy\n    \n    while prev.next and prev.next.next:\n        first = prev.next\n        second = first.next\n        \n        prev.next = second\n        first.next = second.next\n        second.next = first\n        \n        prev = first\n    \n    return dummy.next"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is a dummy node essential for this problem?",
+    "options": [
+      "It provides a predecessor for the head node, allowing uniform swap logic without special-casing the first pair",
+      "It reduces the time complexity from O(n²) to O(n)",
+      "It prevents infinite loops when the list has an odd number of nodes",
+      "It stores the original head for later reference"
+    ],
+    "answer": 0,
+    "explain": "The dummy node gives the head a predecessor, so swapping the first pair uses the same three-step pointer rewiring as all other pairs."
+  }
+]

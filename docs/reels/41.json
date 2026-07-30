@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Binary search on the answer",
+    "body": "**Monotonic property**: if capacity `c` works (≤ maxBoxes), then any larger capacity also works—bigger boxes mean fewer boxes.\n\nSearch space: `[1, max(quantities)]`. Binary search finds the **smallest feasible capacity** where feasibility = simulating the packing process."
+  },
+  {
+    "type": "concept",
+    "heading": "Weight constraint creates complexity",
+    "body": "Can't use simple `ceil(qty / cap)` to count boxes.\n\n**Why?** Each box holds `min(capacity, floor(maxWeight / itemWeight), remaining)` items—the weight limit means different boxes may hold different amounts.\n\nMust **simulate** packing box-by-box."
+  },
+  {
+    "type": "code",
+    "label": "Core · Python",
+    "code": "def countBoxes(capacity):\n    boxes = 0\n    for i in range(len(quantities)):\n        remaining = quantities[i]\n        while remaining > 0:\n            itemsThisBox = min(\n                capacity,\n                maxWeightPerBox // weights[i],\n                remaining\n            )\n            boxes += 1\n            remaining -= itemsThisBox\n    return boxes\n\n# Binary search\nleft, right = 1, max(quantities)\nwhile left < right:\n    mid = (left + right) // 2\n    if countBoxes(mid) <= maxBoxes:\n        right = mid  # Try smaller\n    else:\n        left = mid + 1\nreturn left"
+  },
+  {
+    "type": "quiz",
+    "q": "Why can't we use simple ceiling division `ceil(quantity / capacity)` to count boxes for each product?",
+    "options": [
+      "Because items must be packed in whole numbers only",
+      "Because the weight constraint creates non-uniform packing—different boxes may hold different amounts based on weight limit",
+      "Because products must be packed separately",
+      "Because binary search requires exact simulation"
+    ],
+    "answer": 1,
+    "explain": "The weight constraint means each box might be limited by either capacity OR weight, so we must simulate box-by-box."
+  }
+]

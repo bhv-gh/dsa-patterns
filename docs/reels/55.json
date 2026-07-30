@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "What is Tree Tilt?",
+    "body": "A node's **tilt** = |left subtree sum - right subtree sum|\n\n- Leaf nodes have tilt 0 (both subtrees empty)\n- Missing children count as sum 0\n- Add up all node tilts for the answer\n\nThe trick: compute subtree sums AND tilts in one pass."
+  },
+  {
+    "type": "concept",
+    "heading": "Post-Order DFS Does Both",
+    "body": "**Return** the subtree sum (parent needs it)\n**Accumulate** tilt in a nonlocal variable\n\nWhy return sum not tilt? Each node needs its children's **sums** to calculate |left - right|. Post-order visits children first, so those sums are ready."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def findTilt(root):\n    tilt = 0\n    \n    def dfs(node):\n        nonlocal tilt\n        if not node:\n            return 0\n        \n        left = dfs(node.left)\n        right = dfs(node.right)\n        \n        tilt += abs(left - right)\n        return left + right + node.val\n    \n    dfs(root)\n    return tilt"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does the helper function return the subtree sum instead of the tilt value?",
+    "options": [
+      "To calculate each node's tilt, we need the sums of its left and right subtrees",
+      "Returning the tilt would require additional tree traversals",
+      "The sum is easier to calculate than the tilt",
+      "We need the sum to validate the tree structure"
+    ],
+    "answer": 0,
+    "explain": "Each node needs to know the sums of its left and right subtrees to calculate its own tilt as |left_sum - right_sum|."
+  }
+]

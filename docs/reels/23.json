@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Stack = Last In, First Out",
+    "body": "A **stack** processes elements in reverse order of arrival. The last item you add is the first one you remove.\n\n**Think:** a stack of plates—you can only take from the top.\n\n- **Push:** add to top (O(1))\n- **Pop:** remove from top (O(1))\n- Use an array: `append()` to push, `pop()` to pop"
+  },
+  {
+    "type": "concept",
+    "heading": "When to reach for a stack",
+    "body": "Stacks shine when you need to process items in **reverse order** or manage **nested structures**.\n\n**Perfect for:**\n- Matching parentheses/brackets\n- Undo operations\n- Backtracking (e.g., DFS, expression evaluation)\n\n**Key signal:** \"most recent item must be handled first\""
+  },
+  {
+    "type": "code",
+    "label": "Valid Parentheses · Python",
+    "code": "def isValid(s):\n    stack = []\n    pairs = {\")\": \"(\", \"}\": \"{\", \"]\": \"[\"}\n    \n    for char in s:\n        if char in pairs:\n            # closing bracket\n            if not stack or stack[-1] != pairs[char]:\n                return False\n            stack.pop()\n        else:\n            # opening bracket\n            stack.append(char)\n    \n    return len(stack) == 0"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of push and pop operations on a stack?",
+    "options": [
+      "O(1) for both operations",
+      "O(n) for push, O(1) for pop",
+      "O(1) for push, O(n) for pop",
+      "O(log n) for both operations"
+    ],
+    "answer": 0,
+    "explain": "Both push and pop operations on a stack take O(1) constant time because they only modify the top of the stack."
+  }
+]

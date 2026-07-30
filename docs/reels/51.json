@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Tree depth = 1 + deeper child",
+    "body": "Maximum depth of a tree rooted at any node equals **1 (the current node) + the maximum depth of its deeper subtree**.\n\nThis recursive insight means each node asks its children for their depths, picks the larger, adds 1, and returns it upward.\n\nBase case: empty tree (`None`) has depth 0."
+  },
+  {
+    "type": "concept",
+    "heading": "When to use this pattern",
+    "body": "Use **recursive DFS** when:\n- You need tree height or depth\n- The answer at each node depends on combining child answers\n- Problem has natural base case (leaf/null)\n\nCommon mistakes:\n- Forgetting base case (`None` → 0)\n- Off-by-one errors (forgetting to add 1 for current node)"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def maxDepth(root):\n    if root is None:\n        return 0\n    \n    left = maxDepth(root.left)\n    right = maxDepth(root.right)\n    \n    return max(left, right) + 1"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n)",
+      "O(h) where h is the height",
+      "O(n * log n)",
+      "O(2^n)"
+    ],
+    "answer": 0,
+    "explain": "We must visit every node exactly once to compute the maximum depth, making the time complexity O(n)."
+  }
+]

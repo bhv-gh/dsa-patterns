@@ -1,0 +1,24 @@
+[
+  {
+    "type": "concept",
+    "heading": "Learn patterns, not problems",
+    "body": "Most coding interviews test **15 core patterns** that unlock hundreds of problems.\n\n- Two Pointers for sorted arrays\n- Sliding Window for subarrays\n- Stack for nested structures\n\nMaster the pattern → solve entire categories."
+  },
+  {
+    "type": "concept",
+    "heading": "Why patterns beat memorization",
+    "body": "Memorizing solutions breaks when:\n- The problem has a **slight twist**\n- You forget the exact steps\n- Interview pressure hits\n\nPatterns give you **transferable intuition**: recognize the category, apply the technique, adapt to the variant."
+  },
+  {
+    "type": "quiz",
+    "q": "What is the main advantage of learning algorithm patterns instead of memorizing individual solutions?",
+    "options": [
+      "Patterns help you solve one specific problem faster",
+      "You can apply the same technique to entire categories of problems",
+      "Patterns eliminate the need to understand time complexity",
+      "You only need to learn 5 patterns total"
+    ],
+    "answer": 1,
+    "explain": "Pattern-based learning gives you transferable techniques that work across dozens of similar problems."
+  }
+]

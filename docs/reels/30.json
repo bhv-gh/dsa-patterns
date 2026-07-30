@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Nodes strung together, no array",
+    "body": "A **linked list** is nodes in sequence—each has a `val` and `next` pointer. The first node is the **head**, the last is **tail** (`next=None`).\n\n```python\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n```\n\nTraverse with a `current` pointer: `while current: current = current.next`"
+  },
+  {
+    "type": "concept",
+    "heading": "Fast/slow pointers find the middle",
+    "body": "Two pointers from `head`: `slow` steps once, `fast` steps twice per loop.\n\nWhen `fast` hits the end, `slow` is at the **middle**.\n\n**Gotcha**: For even-length lists, you get the *second* middle node.\n\nAlso detects **cycles**: if `fast == slow` mid-loop, there's a cycle."
+  },
+  {
+    "type": "code",
+    "label": "Reverse · Python",
+    "code": "def reverse(head):\n    prev = None\n    current = head\n    while current:\n        next_ = current.next\n        current.next = prev  # flip pointer\n        prev = current\n        current = next_\n    return prev"
+  },
+  {
+    "type": "quiz",
+    "q": "When using fast/slow pointers on a list with an even number of nodes, which middle node does slow point to when fast reaches the end?",
+    "options": [
+      "The first of the two middle nodes",
+      "The second of the two middle nodes",
+      "The last node in the list",
+      "It depends on the values in the nodes"
+    ],
+    "answer": 1,
+    "explain": "slow points to the second middle node because fast advances two steps per iteration"
+  }
+]
