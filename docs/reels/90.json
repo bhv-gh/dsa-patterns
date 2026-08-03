@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Pick your shortest path weapon",
+    "body": "Not all shortest path algorithms are equal:\n\n- **Unweighted graph?** Use BFS (simplest)\n- **Non-negative weights?** Use Dijkstra (70% of weighted problems)\n- **Negative weights?** Use Bellman-Ford\n- **All pairs, small graph?** Floyd-Warshall\n\nDijkstra fails with negative weights because its greedy assumption breaks."
+  },
+  {
+    "type": "concept",
+    "heading": "Dijkstra: greedy shortest path master",
+    "body": "**Most important for interviews.** Always explore the cheapest unexplored node using a min-heap.\n\n**Core trick**: Pop `(d, node)` from heap. If `d > dist[node]`, skip (stale). Otherwise relax neighbors: if `d + weight < dist[neighbor]`, update and push.\n\n**Why it works**: Process nodes by smallest known distance. Once processed, that's the shortest path—no cheaper route exists (if weights ≥ 0)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dijkstra(graph, source):\n    dist = {source: 0}\n    heap = [(0, source)]\n    \n    while heap:\n        d, node = heapq.heappop(heap)\n        if d > dist.get(node, float('inf')):\n            continue\n        \n        for neighbor, weight in graph.get(node, []):\n            new = d + weight\n            if new < dist.get(neighbor, float('inf')):\n                dist[neighbor] = new\n                heapq.heappush(heap, (new, neighbor))\n    \n    return dist"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does Dijkstra's algorithm fail with negative edge weights?",
+    "options": [
+      "Negative weights cause the heap to malfunction",
+      "The greedy assumption breaks: a node might get a shorter path after being finalized",
+      "Negative weights create infinite loops in the algorithm",
+      "Python's heapq doesn't support negative numbers"
+    ],
+    "answer": 1,
+    "explain": "Dijkstra greedily processes the cheapest node first and assumes that path is final. With negative weights, a later path through a negative edge could be cheaper."
+  }
+]

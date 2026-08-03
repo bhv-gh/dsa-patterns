@@ -1,0 +1,66 @@
+{
+  "id": 74,
+  "slug": "bfs-graphs-overview",
+  "title": "BFS on Graphs",
+  "pattern": "breadth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "BFS traverses graphs level-by-level using a queue and visited set. Best for finding shortest paths in unweighted graphs.",
+  "sections": [
+    {
+      "heading": "BFS on Graphs",
+      "body": "Like Depth-First Search, breadth-first search is used to traverse graphs. BFS explores level-by-level using a queue.\n\n**Key Rule:** Always track visited nodes to avoid infinite loops. If a node has already been visited, skip it instead of adding it to the queue."
+    },
+    {
+      "heading": "BFS on an Adjacency List",
+      "body": "**Algorithm:**\n- Choose a starting node and add it to the queue\n- While the queue is not empty:\n  - Remove the node at the front of the queue\n  - Add it to the visited set\n  - Add unvisited children to the back of the queue\n- Repeat until the queue is empty"
+    },
+    {
+      "heading": "BFS on a Matrix (2D Grid)",
+      "body": "**Algorithm:**\n- Start at a cell (typically top-left) and add it to the queue\n- While the queue is not empty:\n  - Remove the cell at the front of the queue\n  - Add it to the visited set\n  - Add the four neighbors (up, down, left, right) to the queue if they are within bounds and unvisited\n- Repeat until the queue is empty"
+    },
+    {
+      "heading": "Level-by-Level Traversal",
+      "body": "A **level** is the number of edges between the root node and the current node (also called **distance**).\n\nTo process nodes level-by-level, add a `for` loop that iterates over the size of the queue at the beginning of each level. This lets you know when all nodes at a level have been processed."
+    },
+    {
+      "heading": "Shortest Path in a Graph",
+      "body": "BFS finds the shortest path in an **unweighted graph**. Because BFS explores level-by-level, the first time we reach the destination node is guaranteed to be on the shortest path.\n\n**Comparison:** DFS may find a path first, but it might not be the shortest. To find the shortest path with DFS, you must explore all paths and compare lengths—making BFS the better choice for shortest path problems."
+    }
+  ],
+  "approach": [
+    "Use BFS when you need to find the shortest path in an unweighted graph or grid",
+    "Use BFS when you need to explore neighbors level-by-level (distance-based problems)",
+    "Always maintain a visited set to prevent infinite loops in graphs with cycles",
+    "For level-aware processing, track queue size at the start of each iteration"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V)"
+  },
+  "code": "from collections import deque\n\ndef bfs_adjacency_list(graph, start):\n    \"\"\"BFS traversal on an adjacency list.\"\"\"\n    visited = set([start])\n    queue = deque([start])\n    \n    while queue:\n        node = queue.popleft()\n        # process node here\n        \n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    \n    return visited\n\ndef bfs_grid(grid):\n    \"\"\"BFS traversal on a 2D grid starting at (0, 0).\"\"\"\n    if not grid or not grid[0]:\n        return set()\n    \n    visited = set()\n    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # up, down, left, right\n    queue = deque([(0, 0)])\n    visited.add((0, 0))\n    \n    while queue:\n        row, col = queue.popleft()\n        # process cell here\n        \n        for dr, dc in directions:\n            n_row, n_col = row + dr, col + dc\n            if (0 <= n_row < len(grid) and \n                0 <= n_col < len(grid[0]) and \n                (n_row, n_col) not in visited):\n                queue.append((n_row, n_col))\n                visited.add((n_row, n_col))\n    \n    return visited",
+  "quiz": [
+    {
+      "q": "Why is BFS better than DFS for finding the shortest path in an unweighted graph?",
+      "options": [
+        "BFS uses less memory than DFS",
+        "BFS explores nodes level-by-level, so the first time it reaches the destination is guaranteed to be the shortest path",
+        "BFS is faster than DFS in all cases",
+        "DFS cannot find paths in graphs with cycles"
+      ],
+      "answer": 1,
+      "explain": "BFS explores all nodes at distance k before exploring nodes at distance k+1. This level-by-level exploration means the first time BFS reaches a destination, it has taken the minimum number of edges (shortest path in an unweighted graph). DFS may find a longer path first."
+    },
+    {
+      "q": "What is the purpose of the visited set in BFS on graphs?",
+      "options": [
+        "To track the order in which nodes are processed",
+        "To avoid infinite loops by preventing re-visiting nodes in graphs with cycles",
+        "To store the shortest path from start to each node",
+        "To improve the time complexity of the algorithm"
+      ],
+      "answer": 1,
+      "explain": "The visited set prevents infinite loops in graphs with cycles. Without it, BFS could endlessly revisit the same nodes. For example, if node A connects to B and B connects back to A, we would keep adding them to the queue forever without a visited check."
+    }
+  ]
+}

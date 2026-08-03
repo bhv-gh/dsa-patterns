@@ -1,0 +1,74 @@
+{
+  "id": 82,
+  "slug": "subsets",
+  "title": "Subsets",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Generate all possible subsets of an array by choosing to include or exclude each element using backtracking.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums` of unique elements, return all possible subsets (the power set).\n\nThe solution set must not contain duplicate subsets, and the subsets can be returned in any order.\n\n**Example:**\n- Input: `nums = [1,2]`\n- Output: `[[],[1],[2],[1,2]]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "At each element, we have two choices: **include** it in the current subset or **exclude** it. This creates a binary decision tree where each path from root to leaf represents one valid subset.\n\nThe key is to explore all paths using DFS and **append a copy** of the current path when we reach the end (all elements considered)."
+    },
+    {
+      "heading": "Approach",
+      "body": "We use backtracking to explore all include/exclude decisions:\n\n- Start with an empty subset and index 0\n- At each index, make two recursive calls:\n  - **Include:** append `nums[index]` to path, recurse with `index+1`\n  - **Exclude:** pop from path (backtrack), recurse with `index+1`\n- When `index == len(nums)`, add a **copy** of the current path to results\n\nThe copy (`path[:]`) is critical because `path` is modified during recursion."
+    },
+    {
+      "heading": "Complexity",
+      "body": "**Time:** O(2^n · n) — 2^n subsets, each copied in O(n)\n\n**Space:** O(n) — recursion depth is n, plus the path array"
+    }
+  ],
+  "approach": [
+    "Initialize an empty result list and call the recursive helper with index=0 and an empty path",
+    "Base case: if index == len(nums), append a copy of the current path to results and return",
+    "Include decision: append nums[index] to path, recurse with index+1",
+    "Exclude decision: pop the last element from path (backtrack), recurse with index+1",
+    "Return the result list containing all subsets"
+  ],
+  "complexity": {
+    "time": "O(2^n · n)",
+    "space": "O(n)"
+  },
+  "code": "from typing import List\n\nclass Solution:\n    def subsets(self, nums: List[int]) -> List[List[int]]:\n        \"\"\"Generate all possible subsets using backtracking.\"\"\"\n        def dfs(index: int, path: List[int]):\n            if index == len(nums):\n                result.append(path[:])\n                return\n            \n            # include nums[index]\n            path.append(nums[index])\n            dfs(index + 1, path)\n            \n            # exclude nums[index]\n            path.pop()\n            dfs(index + 1, path)\n        \n        result = []\n        dfs(0, [])\n        return result",
+  "quiz": [
+    {
+      "q": "Why must we append path[:] instead of path to the result list?",
+      "options": [
+        "path[:] is faster than path",
+        "path is modified during recursion, so we need a snapshot copy",
+        "Python requires slicing for lists of lists",
+        "path[:] sorts the elements automatically"
+      ],
+      "answer": 1,
+      "explain": "Since path is mutated during backtracking (append/pop), appending path directly would store a reference that changes. path[:] creates a shallow copy capturing the current state."
+    },
+    {
+      "q": "How many total subsets are generated for an array of length n?",
+      "options": [
+        "O(n)",
+        "O(n^2)",
+        "O(2^n)",
+        "O(n!)"
+      ],
+      "answer": 2,
+      "explain": "Each of the n elements has 2 choices (include or exclude), giving 2^n total subsets (the power set)."
+    },
+    {
+      "q": "What does the pop() operation represent in this backtracking approach?",
+      "options": [
+        "Removing duplicates from the result",
+        "Undoing the include decision to explore the exclude branch",
+        "Optimizing memory usage",
+        "Sorting the subset in place"
+      ],
+      "answer": 1,
+      "explain": "The pop() undoes the append from the include branch, restoring the path state so we can explore the exclude decision without the current element."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": 80,
+  "slug": "word-search",
+  "title": "Word Search",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find if a word exists in a grid by building it from adjacent cells using DFS backtracking with visited-cell tracking.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m x n grid of characters `board` and a string `word`, return `true` if the word exists in the grid.\n\nThe word can be constructed from letters of sequentially **adjacent cells** (horizontal or vertical neighbors). The **same cell may not be used more than once**.\n\n**Example:**\n```\nboard = [\n  ['B', 'L', 'C', 'H'],\n  ['D', 'E', 'L', 'T'],\n  ['D', 'A', 'K', 'A']\n]\nword = \"BLEAK\" → True\nword = \"BLEED\" → False\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **backtracking DFS** from each cell that matches the first letter. Mark cells as visited by replacing their value with a placeholder (`\"#\"`), recurse on 4 neighbors for the next letter, then **restore the original value** on backtrack to free the cell for other paths."
+    },
+    {
+      "heading": "Approach",
+      "body": "- Iterate over every cell in the grid\n- If a cell matches `word[0]`, start a DFS from that cell\n- In the DFS helper: check bounds, match current letter to `word[index]`, mark visited\n- Recursively explore all 4 neighbors (N, S, E, W) for the next letter\n- **Backtrack** by restoring the cell's original value after recursive calls\n- Base case: if `index == len(word)`, the word is found"
+    }
+  ],
+  "approach": [
+    "Iterate over each cell in the grid",
+    "If cell matches word[0], start DFS from that cell with index=0",
+    "DFS: check if index == len(word) → return True (base case)",
+    "Check bounds and if board[r][c] == word[index], else return False",
+    "Mark cell as visited: temp = board[r][c]; board[r][c] = '#'",
+    "Recursively call DFS on 4 neighbors with index+1",
+    "Backtrack: restore board[r][c] = temp",
+    "Return True if any neighbor path succeeds"
+  ],
+  "complexity": {
+    "time": "O(m * n * 4^L)",
+    "space": "O(L)"
+  },
+  "code": "from typing import List\n\nclass Solution:\n    def exist(self, board: List[List[str]], word: str) -> bool:\n        \"\"\"Check if word exists in grid using DFS backtracking.\"\"\"\n        rows, cols = len(board), len(board[0])\n        \n        def dfs(r, c, index):\n            if index == len(word):\n                return True\n            if r < 0 or c < 0 or r >= rows or c >= cols or board[r][c] != word[index]:\n                return False\n            \n            temp = board[r][c]\n            board[r][c] = \"#\"\n            \n            found = (\n                dfs(r+1, c, index+1) or\n                dfs(r-1, c, index+1) or\n                dfs(r, c+1, index+1) or\n                dfs(r, c-1, index+1)\n            )\n            \n            board[r][c] = temp\n            return found\n        \n        for row in range(rows):\n            for col in range(cols):\n                if board[row][col] == word[0]:\n                    if dfs(row, col, 0):\n                        return True\n        return False",
+  "quiz": [
+    {
+      "q": "Why do we mark cells as visited during DFS?",
+      "options": [
+        "To optimize space complexity",
+        "To avoid using the same cell twice in a single word path",
+        "To speed up the search by caching results",
+        "To prevent exploring adjacent cells"
+      ],
+      "answer": 1,
+      "explain": "The problem states each cell can only be used once per word. Marking visited prevents infinite loops and reusing cells in the current path."
+    },
+    {
+      "q": "Why must we restore the cell value after recursive calls (backtrack)?",
+      "options": [
+        "To maintain the original grid for output",
+        "To free the cell for use in other search paths",
+        "To improve time complexity",
+        "To satisfy the function signature"
+      ],
+      "answer": 1,
+      "explain": "Backtracking restores the cell so it can be explored in different word paths starting from other cells."
+    },
+    {
+      "q": "What is the time complexity of this solution where m, n = grid dimensions and L = word length?",
+      "options": [
+        "O(n * log n)",
+        "O(m * n * 4^L)",
+        "O(log n)",
+        "O(4^n)"
+      ],
+      "answer": 1,
+      "explain": "We try each of m*n cells as a start. From each cell, DFS explores up to 4 branches at each of L positions, giving O(m * n * 4^L)."
+    }
+  ]
+}

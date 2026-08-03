@@ -1,0 +1,70 @@
+{
+  "id": 89,
+  "slug": "course-schedule-ii",
+  "title": "Course Schedule II",
+  "pattern": "graphs",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Return a valid course order via topological sort (Kahn's algorithm), or empty list if a cycle exists.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given `numCourses` courses labeled 0 to `numCourses - 1` and a list of prerequisite pairs `prerequisites[i] = [a, b]` (must complete `b` before `a`), return a valid ordering to finish all courses.\n\nIf multiple valid orderings exist, return any. If impossible (cycle exists), return an empty array."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **Kahn's topological sort algorithm**: track in-degrees, start with courses having zero prerequisites, and process them level-by-level. If we can't process all courses, a cycle exists."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Build the graph:**\n- Create adjacency list: `graph[src] = [dest1, dest2, ...]`\n- Track in-degrees: `in_degree[dest]` counts prerequisites\n\n**Topological sort:**\n- Initialize queue with courses having `in_degree == 0`\n- While queue is not empty:\n  - Dequeue a course, add to result\n  - For each dependent course, decrement in-degree\n  - If in-degree becomes 0, enqueue it\n\n**Check for cycles:**\n- If result length equals `numCourses`, return result\n- Otherwise, return empty list (cycle detected)"
+    }
+  ],
+  "approach": [
+    "Build adjacency list `graph` and `in_degree` array from prerequisites",
+    "Enqueue all courses with in-degree 0 (no prerequisites)",
+    "While queue is not empty: dequeue course, add to result, decrement neighbors' in-degrees",
+    "Enqueue neighbors whose in-degree becomes 0",
+    "Return result if length equals numCourses, else return empty list"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "code": "from collections import defaultdict, deque\n\ndef findOrder(numCourses, prerequisites):\n    \"\"\"Return valid course order via Kahn's topological sort, or [] if cycle exists.\"\"\"\n    graph = defaultdict(list)\n    in_degree = [0] * numCourses\n    \n    for dest, src in prerequisites:\n        graph[src].append(dest)\n        in_degree[dest] += 1\n    \n    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])\n    order = []\n    \n    while queue:\n        course = queue.popleft()\n        order.append(course)\n        \n        for neighbor in graph[course]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    return order if len(order) == numCourses else []",
+  "quiz": [
+    {
+      "q": "What does Kahn's algorithm detect by checking if the result length equals numCourses?",
+      "options": [
+        "Whether the graph is connected",
+        "Whether a cycle exists in the dependency graph",
+        "Whether multiple valid orderings exist",
+        "Whether the graph is a tree"
+      ],
+      "answer": 1,
+      "explain": "If we can't process all courses (result.length < numCourses), some courses still have non-zero in-degrees, meaning a cycle prevents completing them."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(4^n)",
+        "O(V + E)",
+        "O(m * n * 4^L)",
+        "O(n log n)"
+      ],
+      "answer": 1,
+      "explain": "We visit each vertex once and traverse each edge once while building the graph and performing topological sort, giving O(V + E) complexity."
+    },
+    {
+      "q": "Which courses are added to the initial queue in Kahn's algorithm?",
+      "options": [
+        "Courses with the most prerequisites",
+        "Courses with in-degree 0 (no prerequisites)",
+        "Courses with the highest course number",
+        "Courses that appear first in the prerequisites list"
+      ],
+      "answer": 1,
+      "explain": "We start with courses that have no prerequisites (in-degree 0), as they can be taken immediately without waiting for other courses."
+    }
+  ]
+}

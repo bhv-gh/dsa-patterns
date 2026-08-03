@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Cycle = impossible schedule",
+    "body": "**Course Schedule** is cycle detection in disguise.\n\nIf prerequisites form a loop (A needs B, B needs A), you're stuck — no valid order exists.\n\n**Topological sort** processes courses with no prereqs first, then unlocks the next layer. If you can't process all courses, there's a cycle."
+  },
+  {
+    "type": "concept",
+    "heading": "Start with in-degree zero",
+    "body": "**In-degree** = number of prerequisites a course has.\n\nCourses with in-degree `0` have no blockers — they're your starting point.\n\nProcess them, reduce neighbors' in-degrees by 1, and add newly-freed courses (in-degree → 0) to the queue. Count processed courses; if `count == numCourses`, you're done!"
+  },
+  {
+    "type": "code",
+    "label": "Kahn's Algorithm · Python",
+    "code": "def canFinish(numCourses, prerequisites):\n    from collections import defaultdict, deque\n    graph = defaultdict(list)\n    in_degree = [0] * numCourses\n    \n    for dest, src in prerequisites:\n        graph[src].append(dest)\n        in_degree[dest] += 1\n    \n    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])\n    count = 0\n    \n    while queue:\n        course = queue.popleft()\n        count += 1\n        for neighbor in graph[course]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    return count == numCourses"
+  },
+  {
+    "type": "quiz",
+    "q": "What does it mean if we cannot process all courses using topological sort?",
+    "options": [
+      "The graph has no edges",
+      "There is a cycle in the prerequisite dependencies",
+      "All courses have prerequisites",
+      "The graph is disconnected"
+    ],
+    "answer": 1,
+    "explain": "If we cannot process all courses, it means there is a circular dependency (cycle) in the prerequisites."
+  }
+]

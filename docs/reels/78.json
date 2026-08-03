@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Routes are nodes, not stops",
+    "body": "**Mind flip:** don't treat bus stops as graph nodes. Instead, **each route is a node**. Two routes connect if they share a stop.\n\nWhy? Each BFS level = one more bus boarded. You win when *any route at this level* contains your target stop."
+  },
+  {
+    "type": "concept",
+    "heading": "Build a stop → routes map",
+    "body": "The adjacency list maps each stop to all routes servicing it:\n```python\nbus_stops[stop] = [route_i, route_j, ...]\n```\nThis lets you hop from one route to *all connected routes* by checking which other routes share any of its stops."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def bus_routes(routes, source, target):\n    if source == target:\n        return 0\n    # stop -> [route indices]\n    bus_stops = {}\n    for i, route in enumerate(routes):\n        for stop in route:\n            bus_stops.setdefault(stop, []).append(i)\n    \n    visited = set()\n    queue = deque([(r, 1) for r in bus_stops.get(source, [])])\n    visited.update(bus_stops.get(source, []))\n    \n    while queue:\n        bus, count = queue.popleft()\n        if target in routes[bus]:\n            return count\n        for stop in routes[bus]:\n            for conn in bus_stops.get(stop, []):\n                if conn not in visited:\n                    queue.append((conn, count + 1))\n                    visited.add(conn)\n    return -1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we treat bus routes (not stops) as graph nodes?",
+    "options": [
+      "Because stops are harder to represent in code",
+      "Because each BFS level then represents taking one more bus, making the solution simpler",
+      "Because there are fewer routes than stops",
+      "Because we need to track which routes we've visited"
+    ],
+    "answer": 1,
+    "explain": "Treating routes as nodes means each edge traversal = boarding a new bus. BFS levels naturally count buses taken."
+  }
+]

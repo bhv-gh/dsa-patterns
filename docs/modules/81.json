@@ -1,0 +1,66 @@
+{
+  "id": 81,
+  "slug": "solution-space-trees",
+  "title": "Solution Space Trees",
+  "pattern": "backtracking",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Visualize backtracking as a tree: nodes=partial solutions, edges=choices, leaves=complete solutions. Traverse with DFS.",
+  "sections": [
+    {
+      "heading": "What is a Solution Space Tree?",
+      "body": "In backtracking, we construct an **implicit tree** where:\n- **Nodes** represent partial solutions (states)\n- **Edges** represent choices/decisions\n- **Leaf nodes** represent complete solutions\n\nExample: For phone number `\"23\"` (2→abc, 3→def), the tree has root `\"\"`, first-level children `\"a\"`, `\"b\"`, `\"c\"`, and leaves `\"ad\"`, `\"ae\"`, `\"af\"`, etc.\n\nWe use **depth-first search** to explore all paths from root to leaves."
+    },
+    {
+      "heading": "Defining the Recursive Function",
+      "body": "Each node = one recursive call. To define the function:\n1. **Parameters**: What info is needed to explore neighbors? (e.g., current combination `path`, current digit index `idx`)\n2. **Base case**: When is a leaf reached? (e.g., `idx == len(digits)` → add `path` to results)\n3. **Recursive step**: Iterate over choices at this node, make recursive calls for each choice with updated state."
+    },
+    {
+      "heading": "Letter Combinations Example",
+      "body": "**Problem**: Given digits `\"23\"`, return all letter combinations.\n\n**Recursive structure**:\n- Start at root: `backtrack(\"\", 0)`\n- At each call, iterate over letters for `digits[idx]`\n- Make recursive call: `backtrack(path + letter, idx + 1)`\n- Base case: `if idx == len(digits): result.append(path)`\n\nTree: root `(\"\",0)` → `(\"a\",1)`, `(\"b\",1)`, `(\"c\",1)` → leaves `(\"ad\",2)`, `(\"ae\",2)`, etc."
+    },
+    {
+      "heading": "Binary Choice Trees",
+      "body": "Another common pattern: **include/exclude** decisions form a binary tree.\n\n**Subsets problem**: Given `[1,2,3]`, generate all subsets.\n- Each level = one element\n- Left child = include element, right child = exclude\n- Root `[]` → left `[1]`, right `[]`\n- From `[1]` → left `[1,2]`, right `[1]`\n\nAll leaves are valid subsets. DFS collects them all."
+    },
+    {
+      "heading": "Key Takeaways",
+      "body": "- **Visualize first**: Draw the solution-space tree before coding\n- **Recursive parameters**: Capture the state needed to explore neighbors\n- **DFS traversal**: Each recursive call explores one branch\n- **Base case**: Leaf nodes → record solution\n- **Tree shape varies**: n-ary (phone), binary (subsets), irregular (pruning)"
+    }
+  ],
+  "approach": [
+    "Problem asks for all combinations/permutations/subsets/paths",
+    "Solution can be built incrementally via choices",
+    "Draw implicit tree: nodes=partial states, edges=decisions",
+    "Use DFS to traverse all root-to-leaf paths"
+  ],
+  "complexity": {
+    "time": "O(b^d) where b=branching factor, d=depth; e.g. O(4^n) for phone digits (max 4 letters)",
+    "space": "O(d) recursion stack, plus output size"
+  },
+  "code": "def letterCombinations(digits):\n    \"\"\"Generate all letter combinations for phone number digits.\"\"\"\n    if not digits:\n        return []\n    \n    phone = {\n        \"2\": \"abc\", \"3\": \"def\", \"4\": \"ghi\", \"5\": \"jkl\",\n        \"6\": \"mno\", \"7\": \"pqrs\", \"8\": \"tuv\", \"9\": \"wxyz\"\n    }\n    result = []\n    \n    def backtrack(path, idx):\n        # Base case: reached leaf (processed all digits)\n        if idx == len(digits):\n            result.append(path)\n            return\n        # Explore all letters for current digit\n        for letter in phone[digits[idx]]:\n            backtrack(path + letter, idx + 1)\n    \n    backtrack(\"\", 0)\n    return result",
+  "quiz": [
+    {
+      "q": "In a solution-space tree for backtracking, what do the leaf nodes represent?",
+      "options": [
+        "Partial solutions that need more choices",
+        "Complete solutions to the problem",
+        "Invalid states that should be pruned",
+        "The root of the recursion"
+      ],
+      "answer": 1,
+      "explain": "Leaf nodes are reached when no more choices remain (base case), representing complete solutions that are added to the result."
+    },
+    {
+      "q": "For the phone letter combinations problem with input \"234\", what is the time complexity?",
+      "options": [
+        "O(n) where n is the number of digits",
+        "O(3^n) for 3 letters per digit on average",
+        "O(4^n) since worst-case is 4 letters (7/9 keys)",
+        "O(n^2) for nested iteration"
+      ],
+      "answer": 2,
+      "explain": "Each digit branches up to 4 ways (keys 7 and 9 map to 4 letters), creating a tree of depth n with branching factor up to 4, giving O(4^n)."
+    }
+  ]
+}

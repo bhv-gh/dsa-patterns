@@ -1,0 +1,76 @@
+{
+  "id": 78,
+  "slug": "bus-routes",
+  "title": "Bus Routes",
+  "pattern": "breadth-first-search",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Find minimum buses needed to travel from source to target stop using BFS over routes (not stops) as graph nodes.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "You are given a 2D-integer array `routes` representing bus routes where `routes[i]` is a list of stops that the i-th bus makes. For example, if `routes[0] = [3, 8, 9]`, it means the first bus goes through stops 3, 8, 9, 3, 8, 9, continuously.\n\nYou are also given two integers `source` and `target`, representing the starting bus stop and the destination bus stop, respectively. Write a function that takes in `routes`, `source`, and `target` as input, and returns the **minimum number of buses** you need to take to travel from `source` to `target`. Return `-1` if it is not possible to reach the destination.\n\n**Example 1:**\n```\nInput: routes = [[3, 8, 9], [5, 6, 8], [1, 7, 10]], source = 3, target = 6\nOutput: 2\nExplanation: Take the first bus from stop 3 to stop 8, then take the second bus from stop 8 to stop 6.\n```\n\n**Example 2:**\n```\nInput: routes = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]], source = 1, target = 12\nOutput: -1 (Not possible to reach the destination)\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The critical insight is to **treat bus routes (not stops) as graph nodes**. Two routes are connected if they share a stop. This way, each BFS level represents taking one more bus.\n\nBuild a **stop → routes** adjacency list mapping each stop to all routes that service it. Start BFS from all routes containing `source`, and search for any route containing `target`. Track visited routes (not stops) to avoid cycles."
+    },
+    {
+      "heading": "Approach",
+      "body": "**1. Build adjacency list:** Create a dictionary mapping each bus stop to the list of route indices that stop there.\n\n**2. Initialize BFS:** Add all routes containing `source` to the queue with count 1. Mark them visited.\n\n**3. BFS traversal:** For each route popped from the queue:\n- Check if any stop in this route is `target`. If yes, return the current bus count.\n- For each stop in the route, find all connected routes (via adjacency list) that haven't been visited.\n- Add unvisited connected routes to the queue with count + 1, mark them visited.\n\n**4. Return -1** if queue is empty (no path exists)."
+    },
+    {
+      "heading": "Complexity",
+      "body": "**Time:** O(N * S) where N is the number of routes and S is the average number of stops per route. In the worst case, we visit every route and examine every stop.\n\n**Space:** O(N * S) for the adjacency list and visited set."
+    }
+  ],
+  "approach": [
+    "Build a dictionary mapping each bus stop to all route indices that service it",
+    "Initialize BFS queue with all routes containing the source stop (with count = 1)",
+    "Mark these starting routes as visited",
+    "For each route dequeued: check if any stop in it equals target; if yes, return current count",
+    "For each stop in current route, find all connected routes (via adjacency list) not yet visited",
+    "Add unvisited connected routes to queue with incremented count, mark them visited",
+    "Return -1 if queue empties without finding target"
+  ],
+  "complexity": {
+    "time": "O(N * S)",
+    "space": "O(N * S)"
+  },
+  "code": "from collections import deque\n\ndef bus_routes(routes, source, target):\n    \"\"\"\n    Find minimum number of buses to travel from source to target stop.\n    Returns -1 if impossible.\n    \"\"\"\n    if source == target:\n        return 0\n    \n    # Build adjacency list: stop -> list of route indices\n    bus_stops = {}\n    for i, route in enumerate(routes):\n        for stop in route:\n            if stop not in bus_stops:\n                bus_stops[stop] = []\n            bus_stops[stop].append(i)\n    \n    if source not in bus_stops:\n        return -1\n    \n    visited = set()\n    queue = deque()\n    \n    # Initialize BFS with all routes containing source\n    for bus in bus_stops[source]:\n        queue.append((bus, 1))\n        visited.add(bus)\n    \n    while queue:\n        curr_bus, num_changes = queue.popleft()\n        \n        # Check if any stop in current route is the target\n        for stop in routes[curr_bus]:\n            if stop == target:\n                return num_changes\n            \n            # Add connected routes to queue\n            for connected_bus in bus_stops[stop]:\n                if connected_bus not in visited:\n                    queue.append((connected_bus, num_changes + 1))\n                    visited.add(connected_bus)\n    \n    return -1",
+  "quiz": [
+    {
+      "q": "Why do we treat bus routes (not stops) as graph nodes?",
+      "options": [
+        "Because stops are harder to represent in code",
+        "Because each BFS level then represents taking one more bus, making the solution simpler",
+        "Because there are fewer routes than stops",
+        "Because we need to track which routes we've visited"
+      ],
+      "answer": 1,
+      "explain": "Treating routes as nodes means each edge traversal = boarding a new bus. BFS levels naturally count buses taken, and we reach target when any route in the current level contains it."
+    },
+    {
+      "q": "What does the adjacency list (stop → routes map) represent?",
+      "options": [
+        "Which stops are reachable from each route",
+        "Which routes share at least one stop (the edges in our graph)",
+        "The shortest path between any two stops",
+        "The order in which we visit stops"
+      ],
+      "answer": 1,
+      "explain": "The map lets us find all routes connected to the current route by iterating over its stops and looking up which other routes service those stops. Two routes sharing a stop = an edge."
+    },
+    {
+      "q": "Why do we mark routes visited (not stops)?",
+      "options": [
+        "To avoid taking the same bus twice, which would create cycles in our BFS",
+        "Because stops can be visited multiple times",
+        "To reduce memory usage",
+        "Because the problem requires it"
+      ],
+      "answer": 0,
+      "explain": "Since routes are our graph nodes, we track visited routes to prevent infinite loops. A stop can appear on multiple routes, so we don't mark stops visited—only routes."
+    }
+  ]
+}

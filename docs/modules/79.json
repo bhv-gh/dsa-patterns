@@ -1,0 +1,67 @@
+{
+  "id": 79,
+  "slug": "backtracking-overview",
+  "title": "Backtracking: Overview",
+  "pattern": "backtracking",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "DFS-based exploration of all possible paths with pruning and backtracking when a path fails.",
+  "sections": [
+    {
+      "heading": "What is Backtracking?",
+      "body": "Backtracking uses **Depth-First Search** to explore all possible solution paths. When the current path doesn't lead to a valid solution, the algorithm **backtracks** to the previous decision point and tries the next option.\n\n**Key Characteristics:**\n- Explores all possible paths to find a solution\n- Backs up to the previous state as soon as the current path fails\n- Often uses **pruning** to skip paths that cannot lead to valid solutions"
+    },
+    {
+      "heading": "The Choose-Explore-Unchoose Pattern",
+      "body": "Backtracking follows a three-step pattern:\n\n1. **Choose:** Add the current element to the path\n2. **Explore:** Recursively explore deeper paths\n3. **Unchoose:** Remove the current element (backtrack)\n\nWhen a recursive call returns, we **pop** the current element from the shared path list to backtrack to the previous state."
+    },
+    {
+      "heading": "Pruning",
+      "body": "**Pruning** lets us skip entire subtrees that cannot lead to valid solutions.\n\nIn the path sum example, if the running total exceeds the target, we immediately backtrack without exploring children. This saves work by avoiding paths that can never succeed.\n\n```python\nif total > target:\n    path.pop()\n    return\n```"
+    },
+    {
+      "heading": "Example: Path Sum",
+      "body": "**Problem:** Find all root-to-leaf paths in a binary tree where node values sum to a target.\n\nWe use a helper function `backtrack(node, path, total)` that:\n- Adds the current node to the path\n- Returns immediately if total exceeds target (pruning)\n- Checks if we're at a leaf and the total equals target\n- Recursively explores left and right children\n- **Pops the current node before returning** (backtracking)"
+    },
+    {
+      "heading": "When to Use Backtracking",
+      "body": "Use backtracking when:\n- The problem asks for **all possible solutions** or combinations\n- You need to explore a **decision tree** of choices\n- Constraints let you **prune** invalid paths early\n- Problems involving permutations, combinations, subsets, or constraint satisfaction"
+    }
+  ],
+  "approach": [
+    "Identify the decision tree: what choices can you make at each step?",
+    "Define the base case: when have you found a solution or need to backtrack?",
+    "Implement choose-explore-unchoose: modify state, recurse, then undo the modification",
+    "Add pruning: return early when the current path cannot lead to a valid solution",
+    "Use a shared mutable structure (list/set) across recursive calls, remembering to undo changes"
+  ],
+  "complexity": {
+    "time": "O(n^2)",
+    "space": "O(n^2)"
+  },
+  "code": "def pathSum(root, target):\n    \"\"\"Find all root-to-leaf paths that sum to target.\"\"\"\n    def backtrack(node, path, total):\n        if not node:\n            return\n        \n        # Choose: add current node to path\n        path.append(node.val)\n        total += node.val\n        \n        # Prune: if total exceeds target, backtrack immediately\n        if total > target:\n            path.pop()\n            return\n        \n        # Check if we found a valid solution\n        if not node.left and not node.right:\n            if total == target:\n                result.append(path[:])  # make a copy\n        else:\n            # Explore: recurse on children\n            backtrack(node.left, path, total)\n            backtrack(node.right, path, total)\n        \n        # Unchoose: backtrack by removing current node\n        path.pop()\n    \n    result = []\n    backtrack(root, [], 0)\n    return result",
+  "quiz": [
+    {
+      "q": "Why do we call path.pop() before returning from a backtrack function?",
+      "options": [
+        "To free memory and prevent a memory leak",
+        "To undo the current choice so the shared path list reflects the previous state",
+        "To signal to the caller that this path was invalid",
+        "To prevent duplicate solutions from being added to the result"
+      ],
+      "answer": 1,
+      "explain": "Backtracking uses a single shared list across all recursive calls. Popping the current element undoes the choice made at this level so the path correctly reflects the previous state when control returns to the caller."
+    },
+    {
+      "q": "What is pruning in backtracking?",
+      "options": [
+        "Removing duplicate solutions from the final result list",
+        "Stopping exploration early when the current path cannot lead to a valid solution",
+        "Using an iterative approach instead of recursion to save space",
+        "Copying the path list to avoid modifying the original"
+      ],
+      "answer": 1,
+      "explain": "Pruning means returning immediately when we detect that the current path cannot possibly lead to a valid solution. This avoids wasting time exploring entire subtrees that are guaranteed to fail."
+    }
+  ]
+}

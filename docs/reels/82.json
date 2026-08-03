@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Include or exclude every element",
+    "body": "At each element, make **two choices**: include it in the current subset or exclude it. This binary decision tree generates all 2^n subsets — the power set.\n\nKey trick: explore all paths with DFS and snapshot the path when you reach the end."
+  },
+  {
+    "type": "concept",
+    "heading": "Why path[:] not path?",
+    "body": "**path is mutated** during recursion (append/pop). If you append `path` directly, you store a reference that keeps changing.\n\n`path[:]` creates a **snapshot copy** of the current state — that's your subset."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def subsets(nums):\n    result = []\n    def dfs(i, path):\n        if i == len(nums):\n            result.append(path[:])\n            return\n        # include nums[i]\n        path.append(nums[i])\n        dfs(i + 1, path)\n        # exclude nums[i]\n        path.pop()\n        dfs(i + 1, path)\n    dfs(0, [])\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must we append path[:] instead of path to the result list?",
+    "options": [
+      "path[:] is faster than path",
+      "path is modified during recursion, so we need a snapshot copy",
+      "Python requires slicing for lists of lists",
+      "path[:] sorts the elements automatically"
+    ],
+    "answer": 1,
+    "explain": "Since path is mutated during backtracking (append/pop), appending path directly would store a reference that changes. path[:] creates a shallow copy capturing the current state."
+  }
+]

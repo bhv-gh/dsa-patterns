@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Backtracking is a tree",
+    "body": "Think of backtracking as exploring an **implicit tree**:\n- **Nodes** = partial solutions\n- **Edges** = choices you make\n- **Leaves** = complete solutions\n\nYou use **DFS** to visit every root-to-leaf path and collect the leaves."
+  },
+  {
+    "type": "concept",
+    "heading": "Binary vs n-ary trees",
+    "body": "The tree shape depends on your choices:\n- **Binary**: include/exclude decisions (subsets)\n- **n-ary**: multiple options per step (phone combos: 3-4 letters)\n\nDraw the tree first — it reveals the recursive structure."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def letterCombinations(digits):\n    phone = {\"2\":\"abc\", \"3\":\"def\", \"4\":\"ghi\",\n             \"5\":\"jkl\", \"6\":\"mno\", \"7\":\"pqrs\",\n             \"8\":\"tuv\", \"9\":\"wxyz\"}\n    result = []\n    def backtrack(path, idx):\n        if idx == len(digits):\n            result.append(path)\n            return\n        for letter in phone[digits[idx]]:\n            backtrack(path + letter, idx + 1)\n    if digits:\n        backtrack(\"\", 0)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "In a solution-space tree for backtracking, what do the leaf nodes represent?",
+    "options": [
+      "Partial solutions that need more choices",
+      "Complete solutions to the problem",
+      "Invalid states that should be pruned",
+      "The root of the recursion"
+    ],
+    "answer": 1,
+    "explain": "Leaves are reached when no more choices remain (base case), representing complete solutions."
+  }
+]

@@ -1,7 +1,7 @@
 /* Service worker — precache app shell + all module data for full offline use. */
 // Internal cache name — bumped to precache the new reels feature.
 // (The user-facing version chip stays 'v14' by request; this is not shown.)
-const CACHE = 'dsa-patterns-v14-reels5';
+const CACHE = 'dsa-patterns-v14-b94';
 
 const SHELL = [
   './',
@@ -17,8 +17,8 @@ const SHELL = [
   './anim/_framework.js',
 ];
 
-// module data files 1..67
-const MODULES = Array.from({ length: 67 }, (_, i) => `./modules/${i + 1}.json`);
+// module data files 1..94
+const MODULES = Array.from({ length: 94 }, (_, i) => `./modules/${i + 1}.json`);
 
 // per-module animation scripts (slug-based)
 const ANIM = [
@@ -39,6 +39,9 @@ const ANIM = [
   // binary search
   'binary-search-overview', 'koko-eating-bananas', 'search-in-rotated-sorted-array',
   'split-array-largest-sum', 'minimum-shipping-capacity',
+  // bfs / backtracking / graphs
+  'bfs-fundamentals', 'rotting-oranges', 'subsets', 'generate-parentheses',
+  'topological-sort', 'course-schedule-ii',
 ].map((slug) => `./anim/${slug}.js`);
 
 const PRECACHE = SHELL.concat(MODULES, ANIM);

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "BFS explores level-by-level",
+    "body": "BFS visits **all nodes at the current depth** before moving deeper.\n\n- Uses a **queue** (FIFO)\n- Start at root, add to queue\n- Dequeue node → visit it → enqueue children\n- Perfect for problems about **levels, layers, or shortest paths** in unweighted graphs"
+  },
+  {
+    "type": "concept",
+    "heading": "The level-awareness trick",
+    "body": "**Capture `level_size = len(queue)` before the inner loop.**\n\nWhy? As you process current-level nodes, you're enqueuing next-level nodes. The captured size ensures you only process the current level — not the children you just added.\n\nThis is the **standard interview template** for level-order problems."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef level_order(root):\n    if not root:\n        return []\n    result = []\n    queue = deque([root])\n    \n    while queue:\n        level_size = len(queue)  # freeze current level\n        current_level = []\n        \n        for _ in range(level_size):\n            node = queue.popleft()\n            current_level.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        result.append(current_level)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of BFS on a binary tree with n nodes?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(4^n)",
+      "O(n^2)"
+    ],
+    "answer": 0,
+    "explain": "BFS visits each node exactly once, performing O(1) work per node (enqueue, dequeue, append). Total: O(n)."
+  }
+]

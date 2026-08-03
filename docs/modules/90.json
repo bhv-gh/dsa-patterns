@@ -1,0 +1,67 @@
+{
+  "id": 90,
+  "slug": "shortest-path-algorithms",
+  "title": "Shortest Path Algorithms",
+  "pattern": "graphs",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Choose the right tool: BFS for unweighted, Dijkstra for non-negative weights, Bellman-Ford for negative weights.",
+  "sections": [
+    {
+      "heading": "Algorithm Decision Tree",
+      "body": "The algorithm you choose depends on edge weights:\n\n- **Unweighted (all edges = 1)**: BFS - O(V + E)\n- **Non-negative weights**: Dijkstra - O((V + E) log V)\n- **Negative weights allowed**: Bellman-Ford - O(V · E)\n- **All pairs, small graph**: Floyd-Warshall - O(V³)"
+    },
+    {
+      "heading": "BFS: When All Edges Are Equal",
+      "body": "If every edge has the same cost (or weight = 1), BFS is your shortest path algorithm.\n\n**How it works**: BFS explores nodes level-by-level using a queue. The first time you reach a node, you've found the shortest path to it—no other path can be shorter because all edges cost the same.\n\n**Algorithm**:\n1. Initialize `dist[start] = 0`, add start to queue\n2. Dequeue node, explore neighbors\n3. If neighbor unvisited: `dist[neighbor] = dist[node] + 1`, add to queue\n4. Repeat until queue empty\n\n**When to use**:\n- Grid navigation (moving up/down/left/right)\n- Unweighted graph traversal\n- Finding minimum number of steps/moves"
+    },
+    {
+      "heading": "Dijkstra's Algorithm: Non-Negative Weights",
+      "body": "**Most important shortest path algorithm for interviews.** Handles graphs where edges have non-negative weights.\n\n**Key insight**: Always explore the cheapest unexplored node using a min-heap (priority queue).\n\n**Algorithm**:\n1. Initialize `dist[source] = 0`, `dist[others] = ∞`, `heap = [(0, source)]`\n2. Pop minimum `(d, node)` from heap. If `d > dist[node]`, skip (stale entry)\n3. **Relax** each neighbor: `new = d + weight`. If `new < dist[neighbor]`, update distance and add to heap\n4. Repeat until heap empty\n\n**Why it works**: Greedy approach processes nodes with smallest known distance first. Because all edge weights are non-negative, once we've processed a node, we've found its shortest path.\n\n**When to use**:\n- Weighted graphs with non-negative edges\n- Finding shortest path from one source to all nodes\n- Problems involving \"minimum cost\" or \"minimum time\"\n\n**Fails with negative edge weights** because greedy assumption breaks down."
+    },
+    {
+      "heading": "Bellman-Ford: When Negative Weights Exist",
+      "body": "Handles graphs with **negative edge weights** and can detect negative cycles.\n\n**Algorithm**:\n1. Initialize `dist[source] = 0`, `dist[others] = ∞`\n2. Relax all edges V-1 times: for each edge (u, v, w), if `dist[u] + w < dist[v]`, update\n3. Check for negative cycles: relax once more; any change = cycle exists\n\n**Why V-1 iterations?** Longest possible shortest path visits every node exactly once, meaning at most V-1 edges. Each iteration discovers shortest paths one edge longer than before.\n\n**When to use**:\n- Graph has negative edge weights\n- Need to detect negative cycles\n- Problems involving arbitrage or exchange rates\n\n**In interviews**: More commonly discussed than implemented. Know why Dijkstra fails with negative weights and how Bellman-Ford fixes it."
+    },
+    {
+      "heading": "Floyd-Warshall: All Pairs Shortest Path",
+      "body": "Finds shortest path between **every pair of nodes** using dynamic programming.\n\n**Algorithm**:\n1. Initialize `dist[i][i] = 0`, `dist[i][j] = edge weight or ∞`\n2. For each intermediate node k (0 to V-1):\n   - For all pairs (i, j): `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`\n\n**DP recurrence**: Try each node k as intermediate. After considering node k, `dist[i][j]` holds shortest path using only nodes 0 through k.\n\n**When to use**:\n- Need distances between all pairs\n- Small number of nodes (V ≤ 400)\n- Dense graphs where E ≈ V²"
+    }
+  ],
+  "approach": [
+    "All edges equal weight → BFS (simplest, O(V + E))",
+    "Non-negative weights → Dijkstra with min-heap (default choice, ~70% of weighted problems)",
+    "Negative weights allowed → Bellman-Ford (slower but handles negatives)",
+    "All pairs needed, small graph → Floyd-Warshall (DP approach)",
+    "Dijkstra fails with negative weights; BFS fails with varying weights"
+  ],
+  "complexity": {
+    "time": "BFS: O(V + E), Dijkstra: O((V + E) log V), Bellman-Ford: O(V · E), Floyd-Warshall: O(V³)",
+    "space": "BFS: O(V), Dijkstra: O(V + E), Bellman-Ford: O(V), Floyd-Warshall: O(V²)"
+  },
+  "code": "import heapq\nfrom collections import defaultdict\n\ndef dijkstra(graph, source):\n    \"\"\"\n    Find shortest paths from source to all nodes in a weighted graph.\n    graph: dict of {node: [(neighbor, weight), ...]}\n    Returns: dict of {node: shortest_distance_from_source}\n    \"\"\"\n    dist = {source: 0}\n    heap = [(0, source)]\n    \n    while heap:\n        d, node = heapq.heappop(heap)\n        \n        # Skip stale entries\n        if d > dist.get(node, float('inf')):\n            continue\n        \n        # Relax neighbors\n        for neighbor, weight in graph.get(node, []):\n            new_dist = d + weight\n            if new_dist < dist.get(neighbor, float('inf')):\n                dist[neighbor] = new_dist\n                heapq.heappush(heap, (new_dist, neighbor))\n    \n    return dist",
+  "quiz": [
+    {
+      "q": "Why does Dijkstra's algorithm fail with negative edge weights?",
+      "options": [
+        "Negative weights cause the heap to malfunction",
+        "The greedy assumption breaks: a node might get a shorter path after being finalized",
+        "Negative weights create infinite loops in the algorithm",
+        "Python's heapq doesn't support negative numbers"
+      ],
+      "answer": 1,
+      "explain": "Dijkstra greedily processes the cheapest node first and assumes that path is final. With negative weights, a later path through a negative edge could be cheaper, but the node was already finalized."
+    },
+    {
+      "q": "You need shortest paths in a grid where each move costs 1. Which algorithm is best?",
+      "options": [
+        "Dijkstra's algorithm with a min-heap",
+        "Bellman-Ford to handle uniform weights",
+        "BFS since all edges have equal weight",
+        "Floyd-Warshall to get all pairs at once"
+      ],
+      "answer": 2,
+      "explain": "BFS is the simplest and most efficient choice for unweighted graphs (or graphs where all edges have equal weight). It's O(V + E) and doesn't need a heap."
+    }
+  ]
+}

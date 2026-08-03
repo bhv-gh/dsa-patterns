@@ -1,0 +1,71 @@
+{
+  "id": 76,
+  "slug": "rotting-oranges",
+  "title": "Rotting Oranges",
+  "pattern": "breadth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Multi-source BFS simulation: enqueue all rotten oranges at t=0, spread rot level by level (1 minute per level), return -1 if any fresh remain.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m×n grid of oranges where each cell is:\n- **E** (empty)\n- **F** (fresh orange)\n- **R** (rotten orange)\n\nEvery minute, fresh oranges adjacent (4-directionally) to rotten oranges become rotten.\n\nReturn the **minimum minutes** until no fresh oranges remain, or **-1** if impossible."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is a **multi-source BFS** problem. Instead of one starting point, we enqueue **all initially rotten oranges** at time 0. Each BFS level represents one minute of rot spreading. Track fresh orange count to detect unreachable cells."
+    },
+    {
+      "heading": "Approach",
+      "body": "**1. Initialize Queue and Count Fresh**\n- Scan the grid: enqueue all rotten orange positions `(r,c)`, count all fresh oranges.\n\n**2. BFS Level-by-Level**\n- While queue is not empty and fresh count > 0:\n  - Process **all** oranges in current queue level (one minute).\n  - For each rotten orange, check 4 neighbors.\n  - If neighbor is fresh: mark rotten, decrement fresh count, enqueue for next level.\n  - Increment minute counter after processing the level.\n\n**3. Return Result**\n- If fresh count is 0: return minutes.\n- Otherwise: return -1 (some fresh oranges unreachable)."
+    }
+  ],
+  "approach": [
+    "Scan grid to enqueue all initially rotten oranges and count fresh oranges",
+    "Process BFS level by level (each level = 1 minute)",
+    "For each rotten orange, check 4-directional neighbors",
+    "Mark fresh neighbors as rotten, decrement fresh count, add to queue",
+    "After processing all oranges in current level, increment minute counter",
+    "Return minutes if fresh count is 0, else return -1"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(m * n)"
+  },
+  "code": "from collections import deque\n\ndef rotting_oranges(grid):\n    \"\"\"Return minimum minutes to rot all oranges, or -1 if impossible.\"\"\"\n    if not grid:\n        return -1\n    \n    rows, cols = len(grid), len(grid[0])\n    queue = deque()\n    fresh_count = 0\n    \n    # Initialize: enqueue all rotten, count fresh\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"R\":\n                queue.append((r, c))\n            elif grid[r][c] == \"F\":\n                fresh_count += 1\n    \n    # BFS level-by-level\n    minutes = 0\n    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]\n    \n    while queue and fresh_count > 0:\n        minutes += 1\n        # Process entire current level (all oranges that rotted this minute)\n        for _ in range(len(queue)):\n            r, c = queue.popleft()\n            for dr, dc in directions:\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == \"F\":\n                    grid[nr][nc] = \"R\"\n                    fresh_count -= 1\n                    queue.append((nr, nc))\n    \n    return minutes if fresh_count == 0 else -1",
+  "quiz": [
+    {
+      "q": "Why do we enqueue ALL initially rotten oranges before starting BFS?",
+      "options": [
+        "To reduce time complexity",
+        "Because this is multi-source BFS where rot spreads from multiple starting points simultaneously",
+        "To count the total number of oranges",
+        "To mark visited cells"
+      ],
+      "answer": 1,
+      "explain": "This is a multi-source BFS problem. All initially rotten oranges start spreading at time 0 simultaneously, so we must enqueue them all before beginning the level-by-level traversal."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(log(m * n))",
+        "O(m * n)",
+        "O(n)",
+        "O(4^n)"
+      ],
+      "answer": 1,
+      "explain": "We visit each cell at most once during the initial scan and once during BFS. With m rows and n columns, this gives O(m * n) time complexity."
+    },
+    {
+      "q": "When should we return -1?",
+      "options": [
+        "When the queue is empty",
+        "When all oranges are rotten initially",
+        "When fresh_count > 0 after BFS completes",
+        "When minutes exceeds the grid size"
+      ],
+      "answer": 2,
+      "explain": "If fresh_count > 0 after BFS completes, it means some fresh oranges were never reached by the rot (isolated by empty cells), so it's impossible to rot all oranges."
+    }
+  ]
+}

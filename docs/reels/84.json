@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Backtracking with unlimited reuse",
+    "body": "Use the **same index** when you recurse to allow picking the same candidate again. A **start index** prevents duplicate permutations ([2,3] vs [3,2]). Sort first to prune early when a candidate exceeds the target."
+  },
+  {
+    "type": "concept",
+    "heading": "How to recognize it",
+    "body": "Look for **\"find all combinations\"** + **\"unlimited reuse\"** (same element many times). Classic backtracking pattern: choose → recurse → unchoose (pop)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def combinationSum(candidates, target):\n    def backtrack(start, combo, remain):\n        if remain == 0:\n            result.append(list(combo))\n            return\n        for i in range(start, len(candidates)):\n            if candidates[i] > remain:\n                return  # prune\n            combo.append(candidates[i])\n            backtrack(i, combo, remain - candidates[i])  # same i: reuse\n            combo.pop()\n    \n    candidates.sort()\n    result = []\n    backtrack(0, [], target)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we pass the same index `i` (not `i+1`) to the recursive call?",
+    "options": [
+      "To allow unlimited reuse of the same candidate",
+      "To avoid duplicate combinations",
+      "To improve time complexity",
+      "To enable early pruning"
+    ],
+    "answer": 0,
+    "explain": "Passing `i` (not `i+1`) allows the recursion to pick the same candidate multiple times."
+  }
+]

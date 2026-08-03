@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Alert travels all paths at once",
+    "body": "When server k broadcasts, the alert **propagates simultaneously** along every connection. Each server receives it via its **shortest path** from k.\n\nThe answer? The **max** of all shortest paths — we wait for the **slowest server**."
+  },
+  {
+    "type": "concept",
+    "heading": "Why Dijkstra wins here",
+    "body": "Need single-source shortest paths with **non-negative weights**? Dijkstra is your tool.\n\n- Greedy: always expand the **closest unvisited node**\n- Guarantee: once popped from heap, that's the **optimal distance**\n- Return **-1** if any server is unreachable (visited < n)"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def network_delay_time(times, n, k):\n    from heapq import heappop, heappush\n    from collections import defaultdict\n    \n    graph = defaultdict(list)\n    for u, v, w in times:\n        graph[u].append((v, w))\n    \n    distances = {k: 0}\n    heap = [(0, k)]\n    \n    while heap:\n        dist, node = heappop(heap)\n        if dist > distances.get(node, float('inf')):\n            continue\n        for neighbor, weight in graph[node]:\n            new_dist = dist + weight\n            if new_dist < distances.get(neighbor, float('inf')):\n                distances[neighbor] = new_dist\n                heappush(heap, (new_dist, neighbor))\n    \n    return -1 if len(distances) != n else max(distances.values())"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of Dijkstra's algorithm with a min-heap?",
+    "options": [
+      "O(V + E)",
+      "O((V + E) log V)",
+      "O(V · E)",
+      "O(V²)"
+    ],
+    "answer": 1,
+    "explain": "Each node is popped once (V) and each edge relaxed once (E), with heap ops costing O(log V)."
+  }
+]

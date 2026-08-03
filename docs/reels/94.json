@@ -1,0 +1,24 @@
+[
+  {
+    "type": "concept",
+    "heading": "All-pairs shortest paths in one pass",
+    "body": "**Floyd-Warshall** computes shortest paths between **every pair of cities** in O(V³).\n\nThe core trick: for each intermediate vertex **k**, check if routing through **k** beats the direct route:\n\n`dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`\n\n**When to use**: V ≤ 100 makes O(V³) practical."
+  },
+  {
+    "type": "concept",
+    "heading": "Loop order is critical",
+    "body": "**The k-loop MUST be outermost:**\n\n```\nfor k in range(n):  # intermediate\n  for i in range(n):  # source\n    for j in range(n):  # destination\n```\n\nWhy? When considering paths through vertex **k**, you need the best paths using vertices 0..k-1 already computed."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def find_the_city(n, edges, threshold):\n    # Init: diagonal=0, edges=weight, missing=∞\n    dist = [[float('inf')] * n for _ in range(n)]\n    for i in range(n):\n        dist[i][i] = 0\n    for u, v, w in edges:\n        dist[u][v] = dist[v][u] = w\n    \n    # Floyd-Warshall: k outer!\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])\n    \n    # Count reachable; <= ensures highest index wins ties\n    result, min_count = 0, n\n    for city in range(n):\n        count = sum(1 for j in range(n) if city != j and dist[city][j] <= threshold)\n        if count <= min_count:\n            min_count, result = count, city\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of Floyd-Warshall?",
+    "options": ["O(V²)", "O(V³)", "O(V² log V)", "O(VE)"],
+    "answer": 1,
+    "explain": "Three nested loops over all vertices (k, i, j) → O(V³)."
+  }
+]

@@ -270,8 +270,8 @@ Tell the user the live URL and which modules were added.
 
 ## Ledger — PDFs already converted to modules
 
-**Max module id:** 67
-**Last updated:** 2026-07-29
+**Max module id:** 94
+**Last updated:** 2026-07-30
 
 | PDF        | id | slug                                  | pattern        | type / difficulty |
 |------------|----|---------------------------------------|----------------|-------------------|
@@ -342,3 +342,30 @@ Tell the user the live URL and which modules were added.
 | 65.pdf     | 65 | number-of-islands                     | depth-first-search | problem / medium |
 | 66.pdf     | 66 | surrounded-regions                    | depth-first-search | problem / medium |
 | 67.pdf     | 67 | pacific-atlantic-water-flow           | depth-first-search | problem / medium |
+| 68.pdf     | 68 | bfs-introduction                      | breadth-first-search | lesson            |
+| 69.pdf     | 69 | bfs-fundamentals                      | breadth-first-search | lesson            |
+| 70.pdf     | 70 | level-order-sum                       | breadth-first-search | problem / easy    |
+| 71.pdf     | 71 | rightmost-node                        | breadth-first-search | problem / medium  |
+| 72.pdf     | 72 | zigzag-level-order                    | breadth-first-search | problem / medium  |
+| 73.pdf     | 73 | maximum-width-of-binary-tree          | breadth-first-search | problem / medium  |
+| 74.pdf     | 74 | bfs-graphs-overview                   | breadth-first-search | lesson            |
+| 75.pdf     | 75 | minimum-knight-moves                  | breadth-first-search | problem / medium  |
+| 76.pdf     | 76 | rotting-oranges                       | breadth-first-search | problem / medium  |
+| 77.pdf     | 77 | 01-matrix                             | breadth-first-search | problem / medium  |
+| 78.pdf     | 78 | bus-routes                            | breadth-first-search | problem / hard    |
+| 79.pdf     | 79 | backtracking-overview                 | backtracking         | lesson            |
+| 80.pdf     | 80 | word-search                           | backtracking         | problem / medium  |
+| 81.pdf     | 81 | solution-space-trees                  | backtracking         | lesson            |
+| 82.pdf     | 82 | subsets                               | backtracking         | problem / medium  |
+| 83.pdf     | 83 | generate-parentheses                  | backtracking         | problem / medium  |
+| 84.pdf     | 84 | combination-sum                       | backtracking         | problem / medium  |
+| 85.pdf     | 85 | palindrome-partitioning               | backtracking         | problem / medium  |
+| 86.pdf     | 86 | n-queens                              | backtracking         | problem / hard    |
+| 87.pdf     | 87 | topological-sort                      | graphs               | lesson            |
+| 88.pdf     | 88 | course-schedule                       | graphs               | problem / medium  |
+| 89.pdf     | 89 | course-schedule-ii                    | graphs               | problem / medium  |
+| 90.pdf     | 90 | shortest-path-algorithms              | graphs               | lesson            |
+| 91.pdf     | 91 | network-delay-time                    | graphs               | problem / medium  |
+| 92.pdf     | 92 | cheapest-flights-k-stops              | graphs               | problem / medium  |
+| 93.pdf     | 93 | path-with-minimum-effort              | graphs               | problem / medium  |
+| 94.pdf     | 94 | find-city-fewest-reachable            | graphs               | problem / medium  |

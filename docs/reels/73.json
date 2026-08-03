@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Width counts the nulls too",
+    "body": "Tree width isn't just visible nodes — it's **rightmost to leftmost, including gaps**.\n\nExample:\n```\n  4\n /   \\\n2     7\n```\nLevel 2 has width **2** (both nodes), but if left had a child and right didn't, you'd still count the invisible null between them.\n\n**The trick**: assign array-style positions to every node, then width = `right_pos - left_pos + 1`."
+  },
+  {
+    "type": "concept",
+    "heading": "Index like an array heap",
+    "body": "Assign each node a position `p` (root = 0):\n- **Left child**: `2*p + 1`\n- **Right child**: `2*p + 2`\n\nThis mirrors how binary trees live in arrays — positions naturally preserve spacing even when nodes are missing.\n\nBFS level-by-level, track first and last position per level, calc `max(right - left + 1)`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef maxWidth(root):\n    if not root:\n        return 0\n    queue = deque([(root, 0)])\n    max_w = 0\n    while queue:\n        lvl_size = len(queue)\n        _, left_pos = queue[0]\n        for _ in range(lvl_size):\n            node, pos = queue.popleft()\n            if node.left:\n                queue.append((node.left, 2*pos+1))\n            if node.right:\n                queue.append((node.right, 2*pos+2))\n        max_w = max(max_w, pos - left_pos + 1)\n    return max_w"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we assign positions 2*p+1 and 2*p+2 to left and right children?",
+    "options": [
+      "It mimics array-based binary tree indexing, preserving relative positions including nulls",
+      "It ensures positions are always odd and even",
+      "It prevents position collisions between levels",
+      "It optimizes memory usage in the queue"
+    ],
+    "answer": 0,
+    "explain": "This indexing scheme mirrors how binary trees are stored in arrays (0-indexed), naturally accounting for null nodes and preserving the relative spacing needed to calculate width."
+  }
+]

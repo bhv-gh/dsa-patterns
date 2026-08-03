@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Word Search: Backtracking DFS",
+    "body": "Find a word in a grid by trying every cell as a start point. Use **DFS** to explore neighbors letter-by-letter.\n\n- Mark cells visited (replace with `\"#\"`)\n- Recurse on 4 neighbors for next letter\n- **Backtrack**: restore original value so other paths can reuse the cell"
+  },
+  {
+    "type": "concept",
+    "heading": "Why backtrack? Free cells for reuse",
+    "body": "A cell used in one failed path **must be available** for other paths.\n\nMark visited → explore → **restore** lets the same cell appear in different word attempts starting from different grid positions."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def dfs(board, word, r, c, i):\n    if i == len(word):\n        return True\n    if r < 0 or c < 0 or r >= len(board) or c >= len(board[0]) or board[r][c] != word[i]:\n        return False\n    \n    temp = board[r][c]\n    board[r][c] = \"#\"  # mark visited\n    \n    found = (dfs(board, word, r+1, c, i+1) or\n             dfs(board, word, r-1, c, i+1) or\n             dfs(board, word, r, c+1, i+1) or\n             dfs(board, word, r, c-1, i+1))\n    \n    board[r][c] = temp  # backtrack\n    return found"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we mark cells as visited during DFS?",
+    "options": [
+      "To optimize space complexity",
+      "To avoid using the same cell twice in a single word path",
+      "To speed up the search by caching results",
+      "To prevent exploring adjacent cells"
+    ],
+    "answer": 1,
+    "explain": "The problem states each cell can only be used once per word. Marking visited prevents infinite loops and reusing cells in the current path."
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "id": 86,
+  "slug": "n-queens",
+  "title": "N-Queens",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Place n queens on an n×n board so no queen attacks another. Use backtracking with diagonal tracking.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Place n queens on an n×n chessboard so that no two queens threaten each other.\n\nA queen attacks any piece on the same row, column, or diagonal. Return all distinct board configurations.\n\n**Example 1:**\nInput: `n = 4`\nOutput: Two valid configurations\n\n**Example 2:**\nInput: `n = 1`\nOutput: `[[\"Q\"]]`\n\n**Constraints:** `1 <= n <= 9`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Place one queen per row to reduce the search space from O(n²) positions per queen to O(n) columns per row.\n\nTrack attacked columns and diagonals in sets for O(1) conflict checks:\n- `cols`: occupied column indices\n- `diag1`: (row - col) for upper-left to lower-right diagonals\n- `diag2`: (row + col) for upper-right to lower-left diagonals\n\nBacktrack when no valid column exists in the current row."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Row-by-row placement with backtracking:**\n\n- Start with an empty board and three empty sets: `cols`, `diag1`, `diag2`\n- For each row from 0 to n-1, try placing a queen in each column\n- Before placing, check if the column and both diagonals are free (not in sets)\n- If valid, place the queen, add constraints to sets, and recurse to next row\n- If row == n, record the current board as a solution\n- After recursion returns, remove the queen and backtrack (try next column)"
+    }
+  ],
+  "approach": [
+    "Initialize an empty n×n board and sets to track attacked columns and diagonals",
+    "Define a backtrack function that takes the current row as a parameter",
+    "Base case: if row == n, add the current board configuration to results",
+    "For each column in the current row, check if it's safe (not in cols, diag1, or diag2)",
+    "If safe, place queen, add to sets, recurse to row + 1, then remove queen and backtrack",
+    "Return all collected solutions"
+  ],
+  "complexity": {
+    "time": "O(n!)",
+    "space": "O(n²)"
+  },
+  "code": "def solveNQueens(n):\n    \"\"\"\n    Find all valid ways to place n queens on an n×n board.\n    Returns list of board configurations.\n    \"\"\"\n    result = []\n    board = [['.' for _ in range(n)] for _ in range(n)]\n    cols = set()\n    diag1 = set()  # row - col\n    diag2 = set()  # row + col\n    \n    def backtrack(row):\n        if row == n:\n            result.append([''.join(r) for r in board])\n            return\n        \n        for col in range(n):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            \n            # Place queen\n            board[row][col] = 'Q'\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            \n            backtrack(row + 1)\n            \n            # Backtrack\n            board[row][col] = '.'\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n    \n    backtrack(0)\n    return result",
+  "quiz": [
+    {
+      "q": "Why do we use (row - col) and (row + col) to track diagonals?",
+      "options": [
+        "Because all cells on a diagonal share the same (row - col) or (row + col) value",
+        "To reduce memory usage by storing only two integers per diagonal",
+        "Because it's faster than checking every cell on the diagonal",
+        "To avoid conflicts with column indices"
+      ],
+      "answer": 0,
+      "explain": "Cells on the same upper-left to lower-right diagonal have the same (row - col) value, and cells on the same upper-right to lower-left diagonal have the same (row + col) value. This allows O(1) diagonal conflict checks."
+    },
+    {
+      "q": "What is the time complexity of the N-Queens backtracking solution?",
+      "options": [
+        "O(n²) because we iterate through an n×n board",
+        "O(n!) because we explore at most n choices in row 0, n-1 in row 1, etc.",
+        "O(2^n) because each position has two states: queen or empty",
+        "O(n³) due to nested loops and validity checks"
+      ],
+      "answer": 1,
+      "explain": "The algorithm tries placing a queen in each column of each row, with the search space pruned by constraints. In the worst case, this leads to O(n!) branches, though many are pruned early."
+    },
+    {
+      "q": "Why do we place one queen per row instead of exploring all n² positions?",
+      "options": [
+        "To simplify the code and make it easier to understand",
+        "Because exactly one queen must occupy each row in any valid solution",
+        "To reduce time complexity from O(2^(n²)) to O(n!)",
+        "Because the problem statement requires row-by-row placement"
+      ],
+      "answer": 2,
+      "explain": "Since each row must have exactly one queen, placing row-by-row reduces the branching factor from n² to n per level, dramatically pruning the search space from O(2^(n²)) to O(n!)."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": 93,
+  "slug": "path-with-minimum-effort",
+  "title": "Path With Minimum Effort",
+  "pattern": "graphs",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find path from top-left to bottom-right minimizing max elevation difference between adjacent cells (minimax path).",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a 2D grid of elevations, find the path from `(0,0)` to `(m-1, n-1)` that minimizes the **maximum single step** effort.\n\n**Effort** of a step = absolute difference in elevations between adjacent cells.\n**Effort** of a path = the largest step along the entire path.\n\nYou can move up, down, left, or right. Return the minimum effort required.\n\n**Example:** Grid `[[1,10,2],[2,3,3],[3,2,1]]` → answer `1` (path 1→2→3→2→1 avoids the cliff at 10)."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is a **minimax path problem**: minimize the maximum edge weight along the path, not the sum.\n\n- Standard Dijkstra minimizes **sum** of weights.\n- Here we minimize the **max** weight.\n\nThe greedy property still holds: `new_effort = max(current_effort, edge_weight)`. When we pop a cell from the priority queue, we've found the optimal effort to reach it."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Modified Dijkstra:** Track the minimum effort (max step so far) to reach each cell.\n\n1. **Initialize:** Start at `(0,0)` with effort `0`. All other cells have effort `∞`.\n2. **Min-heap:** Push `(effort, row, col)` tuples, prioritized by effort.\n3. **Pop minimum:** Extract the cell with lowest effort.\n4. **Early exit:** If it's the destination, return the effort.\n5. **Relax neighbors:** For each adjacent cell, compute `new_effort = max(current_effort, height_diff)`. If this improves the known effort, update and push to heap.\n6. **Skip stale entries:** If popped effort > recorded effort for that cell, skip (already found a better path)."
+    }
+  ],
+  "approach": [
+    "Initialize distance matrix to infinity; set dist[0][0] = 0",
+    "Push (effort=0, row=0, col=0) into min-heap",
+    "While heap is not empty, pop (effort, row, col) with minimum effort",
+    "If (row, col) is destination, return effort",
+    "For each neighbor (nr, nc), compute new_effort = max(effort, abs(heights[nr][nc] - heights[row][col]))",
+    "If new_effort < dist[nr][nc], update dist[nr][nc] and push (new_effort, nr, nc) to heap"
+  ],
+  "complexity": {
+    "time": "O(m×n×log(m×n))",
+    "space": "O(m×n)"
+  },
+  "code": "import heapq\n\ndef minimum_effort_path(heights):\n    \"\"\"Modified Dijkstra for minimax path: minimize max edge weight.\"\"\"\n    rows, cols = len(heights), len(heights[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[0][0] = 0\n    heap = [(0, 0, 0)]  # (effort, row, col)\n    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]\n    \n    while heap:\n        effort, row, col = heapq.heappop(heap)\n        if row == rows - 1 and col == cols - 1:\n            return effort\n        if effort > dist[row][col]:\n            continue\n        for dr, dc in dirs:\n            nr, nc = row + dr, col + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                diff = abs(heights[nr][nc] - heights[row][col])\n                new_effort = max(effort, diff)\n                if new_effort < dist[nr][nc]:\n                    dist[nr][nc] = new_effort\n                    heapq.heappush(heap, (new_effort, nr, nc))\n    return dist[rows - 1][cols - 1]",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the modified Dijkstra solution?",
+      "options": [
+        "O(m×n×log(m×n))",
+        "O(m×n)",
+        "O(4^(m×n))",
+        "O(m×n×log(max_height))"
+      ],
+      "answer": 0,
+      "explain": "Each of m×n cells can be pushed to the heap at most once per neighbor update. Heap operations are O(log(m×n)), giving O(m×n×log(m×n))."
+    },
+    {
+      "q": "How does the relaxation step differ from standard Dijkstra?",
+      "options": [
+        "We sum edge weights instead of taking the max",
+        "We compute new_effort = max(current_effort, edge_weight) instead of summing",
+        "We use BFS instead of a priority queue",
+        "We binary search on the threshold"
+      ],
+      "answer": 1,
+      "explain": "In standard Dijkstra, new_dist = dist[curr] + weight. Here, new_effort = max(effort[curr], weight) because we minimize the maximum step."
+    },
+    {
+      "q": "Why can we exit early when we first pop the destination cell?",
+      "options": [
+        "Because BFS guarantees the shortest path",
+        "Because the heap is sorted by effort, the first pop of destination has optimal effort",
+        "Because we've visited all cells",
+        "Because the grid is always small"
+      ],
+      "answer": 1,
+      "explain": "The min-heap ensures we always process the lowest-effort unvisited cell. When destination is popped, no future path can have lower effort."
+    }
+  ]
+}

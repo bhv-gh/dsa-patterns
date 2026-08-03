@@ -1,0 +1,70 @@
+{
+  "id": 77,
+  "slug": "01-matrix",
+  "title": "01 Matrix",
+  "pattern": "breadth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find shortest distance from each cell to nearest 0 using multi-source BFS starting from all 0s simultaneously.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m x n binary matrix where each cell contains 0 or 1, return a matrix of the same dimensions where each cell contains the distance to the nearest 0. The distance between adjacent cells is 1.\n\n**Example:**\n```\nInput:  [[1,0,1],\n         [0,1,0],\n         [1,1,1]]\n\nOutput: [[1,0,1],\n         [0,1,0],\n         [1,2,1]]\n```"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **multi-source BFS** by enqueuing all 0 cells first. The first time BFS reaches any cell is guaranteed to be the shortest distance to a 0. This works because BFS explores cells level-by-level in increasing distance order."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Initialize output grid with -1 (unknown distance)\n2. Enqueue all cells with value 0 and set their output distance to 0\n3. Perform BFS: for each cell in queue, check all 4 neighbors\n4. If a neighbor is unvisited (distance = -1), set its distance to current distance + 1 and enqueue it\n5. Return the output grid"
+    }
+  ],
+  "approach": [
+    "Initialize output grid with all cells set to -1 to mark distances as unknown",
+    "Find all cells with value 0, set their output distance to 0, and add them to the BFS queue",
+    "Process the queue level-by-level: for each cell, explore all 4 neighbors (up, down, left, right)",
+    "For each unvisited neighbor (distance = -1), update its distance and add to queue",
+    "Continue until queue is empty, then return the output grid"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(m * n)"
+  },
+  "code": "from collections import deque\n\ndef updateMatrix(mat):\n    \"\"\"Return matrix where each cell contains distance to nearest 0.\"\"\"\n    rows, cols = len(mat), len(mat[0])\n    output = [[-1] * cols for _ in range(rows)]\n    queue = deque()\n    \n    # Initialize queue with all 0 cells\n    for r in range(rows):\n        for c in range(cols):\n            if mat[r][c] == 0:\n                queue.append((r, c))\n                output[r][c] = 0\n    \n    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]\n    \n    # BFS traversal\n    while queue:\n        r, c = queue.popleft()\n        for dr, dc in directions:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and output[nr][nc] == -1:\n                output[nr][nc] = output[r][c] + 1\n                queue.append((nr, nc))\n    \n    return output",
+  "quiz": [
+    {
+      "q": "Why do we enqueue all 0 cells at the start instead of processing each cell individually?",
+      "options": [
+        "It reduces memory usage by avoiding duplicate queue entries",
+        "Multi-source BFS guarantees the first visit to any cell is the shortest path from any 0",
+        "It allows us to process the matrix in parallel on multiple cores",
+        "It makes the code simpler by avoiding nested loops"
+      ],
+      "answer": 1,
+      "explain": "Multi-source BFS explores all sources simultaneously in distance order. The first time any cell is reached, it must be via the shortest path from some 0."
+    },
+    {
+      "q": "What is the purpose of initializing the output grid with -1?",
+      "options": [
+        "To indicate that a cell contains a 1 in the input matrix",
+        "To mark cells as unvisited so we know when to update and enqueue them",
+        "To calculate the maximum possible distance in the grid",
+        "To handle edge cases where the grid is empty"
+      ],
+      "answer": 1,
+      "explain": "The -1 value marks cells as unvisited. When we encounter a neighbor with -1 during BFS, we know it hasn't been processed yet and we can update its distance."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(log n) because BFS is logarithmic",
+        "O(m * n) because each cell is visited at most once",
+        "O(m * n * 4) because we check 4 directions for each cell",
+        "O(V + E) where V is vertices and E is edges"
+      ],
+      "answer": 1,
+      "explain": "Each of the m*n cells is enqueued and processed exactly once. The 4-directional checks are constant time per cell, so overall complexity is O(m*n)."
+    }
+  ]
+}

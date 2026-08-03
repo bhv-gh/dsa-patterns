@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Multi-source BFS spreads rot",
+    "body": "**Unlike single-source BFS**, enqueue ALL rotten oranges at t=0. Each level = 1 minute of simultaneous spreading.\n\n- Track fresh count\n- Process level-by-level\n- Return -1 if fresh remain"
+  },
+  {
+    "type": "concept",
+    "heading": "When to return -1?",
+    "body": "After BFS completes, if **fresh_count > 0**, some oranges are isolated by empty cells — rot can't reach them.\n\nAlways check: `return minutes if fresh_count == 0 else -1`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def rotting_oranges(grid):\n    from collections import deque\n    rows, cols = len(grid), len(grid[0])\n    queue = deque()\n    fresh = 0\n    \n    # Enqueue all rotten, count fresh\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"R\": queue.append((r, c))\n            elif grid[r][c] == \"F\": fresh += 1\n    \n    minutes = 0\n    dirs = [(0,1),(0,-1),(1,0),(-1,0)]\n    \n    while queue and fresh > 0:\n        minutes += 1\n        for _ in range(len(queue)):  # level-by-level\n            r, c = queue.popleft()\n            for dr, dc in dirs:\n                nr, nc = r+dr, c+dc\n                if 0<=nr<rows and 0<=nc<cols and grid[nr][nc]==\"F\":\n                    grid[nr][nc] = \"R\"\n                    fresh -= 1\n                    queue.append((nr, nc))\n    \n    return minutes if fresh == 0 else -1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we enqueue ALL initially rotten oranges before starting BFS?",
+    "options": [
+      "To reduce time complexity",
+      "Because this is multi-source BFS where rot spreads from multiple starting points simultaneously",
+      "To count the total number of oranges",
+      "To mark visited cells"
+    ],
+    "answer": 1,
+    "explain": "Multi-source BFS: all rotten oranges start spreading at t=0 simultaneously."
+  }
+]

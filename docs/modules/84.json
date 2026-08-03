@@ -1,0 +1,71 @@
+{
+  "id": 84,
+  "slug": "combination-sum",
+  "title": "Combination Sum",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find all unique combinations from candidates that sum to target, allowing unlimited reuse of each number.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array of **distinct integers** `candidates` and a target integer `target`, generate all unique combinations of `candidates` which sum to `target`.\n\n- The same number may be chosen from `candidates` an **unlimited number of times**\n- Combinations may be returned in any order\n- All values in `candidates` are positive integers (1 ≤ candidates[i] ≤ 40)\n\n**Example:**\n- Input: `candidates = [2,3,6,7]`, `target = 7`\n- Output: `[[2,2,3],[7]]`\n- Explanation: 2+2+3=7, and 7=7"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use **backtracking with unlimited reuse**: recurse with the **same index** to allow reusing the current candidate, and use a **start index** to avoid duplicate permutations (e.g., [2,3] vs [3,2]). Sort candidates first to enable early pruning when a candidate exceeds the remaining target."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. **Sort** `candidates` to enable pruning\n2. Initialize empty `result` list and call `backtrack(start=0, combo=[], current_target=target)`\n3. **Base case**: if `current_target == 0`, append a copy of `combo` to `result`\n4. **Iterate** from `start` to end: for each candidate, if it exceeds `current_target`, prune (return)\n5. **Choose**: append candidate to `combo`, recurse with **same index** `i` and reduced target\n6. **Unchoose**: pop from `combo` after recursion returns (backtrack)"
+    }
+  ],
+  "approach": [
+    "Sort candidates to enable early pruning",
+    "Define backtrack(start, combo, current_target) - start prevents duplicates, current_target tracks remaining sum",
+    "Base case: if current_target == 0, add combo to result",
+    "Iterate from start index: if candidate > current_target, prune (return)",
+    "Choose: append candidate, recurse with SAME index i to allow reuse",
+    "Unchoose: pop candidate after recursion (backtrack step)"
+  ],
+  "complexity": {
+    "time": "O(n^(T/m))",
+    "space": "O(T/m)"
+  },
+  "code": "def combinationSum(candidates, target):\n    \"\"\"\n    Find all unique combinations that sum to target, allowing unlimited reuse.\n    \"\"\"\n    def backtrack(start, combo, current_target):\n        if current_target == 0:\n            result.append(list(combo))\n            return\n        for i in range(start, len(candidates)):\n            curr = candidates[i]\n            if curr > current_target:\n                return  # Prune: sorted, so rest also exceed\n            combo.append(curr)\n            backtrack(i, combo, current_target - curr)  # Same i: reuse allowed\n            combo.pop()\n    \n    candidates.sort()\n    result = []\n    backtrack(0, [], target)\n    return result",
+  "quiz": [
+    {
+      "q": "Why do we pass the same index `i` (not `i+1`) to the recursive call?",
+      "options": [
+        "To allow unlimited reuse of the same candidate",
+        "To avoid duplicate combinations",
+        "To improve time complexity",
+        "To enable early pruning"
+      ],
+      "answer": 0,
+      "explain": "Passing `i` (not `i+1`) allows the recursion to pick the same candidate multiple times, which is required by the problem (unlimited reuse)."
+    },
+    {
+      "q": "Why do we sort `candidates` before backtracking?",
+      "options": [
+        "To ensure output is sorted",
+        "To enable early pruning when a candidate exceeds the remaining target",
+        "To avoid duplicate combinations",
+        "Sorting is not necessary"
+      ],
+      "answer": 1,
+      "explain": "Sorting allows us to return early when `candidates[i] > current_target`, since all larger candidates will also exceed the target."
+    },
+    {
+      "q": "What is the time complexity, where n = len(candidates), T = target, m = min(candidates)?",
+      "options": [
+        "O(n^(T/m))",
+        "O(n³)",
+        "O(n * log n)",
+        "O(n!)"
+      ],
+      "answer": 0,
+      "explain": "In the worst case, the recursion tree has depth T/m (smallest candidate used T/m times) and branches n ways at each level, giving O(n^(T/m))."
+    }
+  ]
+}

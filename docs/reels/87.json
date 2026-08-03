@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Order tasks with dependencies",
+    "body": "**Topological sort** orders a DAG so every edge points forward.\n\nThink: course prerequisites, build systems, job scheduling.\n\n- Each node appears before its dependents\n- Multiple valid orderings possible\n- **No cycles allowed** (can't graduate if A needs B and B needs A)"
+  },
+  {
+    "type": "concept",
+    "heading": "Kahn's trick: start with indegree 0",
+    "body": "**Indegree** = number of incoming edges.\n\n**Kahn's algorithm (BFS):**\n- Queue up all nodes with indegree 0 (no dependencies)\n- Process each, decrement neighbors' indegrees\n- If a neighbor hits 0, queue it\n- If final order has `< n` nodes, there's a **cycle**"
+  },
+  {
+    "type": "code",
+    "label": "Kahn's Algorithm · Python",
+    "code": "def topological_sort(adj_list, n):\n    from collections import deque\n    \n    # calculate indegree\n    indegree = [0] * n\n    for u in adj_list:\n        for v in adj_list[u]:\n            indegree[v] += 1\n    \n    # start with nodes that have no dependencies\n    queue = deque([u for u in range(n) if indegree[u] == 0])\n    order = []\n    \n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        for v in adj_list.get(u, []):\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                queue.append(v)\n    \n    return order if len(order) == n else []"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of Kahn's topological sort algorithm?",
+    "options": [
+      "O(V + E)",
+      "O(n³)",
+      "O(n * log n)",
+      "O(x * y)"
+    ],
+    "answer": 0,
+    "explain": "We visit each vertex once and each edge once: O(V + E)."
+  }
+]

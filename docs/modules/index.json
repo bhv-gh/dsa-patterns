@@ -40,6 +40,21 @@
       "id": "depth-first-search",
       "title": "Depth-First Search",
       "blurb": "Recurse deep through trees, graphs, and grids — return values up or pass state down."
+    },
+    {
+      "id": "breadth-first-search",
+      "title": "Breadth-First Search",
+      "blurb": "Explore level by level with a queue — the go-to for shortest paths in unweighted graphs and grids."
+    },
+    {
+      "id": "backtracking",
+      "title": "Backtracking",
+      "blurb": "Choose, explore, un-choose — search a tree of partial solutions and prune branches that can't work."
+    },
+    {
+      "id": "graphs",
+      "title": "Graph Algorithms",
+      "blurb": "Topological sort for ordering DAGs, plus Dijkstra / Bellman-Ford for weighted shortest paths."
     }
   ],
   "modules": [
@@ -645,6 +660,249 @@
       "type": "problem",
       "difficulty": "medium",
       "summary": "Find all cells in a grid where water can flow to both Pacific (top/left edges) and Atlantic (bottom/right edges) oceans using boundary DFS."
+    },
+    {
+      "id": 68,
+      "slug": "bfs-introduction",
+      "title": "BFS: Introduction",
+      "pattern": "breadth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Level-by-level tree/graph traversal using a queue; guarantees shortest path in unweighted graphs."
+    },
+    {
+      "id": 69,
+      "slug": "bfs-fundamentals",
+      "title": "BFS: Fundamentals",
+      "pattern": "breadth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Level-by-level tree traversal using a queue, processing all nodes at each depth before moving to the next."
+    },
+    {
+      "id": 70,
+      "slug": "level-order-sum",
+      "title": "Level Order Sum",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Compute the sum of nodes at each level of a binary tree using level-order BFS traversal."
+    },
+    {
+      "id": 71,
+      "slug": "rightmost-node",
+      "title": "Rightmost Node",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the rightmost node at each level of a binary tree using level-order BFS traversal."
+    },
+    {
+      "id": 72,
+      "slug": "zigzag-level-order",
+      "title": "Zigzag Level Order",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Level-order traversal that alternates direction each level using BFS and a deque to efficiently prepend nodes."
+    },
+    {
+      "id": 73,
+      "slug": "maximum-width-of-binary-tree",
+      "title": "Maximum Width of Binary Tree",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the max width of a binary tree by tracking node positions during BFS; width = rightmost - leftmost + 1 at each level."
+    },
+    {
+      "id": 74,
+      "slug": "bfs-graphs-overview",
+      "title": "BFS on Graphs",
+      "pattern": "breadth-first-search",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "BFS traverses graphs level-by-level using a queue and visited set. Best for finding shortest paths in unweighted graphs."
+    },
+    {
+      "id": 75,
+      "slug": "minimum-knight-moves",
+      "title": "Minimum Knight Moves",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find minimum moves for a chess knight to reach target (x,y) from (0,0) on an infinite board using BFS."
+    },
+    {
+      "id": 76,
+      "slug": "rotting-oranges",
+      "title": "Rotting Oranges",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Multi-source BFS simulation: enqueue all rotten oranges at t=0, spread rot level by level (1 minute per level), return -1 if any fresh remain."
+    },
+    {
+      "id": 77,
+      "slug": "01-matrix",
+      "title": "01 Matrix",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find shortest distance from each cell to nearest 0 using multi-source BFS starting from all 0s simultaneously."
+    },
+    {
+      "id": 78,
+      "slug": "bus-routes",
+      "title": "Bus Routes",
+      "pattern": "breadth-first-search",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Find minimum buses needed to travel from source to target stop using BFS over routes (not stops) as graph nodes."
+    },
+    {
+      "id": 79,
+      "slug": "backtracking-overview",
+      "title": "Backtracking: Overview",
+      "pattern": "backtracking",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "DFS-based exploration of all possible paths with pruning and backtracking when a path fails."
+    },
+    {
+      "id": 80,
+      "slug": "word-search",
+      "title": "Word Search",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find if a word exists in a grid by building it from adjacent cells using DFS backtracking with visited-cell tracking."
+    },
+    {
+      "id": 81,
+      "slug": "solution-space-trees",
+      "title": "Solution Space Trees",
+      "pattern": "backtracking",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Visualize backtracking as a tree: nodes=partial solutions, edges=choices, leaves=complete solutions. Traverse with DFS."
+    },
+    {
+      "id": 82,
+      "slug": "subsets",
+      "title": "Subsets",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Generate all possible subsets of an array by choosing to include or exclude each element using backtracking."
+    },
+    {
+      "id": 83,
+      "slug": "generate-parentheses",
+      "title": "Generate Parentheses",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Generate all valid combinations of n pairs of parentheses using recursive backtracking with pruning rules."
+    },
+    {
+      "id": 84,
+      "slug": "combination-sum",
+      "title": "Combination Sum",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find all unique combinations from candidates that sum to target, allowing unlimited reuse of each number."
+    },
+    {
+      "id": 85,
+      "slug": "palindrome-partitioning",
+      "title": "Palindrome Partitioning",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find all ways to partition a string into palindromic segments using backtracking to explore every valid cut position."
+    },
+    {
+      "id": 86,
+      "slug": "n-queens",
+      "title": "N-Queens",
+      "pattern": "backtracking",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Place n queens on an n×n board so no queen attacks another. Use backtracking with diagonal tracking."
+    },
+    {
+      "id": 87,
+      "slug": "topological-sort",
+      "title": "Topological Sort",
+      "pattern": "graphs",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Order DAG nodes so directed edges only point forward; uses Kahn's algorithm (indegree + BFS) or DFS post-order."
+    },
+    {
+      "id": 88,
+      "slug": "course-schedule",
+      "title": "Course Schedule",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Detect cycles in a directed graph using topological sort to determine if all courses can be completed."
+    },
+    {
+      "id": 89,
+      "slug": "course-schedule-ii",
+      "title": "Course Schedule II",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Return a valid course order via topological sort (Kahn's algorithm), or empty list if a cycle exists."
+    },
+    {
+      "id": 90,
+      "slug": "shortest-path-algorithms",
+      "title": "Shortest Path Algorithms",
+      "pattern": "graphs",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Choose the right tool: BFS for unweighted, Dijkstra for non-negative weights, Bellman-Ford for negative weights."
+    },
+    {
+      "id": 91,
+      "slug": "network-delay-time",
+      "title": "Network Delay Time",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find minimum time for all servers to receive a broadcast from source k using Dijkstra; return -1 if any server is unreachable."
+    },
+    {
+      "id": 92,
+      "slug": "cheapest-flights-k-stops",
+      "title": "Cheapest Flights Within K Stops",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the cheapest flight route between cities with at most k layovers using modified Dijkstra tracking (cost, city, stops)."
+    },
+    {
+      "id": 93,
+      "slug": "path-with-minimum-effort",
+      "title": "Path With Minimum Effort",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find path from top-left to bottom-right minimizing max elevation difference between adjacent cells (minimax path)."
+    },
+    {
+      "id": 94,
+      "slug": "find-city-fewest-reachable",
+      "title": "Find the City With the Fewest Reachable Neighbors",
+      "pattern": "graphs",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Use Floyd-Warshall to find all-pairs shortest paths, count neighbors within threshold, return least-connected city (highest index if tied)."
     }
   ]
 }

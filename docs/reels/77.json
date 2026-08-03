@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Multi-source BFS unlocks shortest paths",
+    "body": "**Start from ALL 0s at once** — not one cell at a time.\n\nBFS explores level-by-level in distance order, so the **first time** it reaches any cell = shortest distance to *any* 0.\n\nNo need to try every 0 individually!"
+  },
+  {
+    "type": "concept",
+    "heading": "Mark unvisited cells with -1",
+    "body": "Initialize output grid to `-1` (unknown distance).\n\nDuring BFS, when you hit a neighbor with `-1` → it's **unvisited** — update it and enqueue.\n\nThis avoids revisiting cells and keeps BFS efficient."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef updateMatrix(mat):\n    rows, cols = len(mat), len(mat[0])\n    dist = [[-1] * cols for _ in range(rows)]\n    q = deque()\n    \n    # Start BFS from all 0s\n    for r in range(rows):\n        for c in range(cols):\n            if mat[r][c] == 0:\n                dist[r][c] = 0\n                q.append((r, c))\n    \n    # Expand level-by-level\n    while q:\n        r, c = q.popleft()\n        for dr, dc in [(0,1),(1,0),(0,-1),(-1,0)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and dist[nr][nc] == -1:\n                dist[nr][nc] = dist[r][c] + 1\n                q.append((nr, nc))\n    return dist"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we enqueue all 0 cells at the start instead of processing each cell individually?",
+    "options": [
+      "It reduces memory usage by avoiding duplicate queue entries",
+      "Multi-source BFS guarantees the first visit to any cell is the shortest path from any 0",
+      "It allows us to process the matrix in parallel on multiple cores",
+      "It makes the code simpler by avoiding nested loops"
+    ],
+    "answer": 1,
+    "explain": "Multi-source BFS explores all sources simultaneously in distance order. The first time any cell is reached, it must be via the shortest path from some 0."
+  }
+]

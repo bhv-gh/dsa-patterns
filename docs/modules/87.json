@@ -1,0 +1,63 @@
+{
+  "id": 87,
+  "slug": "topological-sort",
+  "title": "Topological Sort",
+  "pattern": "graphs",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Order DAG nodes so directed edges only point forward; uses Kahn's algorithm (indegree + BFS) or DFS post-order.",
+  "sections": [
+    {
+      "heading": "What is Topological Sort?",
+      "body": "Topological sort takes a **directed acyclic graph (DAG)** and produces a linear ordering of nodes such that for every directed edge u → v, vertex u comes before v in the ordering.\n\nA graph may have multiple valid topological sorts. If the graph contains a cycle, no valid topological sort exists."
+    },
+    {
+      "heading": "Indegrees",
+      "body": "Each node's **indegree** is the number of incoming edges to that node.\n\n**Calculating indegrees:**\n- From edge list: iterate edges, increment `indegree[v]` for each edge (u, v)\n- From adjacency list: for each node u, iterate neighbors v and increment `indegree[v]`"
+    },
+    {
+      "heading": "Kahn's Algorithm (BFS-based)",
+      "body": "Kahn's algorithm uses BFS to process nodes in increasing indegree order:\n\n1. Calculate indegree of each node\n2. Add all nodes with indegree 0 to a queue\n3. While queue is not empty:\n   - Dequeue a node u and add it to the topological order\n   - For each neighbor v of u, decrement `indegree[v]`\n   - If `indegree[v]` becomes 0, enqueue v\n4. If the order contains all n nodes, return it; otherwise, the graph has a cycle (return empty)"
+    },
+    {
+      "heading": "DFS Alternative",
+      "body": "Topological sort can also be done with DFS by recording nodes in **post-order** (after visiting all descendants), then reversing the result. Both methods produce valid orderings."
+    }
+  ],
+  "approach": [
+    "Use when you need to order tasks/dependencies with no cycles",
+    "Graph must be a DAG (directed acyclic graph)",
+    "Kahn's: BFS starting from nodes with indegree 0",
+    "DFS: post-order traversal, reverse the result",
+    "If final order has fewer than n nodes, a cycle exists"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V)"
+  },
+  "code": "from collections import deque\n\ndef topological_sort(adj_list, n):\n    \"\"\"\n    Return topological ordering of a DAG using Kahn's algorithm.\n    adj_list: dict mapping node -> list of neighbors\n    n: number of nodes (0 to n-1)\n    Returns list of nodes in topological order, or [] if cycle detected.\n    \"\"\"\n    # calculate indegree of each node\n    indegree = [0] * n\n    for u in adj_list:\n        for v in adj_list[u]:\n            indegree[v] += 1\n    \n    # enqueue nodes with indegree 0\n    queue = deque([u for u in range(n) if indegree[u] == 0])\n    order = []\n    \n    while queue:\n        u = queue.popleft()\n        order.append(u)\n        \n        for v in adj_list.get(u, []):\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                queue.append(v)\n    \n    # if order has all n nodes, no cycle; otherwise cycle exists\n    return order if len(order) == n else []",
+  "quiz": [
+    {
+      "q": "What is the time complexity of Kahn's topological sort algorithm?",
+      "options": [
+        "O(V + E)",
+        "O(n³)",
+        "O(n * log n)",
+        "O(x * y)"
+      ],
+      "answer": 0,
+      "explain": "We visit each vertex once and each edge once: O(V + E). Calculating indegrees takes O(E), and the BFS traversal takes O(V + E)."
+    },
+    {
+      "q": "What does it mean if the final topological order contains fewer than n nodes?",
+      "options": [
+        "The graph is disconnected",
+        "The graph contains a cycle",
+        "The algorithm failed",
+        "Some nodes have no incoming edges"
+      ],
+      "answer": 1,
+      "explain": "If fewer than n nodes appear in the order, it means some nodes never reached indegree 0, which indicates a cycle in the graph. Topological sort only exists for DAGs."
+    }
+  ]
+}

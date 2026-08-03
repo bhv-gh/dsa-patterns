@@ -1,0 +1,70 @@
+{
+  "id": 88,
+  "slug": "course-schedule",
+  "title": "Course Schedule",
+  "pattern": "graphs",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Detect cycles in a directed graph using topological sort to determine if all courses can be completed.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "You have to take a total of `numCourses` courses, labeled from `0` to `numCourses - 1`. You are given a list of prerequisites pairs, where `prerequisites[i] = [a, b]` indicates that you must complete course `b` before course `a`.\n\nGiven the total number of courses and a list of prerequisite pairs, write a function to determine if it is possible to finish all courses.\n\n**Example 1:**\n- Input: `numCourses = 3`, `prerequisites = [[1, 0], [2, 1]]`\n- Output: `true`\n- Explanation: You can take courses in the following order: 0, 1, 2.\n\n**Example 2:**\n- Input: `numCourses = 3`, `prerequisites = [[1, 0], [0, 1], [1, 2]]`\n- Output: `false`\n- Explanation: It is impossible to finish all courses, as you must finish course 1 before course 0 and course 0 before course 1."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is a **cycle detection problem** in a directed graph. If there is a circular dependency in the prerequisites (a cycle), it's impossible to complete all courses.\n\nWe can solve this using **topological sort**: start with courses that have no prerequisites (in-degree of 0), process them, and remove them from the graph. If we can process all courses this way, there are no cycles and the schedule is possible."
+    },
+    {
+      "heading": "Approach",
+      "body": "We use **Kahn's algorithm** for topological sort:\n\n1. Build an adjacency list graph and calculate the in-degree of each course.\n2. Add all courses with in-degree 0 to a queue (they have no prerequisites).\n3. Process courses from the queue: increment a counter, and for each neighbor, decrement its in-degree.\n4. If a neighbor's in-degree becomes 0, add it to the queue.\n5. After the queue is empty, check if the counter equals the total number of courses.\n6. If yes, all courses can be completed (no cycle). Otherwise, return false (cycle detected)."
+    }
+  ],
+  "approach": [
+    "Build a graph using an adjacency list and calculate the in-degree of each course.",
+    "Initialize a queue with all courses that have in-degree 0 (no prerequisites).",
+    "While the queue is not empty, remove a course, increment a counter, and decrement the in-degree of its neighbors.",
+    "If any neighbor's in-degree becomes 0, add it to the queue.",
+    "After processing, check if the counter equals numCourses. If yes, return true; otherwise, return false."
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "code": "from collections import defaultdict, deque\n\ndef canFinish(numCourses, prerequisites):\n    \"\"\"\n    Determine if it's possible to finish all courses given prerequisites.\n    Uses topological sort (Kahn's algorithm) to detect cycles.\n    \"\"\"\n    graph = defaultdict(list)\n    in_degree = [0] * numCourses\n    \n    for dest, src in prerequisites:\n        graph[src].append(dest)\n        in_degree[dest] += 1\n    \n    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])\n    count = 0\n    \n    while queue:\n        course = queue.popleft()\n        count += 1\n        \n        for neighbor in graph[course]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    return count == numCourses",
+  "quiz": [
+    {
+      "q": "What does it mean if we cannot process all courses using topological sort?",
+      "options": [
+        "The graph has no edges",
+        "There is a cycle in the prerequisite dependencies",
+        "All courses have prerequisites",
+        "The graph is disconnected"
+      ],
+      "answer": 1,
+      "explain": "If we cannot process all courses, it means there is a circular dependency (cycle) in the prerequisites, making it impossible to complete all courses."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n)",
+        "O(n²)",
+        "O(V + E)",
+        "O(V * E)"
+      ],
+      "answer": 2,
+      "explain": "We visit each vertex (course) once and traverse each edge (prerequisite) once, resulting in O(V + E) time complexity."
+    },
+    {
+      "q": "What does the in-degree of a course represent?",
+      "options": [
+        "The number of courses it is a prerequisite for",
+        "The number of prerequisites it has",
+        "The number of students enrolled",
+        "The difficulty level of the course"
+      ],
+      "answer": 1,
+      "explain": "The in-degree of a course represents the number of prerequisites it has - the number of incoming edges in the graph."
+    }
+  ]
+}

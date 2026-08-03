@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Rightmost = Last Node Per Level",
+    "body": "Use **level-order BFS** to visit nodes level by level. Track how many nodes are in each level — the **last node** you process is the rightmost.\n\n- Count nodes before processing a level\n- When `i == level_size - 1`, you're at the rightmost node"
+  },
+  {
+    "type": "concept",
+    "heading": "Why Queue, Not Stack?",
+    "body": "BFS needs a **queue** (FIFO) to process nodes left-to-right, level-by-level.\n\n- Add children to the queue as you go\n- The last node dequeued at each level is the rightmost"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def rightmostNode(root):\n    if not root:\n        return []\n    nodes = []\n    queue = deque([root])\n    while queue:\n        level_size = len(queue)\n        for i in range(level_size):\n            node = queue.popleft()\n            if i == level_size - 1:\n                nodes.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    return nodes"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(m * n * 4^L)",
+      "O(n)",
+      "O(log n)",
+      "O(n log n)"
+    ],
+    "answer": 1,
+    "explain": "We visit each node exactly once during BFS traversal."
+  }
+]

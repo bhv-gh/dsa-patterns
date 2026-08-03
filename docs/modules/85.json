@@ -1,0 +1,71 @@
+{
+  "id": 85,
+  "slug": "palindrome-partitioning",
+  "title": "Palindrome Partitioning",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find all ways to partition a string into palindromic segments using backtracking to explore every valid cut position.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string `s`, split it into segments where each segment is a palindrome (reads the same forwards and backwards). Return all possible ways to partition the string into palindromic segments.\n\n**Example:**\n- Input: `\"noon\"`\n- Output: `[[\"n\",\"o\",\"o\",\"n\"], [\"n\",\"oo\",\"n\"], [\"noon\"]]`\n- `[\"n\",\"o\",\"o\",\"n\"]` - All single characters are palindromes\n- `[\"n\",\"oo\",\"n\"]` - \"oo\" is a palindrome in the middle\n- `[\"noon\"]` - The entire word is a palindrome"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Think of partitioning as making cuts. At each position `start`, you choose where to end your next segment. You pick an end index and commit to the segment `s[start..end]`. The only rule? That segment must be a palindrome.\n\nThis is backtracking: make a choice (commit to a palindrome segment), explore what follows, then undo that choice and try a different cut."
+    },
+    {
+      "heading": "Approach",
+      "body": "The algorithm explores all possible ways to partition the string. At each position, we try every possible palindromic prefix and recursively solve for the remainder.\n\n**Checking for Palindromes:**\nA string is a palindrome if it reads the same forwards and backwards. We check this by comparing characters from both ends moving inward.\n\n**Optimization:**\nWe can precompute a 2D table where `dp[i][j]` tells us whether `s[i..j]` is a palindrome using dynamic programming, changing each palindrome check from O(n) to O(1)."
+    }
+  ],
+  "approach": [
+    "Start at position `start = 0` with an empty path",
+    "For each `end` from `start` to `n-1`, check if `s[start..end]` is a palindrome",
+    "If palindrome, add segment to path and recurse from `end+1`",
+    "Base case: When `start == n`, we've partitioned everything - save the current path",
+    "Backtrack: pop last segment and try a longer cut position",
+    "Return all collected partitions"
+  ],
+  "complexity": {
+    "time": "O(n × 2^n)",
+    "space": "O(n)"
+  },
+  "code": "def partition(s):\n    \"\"\"Find all ways to partition string into palindromic segments.\"\"\"\n    result = []\n    current = []\n    \n    def is_palindrome(s, left, right):\n        while left < right:\n            if s[left] != s[right]:\n                return False\n            left += 1\n            right -= 1\n        return True\n    \n    def backtrack(start):\n        if start == len(s):\n            result.append(current[:])\n            return\n        \n        for end in range(start, len(s)):\n            if is_palindrome(s, start, end):\n                current.append(s[start:end+1])\n                backtrack(end + 1)\n                current.pop()\n    \n    backtrack(0)\n    return result",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the palindrome partitioning solution?",
+      "options": [
+        "O(n!)",
+        "O(n × 2^n)",
+        "O(2^n)",
+        "O(n^2)"
+      ],
+      "answer": 1,
+      "explain": "We have O(2^n) possible partitions (each position can have a cut or not), and for each partition we do O(n) work to copy the path and check palindromes, giving O(n × 2^n) overall."
+    },
+    {
+      "q": "How can we optimize redundant palindrome checks?",
+      "options": [
+        "Use memoization to cache partition results",
+        "Precompute a 2D DP table where dp[i][j] indicates if s[i..j] is a palindrome",
+        "Sort the string first",
+        "Use a greedy approach instead"
+      ],
+      "answer": 1,
+      "explain": "Precomputing a 2D DP table changes each palindrome check from O(n) to O(1). We use the recurrence: dp[i][j] = (s[i] == s[j]) && dp[i+1][j-1]."
+    },
+    {
+      "q": "What is the base case in the backtracking recursion?",
+      "options": [
+        "When we find a palindrome segment",
+        "When the path is empty",
+        "When start == len(s), meaning we've partitioned the entire string",
+        "When we've tried all possible cuts"
+      ],
+      "answer": 2,
+      "explain": "When start == len(s), we've successfully partitioned the entire string, so we add a copy of the current path to our results."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Minimize the max step, not the sum",
+    "body": "This is a **minimax path problem**: avoid the single worst cliff.\n\n- Standard Dijkstra minimizes **total cost**\n- Here we minimize **the worst single step** (max edge weight)\n\nFind path from top-left to bottom-right where the biggest elevation jump is as small as possible."
+  },
+  {
+    "type": "concept",
+    "heading": "Modified Dijkstra: track max effort",
+    "body": "The greedy property still holds:\n\n`new_effort = max(current_effort, edge_weight)`\n\nWhen you pop a cell from the min-heap, you've found the **optimal effort** to reach it. Early exit when destination is popped."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "import heapq\n\ndef minimum_effort_path(heights):\n    rows, cols = len(heights), len(heights[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[0][0] = 0\n    heap = [(0, 0, 0)]  # (effort, row, col)\n    \n    while heap:\n        effort, r, c = heapq.heappop(heap)\n        if r == rows - 1 and c == cols - 1:\n            return effort\n        if effort > dist[r][c]:\n            continue\n        for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                diff = abs(heights[nr][nc] - heights[r][c])\n                new_effort = max(effort, diff)\n                if new_effort < dist[nr][nc]:\n                    dist[nr][nc] = new_effort\n                    heapq.heappush(heap, (new_effort, nr, nc))\n    return dist[rows - 1][cols - 1]"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the modified Dijkstra solution?",
+    "options": [
+      "O(m×n×log(m×n))",
+      "O(m×n)",
+      "O(4^(m×n))",
+      "O(m×n×log(max_height))"
+    ],
+    "answer": 0,
+    "explain": "Each of m×n cells can be pushed to the heap at most once per neighbor update. Heap operations are O(log(m×n)), giving O(m×n×log(m×n))."
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "id": 73,
+  "slug": "maximum-width-of-binary-tree",
+  "title": "Maximum Width of Binary Tree",
+  "pattern": "breadth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the max width of a binary tree by tracking node positions during BFS; width = rightmost - leftmost + 1 at each level.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given the root of a binary tree, find its maximum width. Each level has a width: the number of nodes between the leftmost and rightmost nodes at that level, **including null nodes between them**.\n\nExample:\n```\n    4\n   / \\\n  2   7\n /     \\\n1       9\n```\nLevel widths: [1, 2, 4]. Max width = **4**."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Assign each node a **positional index** (like array indexing). If a node has position `p`, then:\n- Left child: `2*p + 1`\n- Right child: `2*p + 2`\n\nWidth of a level = `rightmost_pos - leftmost_pos + 1`.\n\nUse BFS to process level-by-level, tracking positions alongside nodes."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Initialize a queue with `(root, 0)` — root has position 0.\n2. For each level, record the position of the **first** node (leftmost) and **last** node (rightmost).\n3. For each node `(node, pos)`, enqueue children with positions `2*pos+1` (left) and `2*pos+2` (right).\n4. Calculate level width: `rightmost - leftmost + 1`; track the maximum across all levels.\n5. **Optimization**: Normalize positions each level (subtract leftmost) to prevent integer overflow in deep trees."
+    },
+    {
+      "heading": "Complexity",
+      "body": "**Time**: O(n) — visit every node once.\n**Space**: O(w) where w is max width (queue size at widest level)."
+    }
+  ],
+  "approach": [
+    "Initialize queue with (root, position=0)",
+    "For each level, capture leftmost and rightmost positions",
+    "Enqueue left child at 2*pos+1, right child at 2*pos+2",
+    "Compute level width: rightmost - leftmost + 1",
+    "Track max width across all levels",
+    "Normalize positions each level to avoid overflow"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(w)"
+  },
+  "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef maxWidth(root):\n    \"\"\"\n    Find maximum width of binary tree using BFS with positional indices.\n    Width = rightmost_pos - leftmost_pos + 1 at each level.\n    \"\"\"\n    if not root:\n        return 0\n    \n    queue = deque([(root, 0)])\n    max_width = 0\n    \n    while queue:\n        level_size = len(queue)\n        _, left_pos = queue[0]\n        right_pos = left_pos\n        \n        for i in range(level_size):\n            node, pos = queue.popleft()\n            right_pos = pos\n            \n            if node.left:\n                queue.append((node.left, 2 * pos + 1))\n            if node.right:\n                queue.append((node.right, 2 * pos + 2))\n        \n        max_width = max(max_width, right_pos - left_pos + 1)\n    \n    return max_width",
+  "quiz": [
+    {
+      "q": "Why do we assign positions 2*p+1 and 2*p+2 to left and right children?",
+      "options": [
+        "It mimics array-based binary tree indexing, preserving relative positions including nulls",
+        "It ensures positions are always odd and even",
+        "It prevents position collisions between levels",
+        "It optimizes memory usage in the queue"
+      ],
+      "answer": 0,
+      "explain": "This indexing scheme mirrors how binary trees are stored in arrays (0-indexed), naturally accounting for null nodes and preserving the relative spacing needed to calculate width."
+    },
+    {
+      "q": "What is the width of a level with leftmost position 3 and rightmost position 10?",
+      "options": [
+        "7",
+        "8",
+        "10",
+        "13"
+      ],
+      "answer": 1,
+      "explain": "Width = rightmost - leftmost + 1 = 10 - 3 + 1 = 8. The +1 accounts for inclusive counting."
+    },
+    {
+      "q": "Why might we normalize positions (subtract leftmost) at each level?",
+      "options": [
+        "To prevent integer overflow in very deep or wide trees",
+        "To make the code run faster",
+        "To ensure positions start at 0",
+        "To reduce memory usage of the queue"
+      ],
+      "answer": 0,
+      "explain": "In deep trees, positions grow exponentially (2^depth). Normalizing each level keeps numbers manageable, preventing overflow while preserving width calculations."
+    }
+  ]
+}

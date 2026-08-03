@@ -1,0 +1,71 @@
+{
+  "id": 83,
+  "slug": "generate-parentheses",
+  "title": "Generate Parentheses",
+  "pattern": "backtracking",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Generate all valid combinations of n pairs of parentheses using recursive backtracking with pruning rules.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer n, write a function to return all well-formed (valid) expressions that can be made using n pairs of parentheses.\n\n**Example 1:**\n- Input: `n = 3`\n- Output: `[\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]`\n\n**Example 2:**\n- Input: `n = 2`\n- Output: `[\"()()\", \"(())\"]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Build valid parentheses incrementally by maintaining counts of opening and closing parentheses. Two pruning rules ensure validity:\n\n1. Add `(` only if `open < n`\n2. Add `)` only if `close < open`\n\nWhen the string length reaches `2*n`, we have a complete valid combination."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use depth-first search to explore the solution space tree. At each node, track the current string, count of opening parentheses, and count of closing parentheses.\n\n- Start with an empty string and counts of 0\n- Recursively add `(` if we haven't used all n opening parentheses\n- Recursively add `)` if the number of closing parentheses is less than opening\n- When the string length equals `2*n`, add it to the result"
+    }
+  ],
+  "approach": [
+    "Initialize an empty result list to store valid combinations",
+    "Define a recursive DFS function with parameters: current string, open count, close count",
+    "Base case: if string length equals 2*n, append to result and return",
+    "If open < n, recursively call DFS with '(' appended and open count incremented",
+    "If close < open, recursively call DFS with ')' appended and close count incremented",
+    "Start the recursion with empty string and counts of 0, then return the result list"
+  ],
+  "complexity": {
+    "time": "O(4^n / √n)",
+    "space": "O(n)"
+  },
+  "code": "def generateParenthesis(n):\n    \"\"\"Generate all valid combinations of n pairs of parentheses.\"\"\"\n    res = []\n    \n    def dfs(s, open_count, close_count):\n        # Base case: complete valid combination\n        if len(s) == 2 * n:\n            res.append(s)\n            return\n        \n        # Add opening parenthesis if we haven't used all n\n        if open_count < n:\n            dfs(s + '(', open_count + 1, close_count)\n        \n        # Add closing parenthesis if it keeps the string valid\n        if close_count < open_count:\n            dfs(s + ')', open_count, close_count + 1)\n    \n    dfs(\"\", 0, 0)\n    return res",
+  "quiz": [
+    {
+      "q": "Why can we only add a closing parenthesis ')' when close < open?",
+      "options": [
+        "To ensure we don't exceed n pairs of parentheses",
+        "To prevent creating an invalid string with unmatched closing parentheses",
+        "To optimize the time complexity of the algorithm",
+        "To avoid duplicate combinations in the result"
+      ],
+      "answer": 1,
+      "explain": "Adding ')' when close >= open would create an invalid string where a closing parenthesis appears without a matching opening parenthesis before it."
+    },
+    {
+      "q": "What is the base case condition for the recursive backtracking?",
+      "options": [
+        "When open == n",
+        "When close == n",
+        "When len(s) == 2 * n",
+        "When open == close"
+      ],
+      "answer": 2,
+      "explain": "A valid combination uses n pairs of parentheses, resulting in a string of length 2*n. This signals we have a complete valid combination."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(4^n)",
+        "O(n * 2^n)",
+        "O(4^n / √n)",
+        "O(2^n)"
+      ],
+      "answer": 2,
+      "explain": "The number of valid parentheses combinations is the nth Catalan number, which is O(4^n / √n). Each valid combination takes O(n) to build, but the total time is dominated by the number of valid paths explored."
+    }
+  ]
+}

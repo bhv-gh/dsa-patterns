@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Topological sort untangles dependencies",
+    "body": "**Kahn's algorithm** solves course scheduling: track how many prerequisites each course needs (in-degree), start with courses at 0, and process them level-by-level.\n\nAs you complete a course, decrement dependent courses' counts. If you finish all courses, no cycle; otherwise, impossible."
+  },
+  {
+    "type": "concept",
+    "heading": "Recognize it: order with dependencies",
+    "body": "Pattern triggers:\n- \"Prerequisites\" or \"dependencies\"\n- \"Valid ordering\" or \"schedule\"\n- Directed graph where edges = \"must do X before Y\"\n\n**Gotcha:** If result length < numCourses, a cycle exists — some courses will never reach in-degree 0."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import defaultdict, deque\n\ndef findOrder(numCourses, prerequisites):\n    graph = defaultdict(list)\n    in_degree = [0] * numCourses\n    \n    for dest, src in prerequisites:\n        graph[src].append(dest)\n        in_degree[dest] += 1\n    \n    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])\n    order = []\n    \n    while queue:\n        course = queue.popleft()\n        order.append(course)\n        for neighbor in graph[course]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    return order if len(order) == numCourses else []"
+  },
+  {
+    "type": "quiz",
+    "q": "What does Kahn's algorithm detect by checking if the result length equals numCourses?",
+    "options": [
+      "Whether the graph is connected",
+      "Whether a cycle exists in the dependency graph",
+      "Whether multiple valid orderings exist",
+      "Whether the graph is a tree"
+    ],
+    "answer": 1,
+    "explain": "If we can't process all courses, some still have non-zero in-degrees, meaning a cycle prevents completing them."
+  }
+]

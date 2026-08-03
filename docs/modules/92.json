@@ -1,0 +1,76 @@
+{
+  "id": 92,
+  "slug": "cheapest-flights-k-stops",
+  "title": "Cheapest Flights Within K Stops",
+  "pattern": "graphs",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the cheapest flight route between cities with at most k layovers using modified Dijkstra tracking (cost, city, stops).",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given n cities connected by flights where each flight is `[from, to, price]`, find the cheapest route from `src` to `dst` that uses at most `k` layovers (intermediate cities). Return -1 if no valid route exists.\n\n**Key constraint**: k layovers means k intermediate cities, or equivalently k+1 flights.\n\nExample: `flights = [[0,1,100], [1,2,100], [2,3,100], [0,3,500]]`, `src=0`, `dst=3`, `k=1` → Output: 500 (the route 0→1→2→3 costs $300 but uses 2 layovers, exceeding k=1)."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Standard Dijkstra fails because it only tracks minimum cost per city, ignoring stop constraints. A cheaper path may violate the stop limit while a more expensive path is valid.\n\n**Solution**: Track both city and stops used as state: `(cost, city, stops)`. This allows the same city to be visited multiple times with different stop counts, treating each `(city, stops)` pair as a distinct state."
+    },
+    {
+      "heading": "Approach",
+      "body": "Use modified Dijkstra with extended state space:\n\n- **State**: `(cost, city, stops_used)` in a min-heap ordered by cost\n- **Visited tracking**: `best[(city, stops)]` stores minimum cost to reach `city` using exactly `stops` flights\n- **Process**: Pop cheapest state; if destination, return cost; if stops > k, skip; otherwise explore neighbors with incremented stops"
+    },
+    {
+      "heading": "When to Use This Pattern",
+      "body": "This modified Dijkstra with state extension applies to:\n\n- **Limited stops/hops**: `(cost, node, stops)`\n- **Fuel constraints**: `(cost, node, fuel_left)`\n- **Must-visit checkpoints**: `(cost, node, visited_mask)`\n- **Time windows**: `(cost, node, arrival_time)`\n\nThe key is identifying which extra dimension needs tracking beyond just cost and node."
+    }
+  ],
+  "approach": [
+    "Build adjacency list from flight edges",
+    "Initialize min-heap with (0, src, 0) - zero cost at source with zero stops",
+    "Pop cheapest state (cost, city, stops); if city == dst return cost",
+    "If stops > k skip this path (exceeds stop limit)",
+    "Check if we've seen (city, stops) with lower cost; if so skip to avoid redundant work",
+    "For each neighbor add (cost + price, neighbor, stops + 1) to heap",
+    "If heap exhausted without finding destination return -1"
+  ],
+  "complexity": {
+    "time": "O(n * k * log(n * k))",
+    "space": "O(n * k)"
+  },
+  "code": "from heapq import heappush, heappop\nfrom collections import defaultdict\n\ndef findCheapestPrice(n, flights, src, dst, k):\n    \"\"\"\n    Find cheapest flight route with at most k stops using modified Dijkstra.\n    \"\"\"\n    graph = defaultdict(list)\n    for u, v, price in flights:\n        graph[u].append((v, price))\n    \n    # Min-heap: (cost, city, stops_used)\n    heap = [(0, src, 0)]\n    # Track best cost for each (city, stops) state\n    best = {}\n    \n    while heap:\n        cost, city, stops = heappop(heap)\n        \n        # Found destination\n        if city == dst:\n            return cost\n        \n        # Exceeded stop limit\n        if stops > k:\n            continue\n        \n        # Already found cheaper path to this state\n        if (city, stops) in best and best[(city, stops)] <= cost:\n            continue\n        best[(city, stops)] = cost\n        \n        # Explore neighbors\n        for neighbor, price in graph[city]:\n            new_cost = cost + price\n            heappush(heap, (new_cost, neighbor, stops + 1))\n    \n    return -1",
+  "quiz": [
+    {
+      "q": "Why does standard Dijkstra fail for this problem?",
+      "options": [
+        "It cannot handle negative edge weights",
+        "It only tracks minimum cost per city, ignoring the stop constraint",
+        "It requires a complete graph to work correctly",
+        "It has exponential time complexity"
+      ],
+      "answer": 1,
+      "explain": "Standard Dijkstra tracks only one value per city (minimum cost) and marks it visited. This causes it to miss valid but more expensive paths that use fewer stops, while selecting cheaper paths that violate the stop limit."
+    },
+    {
+      "q": "In the state (cost, city, stops), what does 'stops' represent?",
+      "options": [
+        "The maximum number of stops allowed",
+        "The number of cities remaining to visit",
+        "The number of flights taken so far to reach this city",
+        "The number of intermediate cities in the final path"
+      ],
+      "answer": 2,
+      "explain": "The 'stops' value tracks the number of flights (edges) taken so far to reach this city. This is incremented with each flight, and we check if stops > k to enforce the constraint."
+    },
+    {
+      "q": "Why do we check 'city == dst' before checking 'stops > k'?",
+      "options": [
+        "To improve performance by returning early",
+        "Because destinations cannot have stop limits",
+        "A valid path can have up to k+1 flights (k stops), and we only gate exploration from non-destination cities",
+        "It doesn't matter, the order can be swapped"
+      ],
+      "answer": 2,
+      "explain": "This ordering is critical: k represents intermediate cities (layovers), so a valid path can use k+1 flights. The stop limit check only prevents exploring further from non-destination cities, while the destination check allows us to return a path that used exactly k+1 flights."
+    }
+  ]
+}

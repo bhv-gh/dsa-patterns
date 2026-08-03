@@ -1,0 +1,62 @@
+{
+  "id": 69,
+  "slug": "bfs-fundamentals",
+  "title": "BFS: Fundamentals",
+  "pattern": "breadth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Level-by-level tree traversal using a queue, processing all nodes at each depth before moving to the next.",
+  "sections": [
+    {
+      "heading": "What is BFS?",
+      "body": "BFS is a **level-by-level traversal** algorithm. It starts at the root node and visits all nodes at the current level before moving to the next level.\n\n**BFS uses a queue** to keep track of nodes:\n- Start at the root and add it to the queue\n- While queue is not empty, dequeue a node and visit it\n- Enqueue the node's children (left, then right)\n- Repeat until queue is empty"
+    },
+    {
+      "heading": "Basic BFS Template",
+      "body": "In Python, use `deque` from `collections` for O(1) queue operations:\n- `queue.append(node)` adds to the back\n- `queue.popleft()` removes from the front\n\n```python\ndef bfs(root):\n    if not root:\n        return []\n    result = []\n    queue = deque([root])\n    while queue:\n        curr_node = queue.popleft()\n        result.append(curr_node.val)\n        if curr_node.left:\n            queue.append(curr_node.left)\n        if curr_node.right:\n            queue.append(curr_node.right)\n    return result\n```"
+    },
+    {
+      "heading": "Processing Levels",
+      "body": "The distinguishing feature of BFS is visiting **all nodes at a particular level** before moving to the next.\n\nUse a **for-loop over `len(queue)`** at each level:\n- Capture `level_size = len(queue)` before the inner loop\n- Process exactly `level_size` nodes\n- When the for-loop finishes, you've processed the entire level\n\nThis pattern is the **standard BFS template** for interviews."
+    },
+    {
+      "heading": "Level-Order Traversal Example",
+      "body": "Given a binary tree, return values grouped by level: `[[4], [2, 7], [1, 3, 6, 9]]`\n\nKey insight: after processing level 2, the queue contains exactly the nodes from level 3: `[1, 3, 6, 9]`. The for-loop will run 4 times to process them.\n\nThe state of the queue at any point contains **only** the nodes of the next level to process."
+    }
+  ],
+  "approach": [
+    "Use BFS when the problem asks about **levels** or **layer-by-layer** processing",
+    "Queue holds nodes to visit; process all nodes at current depth first",
+    "For level-aware problems, use `for _ in range(len(queue))` inner loop",
+    "Common for: level order traversal, minimum depth, zigzag traversal, right side view"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef level_order(root):\n    \"\"\"Return level-order traversal of binary tree.\"\"\"\n    if not root:\n        return []\n    result = []\n    queue = deque([root])\n    \n    while queue:\n        level_size = len(queue)  # number of nodes at current level\n        current_level = []\n        \n        for _ in range(level_size):\n            curr = queue.popleft()\n            current_level.append(curr.val)\n            \n            if curr.left:\n                queue.append(curr.left)\n            if curr.right:\n                queue.append(curr.right)\n        \n        result.append(current_level)  # finished processing this level\n    \n    return result",
+  "quiz": [
+    {
+      "q": "What is the time complexity of BFS on a binary tree with n nodes?",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(4^n)",
+        "O(n^2)"
+      ],
+      "answer": 0,
+      "explain": "BFS visits each node exactly once, performing O(1) work per node (enqueue, dequeue, append). Total: O(n)."
+    },
+    {
+      "q": "Why do we capture `level_size = len(queue)` before the inner for-loop?",
+      "options": [
+        "To optimize memory usage",
+        "To track how many nodes are at the current level before adding children",
+        "To prevent infinite loops",
+        "To improve time complexity"
+      ],
+      "answer": 1,
+      "explain": "We capture the size first because as we process nodes, we enqueue their children. We only want to process the nodes that were already in the queue (current level), not the newly added ones (next level)."
+    }
+  ]
+}

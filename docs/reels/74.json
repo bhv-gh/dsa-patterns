@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "BFS explores level-by-level",
+    "body": "**BFS = Breadth-First Search.** Explores graphs layer by layer using a **queue**.\n\n- Start at a node, add it to the queue\n- Pop from front, visit it\n- Add unvisited neighbors to the back\n\n**Always track visited nodes** to avoid infinite loops in cyclic graphs."
+  },
+  {
+    "type": "concept",
+    "heading": "BFS finds shortest unweighted paths",
+    "body": "Because BFS visits all nodes at distance `k` before distance `k+1`, **the first time you reach the target = shortest path**.\n\nDFS might find *a* path first, but not necessarily the shortest. BFS guarantees it."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef bfs_graph(graph, start):\n    visited = set([start])\n    queue = deque([start])\n    \n    while queue:\n        node = queue.popleft()\n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    \n    return visited"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is BFS better than DFS for finding the shortest path in an unweighted graph?",
+    "options": [
+      "BFS uses less memory than DFS",
+      "BFS explores nodes level-by-level, so the first time it reaches the destination is guaranteed to be the shortest path",
+      "BFS is faster than DFS in all cases",
+      "DFS cannot find paths in graphs with cycles"
+    ],
+    "answer": 1,
+    "explain": "BFS explores all nodes at distance k before exploring nodes at distance k+1, guaranteeing the shortest path in unweighted graphs."
+  }
+]

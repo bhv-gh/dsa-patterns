@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Dijkstra needs more than just cost",
+    "body": "Regular Dijkstra tracks min cost per city — but here a **cheaper path** might violate the stop limit while a **pricier path** is valid.\n\n**Fix**: Track `(cost, city, stops)` so the same city can be visited with different stop counts. Each `(city, stops)` pair = distinct state."
+  },
+  {
+    "type": "concept",
+    "heading": "When to extend Dijkstra's state",
+    "body": "Use `(cost, node, extra_dimension)` for:\n\n- **Limited hops/stops**: `(cost, node, stops)`\n- **Fuel constraints**: `(cost, node, fuel)`\n- **Must-visit checkpoints**: `(cost, node, visited_mask)`\n- **Time windows**: `(cost, node, arrival_time)`\n\nIf cost alone isn't enough → extend the state."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from heapq import heappush, heappop\nfrom collections import defaultdict\n\ndef findCheapestPrice(n, flights, src, dst, k):\n    graph = defaultdict(list)\n    for u, v, price in flights:\n        graph[u].append((v, price))\n    \n    heap = [(0, src, 0)]  # (cost, city, stops)\n    best = {}  # Track best cost per (city, stops)\n    \n    while heap:\n        cost, city, stops = heappop(heap)\n        \n        if city == dst:\n            return cost\n        if stops > k:\n            continue\n        if (city, stops) in best and best[(city, stops)] <= cost:\n            continue\n        best[(city, stops)] = cost\n        \n        for neighbor, price in graph[city]:\n            heappush(heap, (cost + price, neighbor, stops + 1))\n    \n    return -1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does standard Dijkstra fail for this problem?",
+    "options": [
+      "It cannot handle negative edge weights",
+      "It only tracks minimum cost per city, ignoring the stop constraint",
+      "It requires a complete graph to work correctly",
+      "It has exponential time complexity"
+    ],
+    "answer": 1,
+    "explain": "Standard Dijkstra tracks only one value per city (minimum cost) and marks it visited, missing valid but pricier paths that use fewer stops."
+  }
+]

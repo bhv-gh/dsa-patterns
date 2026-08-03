@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Choose · Explore · Unchoose",
+    "body": "Backtracking explores **all possible paths** using DFS. The pattern:\n\n- **Choose:** add element to path\n- **Explore:** recurse deeper\n- **Unchoose:** `path.pop()` to restore state\n\nWhen a path fails, backtrack to the previous decision point and try the next option."
+  },
+  {
+    "type": "concept",
+    "heading": "Pruning saves you from dead ends",
+    "body": "**Pruning** = stop early when a path can't succeed.\n\nIf `total > target`, don't waste time exploring children — backtrack immediately:\n\n```python\nif total > target:\n    path.pop()\n    return\n```\n\nSkips entire subtrees that are guaranteed to fail."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def pathSum(root, target):\n    def backtrack(node, path, total):\n        if not node:\n            return\n        \n        path.append(node.val)\n        total += node.val\n        \n        if total > target:  # prune\n            path.pop()\n            return\n        \n        if not node.left and not node.right and total == target:\n            result.append(path[:])\n        else:\n            backtrack(node.left, path, total)\n            backtrack(node.right, path, total)\n        \n        path.pop()  # unchoose\n    \n    result = []\n    backtrack(root, [], 0)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we call path.pop() before returning from a backtrack function?",
+    "options": [
+      "To free memory and prevent a memory leak",
+      "To undo the current choice so the shared path list reflects the previous state",
+      "To signal to the caller that this path was invalid",
+      "To prevent duplicate solutions from being added to the result"
+    ],
+    "answer": 1,
+    "explain": "Backtracking uses a single shared list across all recursive calls. Popping undoes the choice made at this level."
+  }
+]

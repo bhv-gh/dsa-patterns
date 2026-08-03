@@ -1,0 +1,71 @@
+{
+  "id": 75,
+  "slug": "minimum-knight-moves",
+  "title": "Minimum Knight Moves",
+  "pattern": "breadth-first-search",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find minimum moves for a chess knight to reach target (x,y) from (0,0) on an infinite board using BFS.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an infinite chessboard, find the minimum number of moves required for a knight to move from starting position (0,0) to target position (x,y).\n\nA knight moves in an L-shape: either two squares horizontally and one vertically, or two squares vertically and one horizontally.\n\nAssume x and y are integers in the range [-200, 200] and the target is always reachable."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Model the chessboard as a graph where each cell is a node and neighbors are cells reachable by a knight's move. Since we need the **shortest path**, BFS guarantees the minimum number of moves.\n\nThe BFS level/depth when we first reach the target equals the minimum moves.\n\n**Symmetry optimization**: Because knight moves are symmetric across all four quadrants, we can work with absolute values to reduce the search space."
+    },
+    {
+      "heading": "Approach",
+      "body": "**1. Initialize BFS**: Start with a queue containing (0,0) with 0 moves, and a visited set to track explored cells.\n\n**2. Define knight moves**: Use 8 direction offsets: `[(2,1), (2,-1), (-2,1), (-2,-1), (1,2), (1,-2), (-1,2), (-1,-2)]`.\n\n**3. BFS traversal**: Dequeue current position and move count. If current position matches target, return the move count.\n\n**4. Explore neighbors**: For each of the 8 possible knight moves from current position, if not visited, add to queue with `moves + 1` and mark as visited.\n\n**5. Continue until found**: BFS guarantees we find the shortest path when we first reach the target."
+    }
+  ],
+  "approach": [
+    "Initialize a queue with starting position (0,0) and moves=0, plus a visited set",
+    "Define the 8 possible knight move directions as offset pairs",
+    "Dequeue the current position and move count from the queue",
+    "If current position equals target, return the move count",
+    "For each of the 8 knight moves from current position, if unvisited, enqueue it with moves+1 and mark visited",
+    "Repeat until target is found (BFS guarantees shortest path)"
+  ],
+  "complexity": {
+    "time": "O(max(|x|, |y|)²)",
+    "space": "O(max(|x|, |y|)²)"
+  },
+  "code": "from collections import deque\n\ndef minimum_knight_moves(x: int, y: int) -> int:\n    \"\"\"\n    Find minimum moves for a knight to reach (x,y) from (0,0).\n    Uses BFS to guarantee shortest path on infinite chessboard.\n    \"\"\"\n    directions = [(2, 1), (2, -1), (-2, 1), (-2, -1),\n                  (1, 2), (1, -2), (-1, 2), (-1, -2)]\n    \n    # Initialize BFS queue with (x, y, moves) and visited set\n    queue = deque([(0, 0, 0)])\n    visited = {(0, 0)}\n    \n    while queue:\n        cx, cy, moves = queue.popleft()\n        \n        # Check if we reached the target\n        if (cx, cy) == (x, y):\n            return moves\n        \n        # Explore all 8 possible knight moves\n        for dx, dy in directions:\n            nx, ny = cx + dx, cy + dy\n            \n            if (nx, ny) not in visited:\n                visited.add((nx, ny))\n                queue.append((nx, ny, moves + 1))\n    \n    return -1  # Target not reachable (shouldn't happen per problem)",
+  "quiz": [
+    {
+      "q": "Why is BFS the correct algorithm for this problem instead of DFS?",
+      "options": [
+        "BFS uses less memory than DFS",
+        "BFS explores level-by-level, guaranteeing the first path found is the shortest",
+        "DFS cannot handle infinite graphs",
+        "BFS is faster than DFS in all cases"
+      ],
+      "answer": 1,
+      "explain": "BFS explores nodes level-by-level (by distance from start). The first time BFS reaches the target, it's guaranteed to be via the shortest path. DFS could find a longer path first."
+    },
+    {
+      "q": "What is the purpose of the visited set in this solution?",
+      "options": [
+        "To store the path taken to reach each cell",
+        "To prevent revisiting cells and avoid infinite loops",
+        "To count the total number of cells explored",
+        "To optimize the knight's movement pattern"
+      ],
+      "answer": 1,
+      "explain": "The visited set prevents the algorithm from revisiting cells, which would cause infinite loops and redundant work. Once a cell is visited via BFS, any future path to it will be longer."
+    },
+    {
+      "q": "What optimization can reduce the search space by exploiting symmetry?",
+      "options": [
+        "Only search in positive x and y directions using abs(x) and abs(y)",
+        "Use a priority queue instead of a regular queue",
+        "Limit the search to a bounded grid",
+        "Use bidirectional BFS from both start and target"
+      ],
+      "answer": 0,
+      "explain": "Knight moves are symmetric across all four quadrants. By working with abs(x) and abs(y), we can search only in the positive quadrant, reducing the search space by ~75%."
+    }
+  ]
+}

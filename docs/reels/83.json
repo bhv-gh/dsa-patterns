@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Build valid parens incrementally",
+    "body": "Don't enumerate all strings and filter — **build only valid ones** by tracking open/close counts.\n\n**Two pruning rules:**\n- Add `(` only if `open < n`\n- Add `)` only if `close < open`\n\nWhen `len(s) == 2*n`, you've got a valid combo."
+  },
+  {
+    "type": "concept",
+    "heading": "Why close < open matters",
+    "body": "Adding `)` when `close >= open` creates an **unmatched closing bracket** — the string breaks immediately.\n\nExample: `)(` is invalid from the start. You need an opening `(` before every closing `)`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def generateParenthesis(n):\n    res = []\n    def dfs(s, open_count, close_count):\n        if len(s) == 2 * n:\n            res.append(s)\n            return\n        if open_count < n:\n            dfs(s + '(', open_count + 1, close_count)\n        if close_count < open_count:\n            dfs(s + ')', open_count, close_count + 1)\n    dfs(\"\", 0, 0)\n    return res"
+  },
+  {
+    "type": "quiz",
+    "q": "Why can we only add a closing parenthesis ')' when close < open?",
+    "options": [
+      "To ensure we don't exceed n pairs of parentheses",
+      "To prevent creating an invalid string with unmatched closing parentheses",
+      "To optimize the time complexity of the algorithm",
+      "To avoid duplicate combinations in the result"
+    ],
+    "answer": 1,
+    "explain": "Adding ')' when close >= open would create an invalid string where a closing parenthesis appears without a matching opening parenthesis before it."
+  }
+]

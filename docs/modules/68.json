@@ -1,0 +1,63 @@
+{
+  "id": 68,
+  "slug": "bfs-introduction",
+  "title": "BFS: Introduction",
+  "pattern": "breadth-first-search",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Level-by-level tree/graph traversal using a queue; guarantees shortest path in unweighted graphs.",
+  "sections": [
+    {
+      "heading": "What is BFS?",
+      "body": "**Breadth-First Search (BFS)** is a level-by-level traversal algorithm for trees and graphs.\n\nUnlike DFS which dives deep into one path before backtracking, BFS explores **all nodes at the current level** before moving to the next level.\n\nBFS uses a **queue** to ensure nodes are processed in the order they were discovered, creating breadth-first behavior."
+    },
+    {
+      "heading": "Why BFS?",
+      "body": "BFS is the go-to algorithm when you need:\n\n- **Shortest paths** in unweighted graphs\n- **Level-order processing** (e.g., level-by-level tree traversal)\n- **Minimum steps** to reach a target\n\nBecause BFS explores all nodes at distance `k` before any node at distance `k+1`, it **guarantees the shortest path** in unweighted scenarios."
+    },
+    {
+      "heading": "BFS vs DFS",
+      "body": "**DFS** (Depth-First Search): Uses a **stack** (or recursion), dives deep into one path before backtracking.\n\n**BFS** (Breadth-First Search): Uses a **queue**, explores neighbors level by level.\n\nUse **BFS** when you need shortest path or level-order. Use **DFS** for exploring all paths, backtracking, or tree depth problems."
+    },
+    {
+      "heading": "Core Template",
+      "body": "BFS for trees and graphs follows this pattern:\n\n1. Initialize a **queue** with the starting node(s)\n2. Track **visited** nodes (for graphs to avoid cycles)\n3. While queue is not empty:\n   - Dequeue a node\n   - Process it\n   - Enqueue all unvisited neighbors\n\nFor trees, no visited set is needed (no cycles). For graphs, always use a visited set."
+    }
+  ],
+  "approach": [
+    "Need shortest path in unweighted graph → BFS",
+    "Level-by-level tree traversal → BFS",
+    "Minimum steps/moves to target → BFS",
+    "Use a queue (FIFO) to explore neighbors layer by layer",
+    "Track visited nodes in graphs to avoid cycles"
+  ],
+  "complexity": {
+    "time": "O(V + E)",
+    "space": "O(V)"
+  },
+  "code": "from collections import deque\n\ndef bfs_tree(root):\n    \"\"\"BFS traversal of a binary tree (level-order).\"\"\"\n    if not root:\n        return []\n    \n    result = []\n    queue = deque([root])\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node.val)\n        \n        if node.left:\n            queue.append(node.left)\n        if node.right:\n            queue.append(node.right)\n    \n    return result\n\ndef bfs_graph(start, graph):\n    \"\"\"BFS traversal of a graph (adjacency list).\"\"\"\n    visited = {start}\n    queue = deque([start])\n    result = []\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        \n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    \n    return result",
+  "quiz": [
+    {
+      "q": "What data structure does BFS use to ensure nodes are processed level by level?",
+      "options": [
+        "Stack",
+        "Queue",
+        "Heap",
+        "Hash table"
+      ],
+      "answer": 1,
+      "explain": "BFS uses a **queue** (FIFO) to process nodes in the order they were discovered, ensuring all nodes at level k are visited before any node at level k+1."
+    },
+    {
+      "q": "Why does BFS guarantee the shortest path in an unweighted graph?",
+      "options": [
+        "It uses recursion to explore all paths",
+        "It marks nodes as visited immediately",
+        "It explores all nodes at distance k before any at distance k+1",
+        "It uses a priority queue to sort paths"
+      ],
+      "answer": 2,
+      "explain": "BFS explores nodes **level by level**, so when it first reaches a target node, it has taken the minimum number of steps. All shorter paths would have been explored in earlier levels."
+    }
+  ]
+}

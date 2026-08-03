@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "BFS explores level by level",
+    "body": "**Breadth-First Search (BFS)** visits all nodes at the current level before moving deeper.\n\nUses a **queue** (FIFO) to process nodes in discovery order.\n\n**When to use:** shortest path in unweighted graphs, level-order tree traversal, minimum steps to target."
+  },
+  {
+    "type": "concept",
+    "heading": "BFS vs DFS: Choose wisely",
+    "body": "**BFS** (queue): level-by-level, guarantees shortest path\n**DFS** (stack/recursion): deep dive, explores all paths\n\n**BFS wins when:**\n- You need the shortest path\n- You need level-order processing\n- You want minimum steps to a target"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef bfs_tree(root):\n    if not root:\n        return []\n    \n    result = []\n    queue = deque([root])\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node.val)\n        \n        if node.left:\n            queue.append(node.left)\n        if node.right:\n            queue.append(node.right)\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What data structure does BFS use to ensure nodes are processed level by level?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Heap",
+      "Hash table"
+    ],
+    "answer": 1,
+    "explain": "BFS uses a queue (FIFO) to process nodes in discovery order, ensuring all nodes at level k are visited before any node at level k+1."
+  }
+]

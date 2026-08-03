@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Sum every tree level",
+    "body": "Level-order BFS lets you process a tree **one level at a time**. The secret? Capture `len(queue)` before looping — that tells you exactly how many nodes are at the current level. Process that many, sum their values, then move to the next level."
+  },
+  {
+    "type": "concept",
+    "heading": "The level-batching trick",
+    "body": "Why `for _ in range(len(queue))`?\n\nBecause **as you dequeue nodes, you enqueue their children**. If you don't freeze the count first, you'll process children in the same loop — mixing levels. Capture the size → process exactly that many → clean separation."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef levelSum(root):\n    if not root:\n        return []\n    result = []\n    queue = deque([root])\n    \n    while queue:\n        level_size = len(queue)  # freeze count\n        level_sum = 0\n        \n        for _ in range(level_size):\n            node = queue.popleft()\n            level_sum += node.val\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        result.append(level_sum)\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we capture `len(queue)` before the inner for-loop?",
+    "options": [
+      "To optimize memory usage",
+      "To process exactly one level at a time before children are added",
+      "To prevent infinite loops",
+      "To ensure the queue never becomes empty"
+    ],
+    "answer": 1,
+    "explain": "Capturing the size before the loop ensures we only process the current level's nodes. As we process nodes, we add their children to the queue, but those children belong to the next level."
+  }
+]

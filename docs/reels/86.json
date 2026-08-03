@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "One queen per row wins",
+    "body": "Place queens row-by-row to shrink the search space from O(n²) positions to O(n) columns per row.\n\nTrack conflicts in sets:\n- **cols**: blocked columns\n- **diag1**: `row - col` (same for \\ diagonals)\n- **diag2**: `row + col` (same for / diagonals)\n\nO(1) conflict checks, backtrack when stuck."
+  },
+  {
+    "type": "concept",
+    "heading": "Diagonal math unlocks speed",
+    "body": "All cells on the same diagonal share a constant:\n- `row - col` for \\ diagonals\n- `row + col` for / diagonals\n\nStore these values in sets for instant O(1) checks instead of scanning the board."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def solveNQueens(n):\n    result = []\n    board = [['.' for _ in range(n)] for _ in range(n)]\n    cols, diag1, diag2 = set(), set(), set()\n    \n    def backtrack(row):\n        if row == n:\n            result.append([''.join(r) for r in board])\n            return\n        for col in range(n):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            board[row][col] = 'Q'\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            backtrack(row + 1)\n            board[row][col] = '.'\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n    \n    backtrack(0)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we use (row - col) and (row + col) to track diagonals?",
+    "options": [
+      "Because all cells on a diagonal share the same (row - col) or (row + col) value",
+      "To reduce memory usage by storing only two integers per diagonal",
+      "Because it's faster than checking every cell on the diagonal",
+      "To avoid conflicts with column indices"
+    ],
+    "answer": 0,
+    "explain": "Cells on the same upper-left to lower-right diagonal have the same (row - col) value, and cells on the same upper-right to lower-left diagonal have the same (row + col) value. This allows O(1) diagonal conflict checks."
+  }
+]

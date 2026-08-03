@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Knight moves = shortest path problem",
+    "body": "Chess knight on infinite board → **graph search**. Each cell is a node, knight moves = edges.\n\n**Why BFS?** Explores level-by-level. First time you hit the target = minimum moves guaranteed."
+  },
+  {
+    "type": "concept",
+    "heading": "Symmetry cuts 75% of work",
+    "body": "Knight moves are **symmetric** across all 4 quadrants.\n\nWork with `abs(x)` and `abs(y)` → search only positive quadrant → ~75% fewer cells explored."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef min_knight_moves(x, y):\n    dirs = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(1,-2),(-1,2),(-1,-2)]\n    q = deque([(0, 0, 0)])  # (x, y, moves)\n    visited = {(0, 0)}\n    \n    while q:\n        cx, cy, moves = q.popleft()\n        if (cx, cy) == (x, y):\n            return moves\n        \n        for dx, dy in dirs:\n            nx, ny = cx + dx, cy + dy\n            if (nx, ny) not in visited:\n                visited.add((nx, ny))\n                q.append((nx, ny, moves + 1))\n    \n    return -1"
+  },
+  {
+    "type": "quiz",
+    "q": "Why is BFS the correct algorithm for this problem instead of DFS?",
+    "options": [
+      "BFS uses less memory than DFS",
+      "BFS explores level-by-level, guaranteeing the first path found is the shortest",
+      "DFS cannot handle infinite graphs",
+      "BFS is faster than DFS in all cases"
+    ],
+    "answer": 1,
+    "explain": "BFS explores level-by-level by distance. First time it hits the target = shortest path guaranteed."
+  }
+]

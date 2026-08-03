@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Zigzag: BFS + toggle direction",
+    "body": "**Standard BFS**, but with a twist: track a `left_to_right` boolean that flips each level.\n\n- **True** → append values to the back\n- **False** → `appendleft()` to reverse order\n\nUse a **deque** for O(1) prepending — no manual list reversal needed."
+  },
+  {
+    "type": "concept",
+    "heading": "Why deque beats list reversal",
+    "body": "You *could* reverse each level: `level[::-1]` — but that's O(n) per level.\n\n**Better:** deque's `appendleft()` is O(1). As you process nodes left-to-right in the queue, prepending builds the reversed level *in-place*.\n\n**Gotcha:** always enqueue children L→R, flip direction only when building the level output."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef zigzag_bfs(root):\n    if not root:\n        return []\n    result, queue, left_to_right = [], deque([root]), True\n    while queue:\n        level = deque()\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            if left_to_right:\n                level.append(node.val)\n            else:\n                level.appendleft(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        result.append(list(level))\n        left_to_right = not left_to_right\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the zigzag level-order traversal?",
+    "options": [
+      "O(2^n)",
+      "O(n log n)",
+      "O(n)",
+      "O(n^2)"
+    ],
+    "answer": 2,
+    "explain": "We visit each node exactly once during the BFS traversal, resulting in O(n) time complexity where n is the number of nodes."
+  }
+]
