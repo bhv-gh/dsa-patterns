@@ -134,6 +134,28 @@
     return i < 0; // true if now bookmarked
   }
 
+  /* ---------- reels position memory (resume where you left off) ---------- */
+  const LS_REELPOS = 'dsa.reelpos.v1';
+  const getReelPos = () => {
+    try { return JSON.parse(localStorage.getItem(LS_REELPOS)) || null; }
+    catch { return null; }
+  };
+  function saveReelPos(mode, cardId, index, total) {
+    if (!cardId) return;
+    try {
+      localStorage.setItem(LS_REELPOS, JSON.stringify({
+        mode, cardId, index, total, at: Date.now(),
+      }));
+    } catch (e) { /* storage full/blocked — non-fatal */ }
+  }
+  function agoText(ts) {
+    const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+    if (s < 90) return 'just now';
+    const m = Math.round(s / 60); if (m < 60) return `${m}m ago`;
+    const h = Math.round(m / 60); if (h < 24) return `${h}h ago`;
+    const d = Math.round(h / 24); return d === 1 ? 'yesterday' : `${d}d ago`;
+  }
+
   // per-pattern accent (hue) for reel backgrounds
   const PATTERN_HUE = {
     'intro': 250, 'two-pointers': 222, 'sliding-window': 275, 'intervals': 200,
@@ -178,6 +200,17 @@
           </button>
         </div>
       </section>`;
+
+    // resume where you left off in Reels
+    const rp = getReelPos();
+    if (rp && rp.cardId) {
+      const pos = (rp.index != null && rp.total) ? `card ${rp.index + 1} of ${rp.total}` : 'your last reel';
+      html += `<button class="resume-chip" data-nav="#/reels${rp.mode && rp.mode !== 'all' ? '/' + rp.mode : ''}">
+        <span class="rz-ic">▶</span>
+        <span class="rz-tx"><b>Pick up where you left off</b><small>${esc(pos)} · ${agoText(rp.at)}</small></span>
+        <span class="rz-go">Resume</span>
+      </button>`;
+    }
 
     if (intro) {
       html += `<div class="cards" style="margin-bottom:22px">${cardHtml(intro, progress)}</div>`;
@@ -490,9 +523,10 @@
         <div class="reel-inner">${reelInner(c)}</div>
         <div class="reel-actions">
           <button class="reel-bm ${saved ? 'on' : ''}" aria-label="Bookmark">${saved ? '🔖' : '🏷️'}</button>
-          <button class="reel-open" aria-label="Open lesson">↗</button>
         </div>
+        <button class="reel-open-btn" aria-label="Open full lesson">📖 Open lesson</button>
         <div class="reel-heart" aria-hidden="true">🧿</div>
+        <div class="reel-swipe" aria-hidden="true">🔖 Saved</div>
       </section>`;
     }).join('');
 
@@ -518,7 +552,7 @@
         toast(nowOn ? 'Saved 🧿' : 'Removed');
       };
       bmBtn.addEventListener('click', (e) => { e.stopPropagation(); doBookmark(false); });
-      reel.querySelector('.reel-open').addEventListener('click', (e) => {
+      reel.querySelector('.reel-open-btn').addEventListener('click', (e) => {
         e.stopPropagation(); location.hash = `#/m/${reel.dataset.module}`;
       });
       // double-tap anywhere to bookmark
@@ -528,6 +562,43 @@
         const now = e.timeStamp;
         if (now - lastTap < 320) { doBookmark(true); lastTap = 0; } else { lastTap = now; }
       });
+
+      // swipe RIGHT to bookmark (horizontal drag; vertical is left to scroll-snap)
+      let sx = 0, sy = 0, dragging = false, decided = false, horiz = false;
+      const inner = reel.querySelector('.reel-inner');
+      reel.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+        dragging = true; decided = false; horiz = false;
+      }, { passive: true });
+      reel.addEventListener('touchmove', (e) => {
+        if (!dragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - sx;
+        const dy = e.touches[0].clientY - sy;
+        if (!decided) {
+          if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+          decided = true;
+          horiz = Math.abs(dx) > Math.abs(dy) * 1.5;   // clearly horizontal
+        }
+        if (!horiz) return;
+        const shift = Math.max(0, Math.min(dx, 120));   // right-drag only
+        reel.style.setProperty('--sx', shift + 'px');
+        reel.classList.toggle('swiping', shift > 8);
+        reel.classList.toggle('swipe-armed', shift > 70);
+        if (inner) inner.style.transform = `translateX(${shift * 0.5}px)`;
+      }, { passive: true });
+      const endSwipe = () => {
+        if (!dragging) return;
+        dragging = false;
+        const armed = reel.classList.contains('swipe-armed');
+        reel.classList.remove('swiping', 'swipe-armed');
+        reel.style.removeProperty('--sx');
+        if (inner) inner.style.transform = '';
+        if (armed && !isBookmarked(id)) doBookmark(true);
+        else if (armed) toast('Already saved 🔖');
+      };
+      reel.addEventListener('touchend', endSwipe, { passive: true });
+      reel.addEventListener('touchcancel', endSwipe, { passive: true });
       // quiz interactivity
       const q = reel.querySelector('.reel-q');
       if (q) {
@@ -546,6 +617,7 @@
     });
 
     // activate the reel currently in view (drives entrance + floating emojis)
+    // and remember the position so you can resume later
     const scroller = view.querySelector('.reels-scroll');
     const reelEls = Array.from(view.querySelectorAll('.reel'));
     if (reelEls[0]) reelEls[0].classList.add('active');
@@ -554,12 +626,27 @@
         entries.forEach((en) => {
           if (en.isIntersecting && en.intersectionRatio >= 0.55) {
             reelEls.forEach((r) => r.classList.toggle('active', r === en.target));
+            const i = reelEls.indexOf(en.target);
+            saveReelPos(filter.mode, en.target.dataset.id, i, reelEls.length);
           }
         });
       }, { root: scroller, threshold: [0.55, 0.9] });
       reelEls.forEach((r) => io.observe(r));
     } catch (e) {
       reelEls.forEach((r) => r.classList.add('active')); // no IO support → animate all
+    }
+
+    // resume: jump to the last-viewed card of this same feed
+    const rp = getReelPos();
+    if (rp && rp.mode === filter.mode && rp.cardId) {
+      const target = reelEls.find((r) => r.dataset.id === rp.cardId);
+      if (target && target !== reelEls[0]) {
+        requestAnimationFrame(() => {
+          target.scrollIntoView({ block: 'start' });
+          reelEls.forEach((r) => r.classList.toggle('active', r === target));
+          toast('Resumed where you left off 🧿');
+        });
+      }
     }
   }
 
