@@ -427,17 +427,47 @@ pre.code .tok-def { color: #82aaff; }
 .hero .nz { display: inline-block; }
 
 /* ---------- Home launchers (Reels / Saved) ---------- */
-.launchers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.launchers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
 .launch {
-  display: flex; align-items: center; gap: 10px; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0;
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 12px; cursor: pointer; color: inherit; font: inherit; text-align: left;
+  padding: 11px 8px; cursor: pointer; color: inherit; font: inherit; text-align: center;
 }
 .launch:active { transform: scale(.98); border-color: var(--accent); }
-.launch .lx-ic { font-size: 22px; flex: 0 0 auto; }
-.launch .lx-tx { display: flex; flex-direction: column; min-width: 0; }
-.launch .lx-tx b { font-size: 14px; }
-.launch .lx-tx small { color: var(--text-faint); font-size: 11.5px; }
+.launch .lx-ic { font-size: 20px; flex: 0 0 auto; line-height: 1.2; }
+.launch .lx-tx { display: flex; flex-direction: column; min-width: 0; width: 100%; }
+.launch .lx-tx b { font-size: 13px; }
+.launch .lx-tx small { color: var(--text-faint); font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Notes ---------- */
+.note-fab {
+  position: fixed; z-index: 1200; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+  border-radius: 99px; padding: 9px 16px; font-size: 13.5px; font-weight: 800;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4); white-space: nowrap;
+  animation: notepop .16s ease;
+}
+.note-fab[hidden] { display: none; }
+@keyframes notepop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+.note-card {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 12px 13px; margin: 10px 0;
+}
+.note-text { font-size: 14.5px; line-height: 1.55; overflow-wrap: anywhere; }
+.note-meta { display: flex; align-items: center; gap: 8px; margin-top: 9px; }
+.note-src {
+  flex: 1 1 auto; min-width: 0; text-align: left; font: inherit; font-size: 11.5px; font-weight: 700;
+  color: var(--accent); background: transparent; border: none; cursor: pointer; padding: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.note-src.plain { color: var(--text-faint); font-weight: 600; }
+.note-when { flex: 0 0 auto; font-size: 11px; color: var(--text-faint); }
+.note-del {
+  flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--bg-elev-2); border: 1px solid var(--border); color: var(--text-faint);
+  font-size: 12px; cursor: pointer; line-height: 1;
+}
+.note-del:active { background: var(--bad); color: #fff; border-color: var(--bad); }
 .reels-link {
   display: block; text-align: center; margin: 14px 0 2px; padding: 12px;
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm);

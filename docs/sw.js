@@ -1,7 +1,7 @@
 /* Service worker — precache app shell + all module data for full offline use. */
 // Internal cache name — bumped to precache the new reels feature.
 // (The user-facing version chip stays 'v14' by request; this is not shown.)
-const CACHE = 'dsa-patterns-v14-b121';
+const CACHE = 'dsa-patterns-v14-notes';
 
 const SHELL = [
   './',

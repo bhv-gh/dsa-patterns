@@ -18,6 +18,16 @@ lessons offline. Live: **https://bhv-gh.github.io/dsa-patterns/**
 - `docs/sw.js` precaches every module for offline use.
 - Source PDFs and `.extracted/` raw text are **git-ignored** (kept private). Never commit them.
 
+### App features (all offline, all localStorage — no backend)
+- **Modules** — lesson pages with sections, steps, complexity, Python, quiz, optional animation.
+- **Reels** (`#/reels`) — swipeable mixed feed from `docs/reels.json`; filters All / 🔖 Saved / ✓ Completed
+  and per-lesson (`#/reels/m/<id>`); double-tap or swipe-right to bookmark; resumes where you left off.
+- **Saved** (`#/saved`) — bookmarked reel cards. Key: `dsa.bookmarks.v1`.
+- **Notes** (`#/notes`) — select any text in a lesson/reel → floating **➕ Note** button saves it with
+  its source lesson. Key: `dsa.notes.v1`. Copy-all / delete supported. New views should call
+  `setNoteSource({moduleId,title,pattern})` so notes attribute correctly.
+- Other keys: `dsa.progress.v1` (completed), `dsa.reelpos.v1` (resume), `dsa.theme.v1`.
+
 ### Locked-in content decisions (keep consistent unless the user says otherwise)
 - **Depth:** distilled + quiz (tight summary → step-by-step → complexity → code → 1–3 quiz Qs).
 - **Code language:** **Python**.

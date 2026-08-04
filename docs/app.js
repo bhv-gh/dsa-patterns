@@ -134,6 +134,37 @@
     return i < 0; // true if now bookmarked
   }
 
+  /* ---------- notes (highlight any text -> save) ---------- */
+  const LS_NOTES = 'dsa.notes.v1';
+  const getNotes = () => {
+    try { return JSON.parse(localStorage.getItem(LS_NOTES)) || []; }
+    catch { return []; }
+  };
+  const notesCount = () => getNotes().length;
+  function addNote(text, src) {
+    const notes = getNotes();
+    const clean = String(text).replace(/\s+/g, ' ').trim();
+    if (!clean) return false;
+    if (notes.some((n) => n.text === clean && n.moduleId === src.moduleId)) return 'dup';
+    notes.unshift({
+      id: 'n' + Date.now().toString(36) + Math.floor(performance.now() % 1000).toString(36),
+      text: clean.slice(0, 1200),
+      moduleId: src.moduleId || null,
+      title: src.title || '',
+      pattern: src.pattern || '',
+      at: Date.now(),
+    });
+    localStorage.setItem(LS_NOTES, JSON.stringify(notes));
+    return true;
+  }
+  function deleteNote(id) {
+    localStorage.setItem(LS_NOTES, JSON.stringify(getNotes().filter((n) => n.id !== id)));
+  }
+
+  // what lesson is on screen right now (for note attribution)
+  let noteSource = { moduleId: null, title: '', pattern: '' };
+  const setNoteSource = (s) => { noteSource = Object.assign({ moduleId: null, title: '', pattern: '' }, s); };
+
   /* ---------- reels position memory (resume where you left off) ---------- */
   const LS_REELPOS = 'dsa.reelpos.v1';
   const getReelPos = () => {
@@ -197,6 +228,9 @@
           </button>
           <button class="launch" data-nav="#/saved">
             <span class="lx-ic">🔖</span><span class="lx-tx"><b>Saved</b><small>${bookmarkCount()} bookmarked</small></span>
+          </button>
+          <button class="launch" data-nav="#/notes">
+            <span class="lx-ic">📝</span><span class="lx-tx"><b>Notes</b><small>${notesCount()} saved</small></span>
           </button>
         </div>
       </section>`;
@@ -269,6 +303,7 @@
     catch { view.innerHTML = `<div class="empty">Couldn't load this lesson.<br>Try again when online.</div>`; return; }
 
     topbarTitle.textContent = m.title;
+    setNoteSource({ moduleId: m.id, title: m.title, pattern: m.pattern });
     const progress = getProgress();
     const isDone = !!progress[m.id];
 
@@ -628,6 +663,8 @@
             reelEls.forEach((r) => r.classList.toggle('active', r === en.target));
             const i = reelEls.indexOf(en.target);
             saveReelPos(filter.mode, en.target.dataset.id, i, reelEls.length);
+            const cd = cards[i];
+            if (cd) setNoteSource({ moduleId: cd.moduleId, title: cd.title, pattern: cd.pattern });
           }
         });
       }, { root: scroller, threshold: [0.55, 0.9] });
@@ -648,6 +685,51 @@
         });
       }
     }
+  }
+
+  /* ---------- NOTES list ---------- */
+  async function renderNotes() {
+    backBtn.hidden = false;
+    topbarTitle.textContent = 'Notes 📝';
+    setNoteSource({});
+    const notes = getNotes();
+    if (!notes.length) {
+      view.innerHTML = `<div class="empty"><div style="font-size:32px">📝</div>
+        <p><b>No notes yet.</b><br>Select any text in a lesson or reel,<br>then tap <b>➕ Note</b> to save it here.</p>
+        <button class="complete-btn" data-nav="#/">Back home</button></div>`;
+      view.querySelectorAll('[data-nav]').forEach((el) => el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
+      return;
+    }
+    const items = notes.map((n) => `
+      <div class="note-card" data-note="${esc(n.id)}">
+        <div class="note-text">${esc(n.text)}</div>
+        <div class="note-meta">
+          ${n.moduleId ? `<button class="note-src" data-goto="${n.moduleId}">${esc(n.title || 'lesson')} ↗</button>` : '<span class="note-src plain">general</span>'}
+          <span class="note-when">${agoText(n.at)}</span>
+          <button class="note-del" data-del="${esc(n.id)}" aria-label="Delete note">✕</button>
+        </div>
+      </div>`).join('');
+    view.innerHTML = `<div class="saved-head"><h1>Notes 📝</h1><p>${notes.length} saved · tap a lesson name to jump back</p></div>
+      ${items}
+      <button class="reset-link" id="copyNotes">Copy all notes</button>
+      <button class="reset-link" id="clearNotes">Clear all notes</button>
+      <div class="nazar" aria-hidden="true">🧿</div>`;
+    window.scrollTo(0, 0);
+    view.querySelectorAll('[data-nav]').forEach((el) => el.addEventListener('click', () => { location.hash = el.dataset.nav; }));
+    view.querySelectorAll('[data-goto]').forEach((el) =>
+      el.addEventListener('click', () => { location.hash = `#/m/${el.dataset.goto}`; }));
+    view.querySelectorAll('[data-del]').forEach((el) =>
+      el.addEventListener('click', () => { deleteNote(el.dataset.del); renderNotes(); }));
+    const copyBtn = document.getElementById('copyNotes');
+    if (copyBtn) copyBtn.addEventListener('click', async () => {
+      const txt = notes.map((n) => `• ${n.text}${n.title ? `\n  — ${n.title}` : ''}`).join('\n\n');
+      try { await navigator.clipboard.writeText(txt); toast('Notes copied 📝'); }
+      catch { toast('Copy not supported'); }
+    });
+    const clr = document.getElementById('clearNotes');
+    if (clr) clr.addEventListener('click', () => {
+      if (confirm('Delete all notes?')) { localStorage.removeItem(LS_NOTES); renderNotes(); }
+    });
   }
 
   /* ---------- SAVED list ---------- */
@@ -698,6 +780,7 @@
       else if (hash.startsWith('#/reels/saved')) await renderReels({ mode: 'saved' });
       else if (hash.startsWith('#/reels/completed')) await renderReels({ mode: 'completed' });
       else if (hash.startsWith('#/reels')) await renderReels({ mode: 'all' });
+      else if (hash.startsWith('#/notes')) await renderNotes();
       else if (hash.startsWith('#/saved')) await renderSaved();
       else if (mMatch) await renderModule(parseInt(mMatch[1], 10));
       else await renderHome();
@@ -762,6 +845,57 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW failed', e));
+    });
+  }
+
+  /* ---------- select text -> add to notes ---------- */
+  const noteBtn = document.getElementById('noteBtn');
+  let pendingSel = '';
+
+  function hideNoteBtn() { if (noteBtn) { noteBtn.hidden = true; pendingSel = ''; } }
+
+  function updateNoteBtn() {
+    if (!noteBtn) return;
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) return hideNoteBtn();
+    const text = sel.toString().trim();
+    if (text.length < 3) return hideNoteBtn();
+    // only offer notes for content inside the app view
+    const anchor = sel.anchorNode;
+    const host = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
+    if (!host || !host.closest || !host.closest('#view')) return hideNoteBtn();
+
+    let rect;
+    try { rect = sel.getRangeAt(0).getBoundingClientRect(); } catch (e) { return hideNoteBtn(); }
+    if (!rect || (!rect.width && !rect.height)) return hideNoteBtn();
+
+    pendingSel = text;
+    noteBtn.hidden = false;
+    const bw = noteBtn.offsetWidth || 110;
+    const bh = noteBtn.offsetHeight || 38;
+    let left = rect.left + rect.width / 2 - bw / 2;
+    left = Math.max(10, Math.min(left, window.innerWidth - bw - 10));
+    let top = rect.top - bh - 10;                       // above the selection
+    if (top < 8) top = Math.min(rect.bottom + 10, window.innerHeight - bh - 10);
+    noteBtn.style.left = left + 'px';
+    noteBtn.style.top = top + 'px';
+  }
+
+  if (noteBtn) {
+    document.addEventListener('selectionchange', () => {
+      clearTimeout(updateNoteBtn._t);
+      updateNoteBtn._t = setTimeout(updateNoteBtn, 120);
+    });
+    window.addEventListener('scroll', hideNoteBtn, true);
+    noteBtn.addEventListener('mousedown', (e) => e.preventDefault());  // keep the selection
+    noteBtn.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const text = pendingSel;
+      if (!text) return hideNoteBtn();
+      const res = addNote(text, noteSource);
+      toast(res === 'dup' ? 'Already in notes' : 'Added to notes 📝');
+      hideNoteBtn();
+      const s = window.getSelection(); if (s) s.removeAllRanges();
     });
   }
 
