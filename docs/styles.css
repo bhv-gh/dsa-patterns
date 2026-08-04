@@ -439,6 +439,52 @@ pre.code .tok-def { color: #82aaff; }
 .launch .lx-tx b { font-size: 13px; }
 .launch .lx-tx small { color: var(--text-faint); font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* ---------- Tap-to-note mode ---------- */
+#noteModeBtn.on {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+/* in note mode: kill native selection + the iOS callout menu inside content */
+body.note-mode .view,
+body.note-mode .reels {
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+}
+body.note-mode .section .body p,
+body.note-mode .section .body li,
+body.note-mode .steps li,
+body.note-mode .m-summary,
+body.note-mode .reel-body p,
+body.note-mode .reel-body li,
+body.note-mode .reel-h,
+body.note-mode .reel-q,
+body.note-mode .q-text,
+body.note-mode .explain,
+body.note-mode .group-blurb,
+body.note-mode pre.code {
+  cursor: pointer; border-radius: 8px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 26%, transparent);
+  transition: background .15s ease, box-shadow .15s ease;
+}
+body.note-mode .section .body p:active,
+body.note-mode .steps li:active,
+body.note-mode .reel-body p:active,
+body.note-mode pre.code:active {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+/* saved lines — highlighter yellow */
+body.note-mode .noted, .noted {
+  background: color-mix(in srgb, #fbbf24 26%, transparent) !important;
+  box-shadow: inset 0 0 0 1.5px #fbbf24 !important;
+  border-radius: 8px;
+}
+[data-theme="light"] body.note-mode .noted, [data-theme="light"] .noted {
+  background: color-mix(in srgb, #fbbf24 42%, transparent) !important;
+}
+body.note-mode .noted::after {
+  content: ' 📝'; font-size: .85em; opacity: .8;
+}
+
 /* ---------- Notes ---------- */
 .note-fab {
   position: fixed; z-index: 1200; border: none; cursor: pointer;

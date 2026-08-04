@@ -160,6 +160,16 @@
   function deleteNote(id) {
     localStorage.setItem(LS_NOTES, JSON.stringify(getNotes().filter((n) => n.id !== id)));
   }
+  const normNote = (s) => String(s).replace(/\s+/g, ' ').trim().slice(0, 1200);
+  const findNoteByText = (text, moduleId) => {
+    const t = normNote(text);
+    return getNotes().find((n) => n.text === t && n.moduleId === (moduleId || null));
+  };
+  function removeNoteByText(text, moduleId) {
+    const n = findNoteByText(text, moduleId);
+    if (n) { deleteNote(n.id); return true; }
+    return false;
+  }
 
   // what lesson is on screen right now (for note attribution)
   let noteSource = { moduleId: null, title: '', pattern: '' };
@@ -788,6 +798,8 @@
       view.innerHTML = `<div class="empty">Something went wrong loading content.</div>`;
       console.error(e);
     }
+    // re-apply tap-to-note highlighting for the newly rendered view
+    if (typeof applyNoteMode === 'function') applyNoteMode();
   }
 
   /* ---------- theme ---------- */
@@ -848,6 +860,56 @@
     });
   }
 
+  /* ---------- tap-to-note mode (no native selection menu) ---------- */
+  const LS_NOTEMODE = 'dsa.notemode.v1';
+  const NOTABLE = [
+    '.section .body p', '.section .body li', '.steps li', '.m-summary',
+    '.reel-body p', '.reel-body li', '.reel-h', '.reel-q', '.q-text',
+    '.explain', '.group-blurb', 'pre.code',
+  ].join(',');
+  const noteModeBtn = document.getElementById('noteModeBtn');
+  let noteMode = localStorage.getItem(LS_NOTEMODE) === '1';
+
+  function markNoted(root) {
+    (root || view).querySelectorAll(NOTABLE).forEach((el) => {
+      el.classList.toggle('noted', !!findNoteByText(el.textContent, noteSource.moduleId));
+    });
+  }
+  function applyNoteMode() {
+    if (document.body) document.body.classList.toggle('note-mode', noteMode);
+    if (noteModeBtn) {
+      noteModeBtn.classList.toggle('on', noteMode);
+      noteModeBtn.setAttribute('aria-pressed', noteMode ? 'true' : 'false');
+    }
+    if (noteMode) markNoted();
+    else view.querySelectorAll('.noted').forEach((el) => el.classList.remove('noted'));
+  }
+  if (noteModeBtn) {
+    noteModeBtn.addEventListener('click', () => {
+      noteMode = !noteMode;
+      localStorage.setItem(LS_NOTEMODE, noteMode ? '1' : '0');
+      applyNoteMode();
+      hideNoteBtn();
+      toast(noteMode ? 'Tap-to-note ON — tap any line ✏️' : 'Tap-to-note off');
+    });
+  }
+  // capture-phase so it wins over reel double-tap / card navigation
+  view.addEventListener('click', (e) => {
+    if (!noteMode) return;
+    if (e.target.closest('button, a, .opt, .dsa-ctrls, .reels-bar, .pager')) return;
+    const el = e.target.closest(NOTABLE);
+    if (!el || !view.contains(el)) return;
+    e.preventDefault(); e.stopPropagation();
+    const text = el.textContent;
+    if (normNote(text).length < 3) return;
+    if (removeNoteByText(text, noteSource.moduleId)) {
+      el.classList.remove('noted'); toast('Note removed');
+    } else {
+      addNote(text, noteSource);
+      el.classList.add('noted'); toast('Saved to notes 📝');
+    }
+  }, true);
+
   /* ---------- select text -> add to notes ---------- */
   const noteBtn = document.getElementById('noteBtn');
   let pendingSel = '';
@@ -856,6 +918,7 @@
 
   function updateNoteBtn() {
     if (!noteBtn) return;
+    if (noteMode) return hideNoteBtn();   // tap-to-note replaces selection flow
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) return hideNoteBtn();
     const text = sel.toString().trim();
