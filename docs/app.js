@@ -170,6 +170,16 @@
     if (n) { deleteNote(n.id); return true; }
     return false;
   }
+  // your own annotation attached to a highlight (Kindle-style)
+  function setNoteComment(id, comment) {
+    const notes = getNotes();
+    const n = notes.find((x) => x.id === id);
+    if (!n) return;
+    const c = String(comment || '').trim().slice(0, 2000);
+    if (c) n.comment = c; else delete n.comment;
+    n.editedAt = Date.now();
+    localStorage.setItem(LS_NOTES, JSON.stringify(notes));
+  }
 
   // what lesson is on screen right now (for note attribution)
   let noteSource = { moduleId: null, title: '', pattern: '' };
@@ -713,8 +723,17 @@
     const items = notes.map((n) => `
       <div class="note-card" data-note="${esc(n.id)}">
         <div class="note-text">${esc(n.text)}</div>
+        ${n.comment ? `<div class="note-comment" data-edit="${esc(n.id)}"><span class="nc-ic">✍️</span><span class="nc-tx">${esc(n.comment)}</span></div>` : ''}
+        <div class="note-editor" hidden>
+          <textarea class="note-input" rows="3" placeholder="Your note…">${esc(n.comment || '')}</textarea>
+          <div class="note-editor-btns">
+            <button class="ne-save" data-save="${esc(n.id)}">Save</button>
+            <button class="ne-cancel">Cancel</button>
+          </div>
+        </div>
         <div class="note-meta">
           ${n.moduleId ? `<button class="note-src" data-goto="${n.moduleId}">${esc(n.title || 'lesson')} ↗</button>` : '<span class="note-src plain">general</span>'}
+          <button class="note-add" data-edit="${esc(n.id)}">${n.comment ? '✍️ Edit note' : '✍️ Add note'}</button>
           <span class="note-when">${agoText(n.at)}</span>
           <button class="note-del" data-del="${esc(n.id)}" aria-label="Delete note">✕</button>
         </div>
@@ -730,9 +749,30 @@
       el.addEventListener('click', () => { location.hash = `#/m/${el.dataset.goto}`; }));
     view.querySelectorAll('[data-del]').forEach((el) =>
       el.addEventListener('click', () => { deleteNote(el.dataset.del); renderNotes(); }));
+
+    // open the inline annotation editor
+    view.querySelectorAll('[data-edit]').forEach((el) =>
+      el.addEventListener('click', () => {
+        const card = el.closest('.note-card');
+        const ed = card.querySelector('.note-editor');
+        ed.hidden = false;
+        const ta = ed.querySelector('.note-input');
+        ta.focus();
+        ta.setSelectionRange(ta.value.length, ta.value.length);
+      }));
+    view.querySelectorAll('.ne-cancel').forEach((el) =>
+      el.addEventListener('click', () => { el.closest('.note-editor').hidden = true; }));
+    view.querySelectorAll('[data-save]').forEach((el) =>
+      el.addEventListener('click', () => {
+        const ta = el.closest('.note-editor').querySelector('.note-input');
+        setNoteComment(el.dataset.save, ta.value);
+        toast(ta.value.trim() ? 'Note saved ✍️' : 'Note cleared');
+        renderNotes();
+      }));
+
     const copyBtn = document.getElementById('copyNotes');
     if (copyBtn) copyBtn.addEventListener('click', async () => {
-      const txt = notes.map((n) => `• ${n.text}${n.title ? `\n  — ${n.title}` : ''}`).join('\n\n');
+      const txt = notes.map((n) => `• ${n.text}${n.comment ? `\n  ✍️ ${n.comment}` : ''}${n.title ? `\n  — ${n.title}` : ''}`).join('\n\n');
       try { await navigator.clipboard.writeText(txt); toast('Notes copied 📝'); }
       catch { toast('Copy not supported'); }
     });
@@ -870,9 +910,21 @@
   const noteModeBtn = document.getElementById('noteModeBtn');
   let noteMode = localStorage.getItem(LS_NOTEMODE) === '1';
 
+  // in Reels each card is a different module, so resolve per element
+  function srcFor(el) {
+    const reel = el && el.closest ? el.closest('.reel') : null;
+    if (reel && reel.dataset.module) {
+      const mid = parseInt(reel.dataset.module, 10);
+      const m = INDEX && INDEX.modules.find((x) => x.id === mid);
+      return { moduleId: mid, title: m ? m.title : '', pattern: m ? m.pattern : '' };
+    }
+    return noteSource;
+  }
   function markNoted(root) {
     (root || view).querySelectorAll(NOTABLE).forEach((el) => {
-      el.classList.toggle('noted', !!findNoteByText(el.textContent, noteSource.moduleId));
+      const n = findNoteByText(el.textContent, srcFor(el).moduleId);
+      el.classList.toggle('noted', !!n);
+      el.classList.toggle('has-comment', !!(n && n.comment));
     });
   }
   function applyNoteMode() {
@@ -881,8 +933,7 @@
       noteModeBtn.classList.toggle('on', noteMode);
       noteModeBtn.setAttribute('aria-pressed', noteMode ? 'true' : 'false');
     }
-    if (noteMode) markNoted();
-    else view.querySelectorAll('.noted').forEach((el) => el.classList.remove('noted'));
+    markNoted();   // highlights persist even when the pen is off
   }
   if (noteModeBtn) {
     noteModeBtn.addEventListener('click', () => {
@@ -902,10 +953,11 @@
     e.preventDefault(); e.stopPropagation();
     const text = el.textContent;
     if (normNote(text).length < 3) return;
-    if (removeNoteByText(text, noteSource.moduleId)) {
+    const src = srcFor(el);
+    if (removeNoteByText(text, src.moduleId)) {
       el.classList.remove('noted'); toast('Note removed');
     } else {
-      addNote(text, noteSource);
+      addNote(text, src);
       el.classList.add('noted'); toast('Saved to notes 📝');
     }
   }, true);
