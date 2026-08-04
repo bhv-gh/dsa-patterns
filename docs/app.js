@@ -996,6 +996,49 @@
     noteBtn.style.top = top + 'px';
   }
 
+  /* ---------- note sheet: write / read / edit an annotation ---------- */
+  const sheet = document.getElementById('noteSheet');
+  const nsQuote = document.getElementById('nsQuote');
+  const nsInput = document.getElementById('nsInput');
+  let sheetCtx = null;   // {noteId} for existing, or {text, src} for new
+
+  function closeSheet() { if (sheet) { sheet.hidden = true; sheetCtx = null; } }
+  function openSheet(ctx) {
+    if (!sheet) return;
+    sheetCtx = ctx;
+    const existing = ctx.noteId ? getNotes().find((n) => n.id === ctx.noteId) : null;
+    const quote = existing ? existing.text : normNote(ctx.text);
+    nsQuote.textContent = quote.length > 220 ? quote.slice(0, 219) + '…' : quote;
+    nsInput.value = existing && existing.comment ? existing.comment : '';
+    document.getElementById('nsDelete').hidden = !existing;
+    sheet.hidden = false;
+    setTimeout(() => nsInput.focus(), 60);
+  }
+  if (sheet) {
+    sheet.querySelector('.ns-backdrop').addEventListener('click', closeSheet);
+    document.getElementById('nsCancel').addEventListener('click', closeSheet);
+    document.getElementById('nsSave').addEventListener('click', () => {
+      if (!sheetCtx) return closeSheet();
+      let id = sheetCtx.noteId;
+      if (!id) {
+        const src = sheetCtx.src || noteSource;
+        const existing = findNoteByText(sheetCtx.text, src.moduleId);
+        if (existing) id = existing.id;
+        else { addNote(sheetCtx.text, src); const n = findNoteByText(sheetCtx.text, src.moduleId); id = n && n.id; }
+      }
+      if (id) setNoteComment(id, nsInput.value);
+      toast(nsInput.value.trim() ? 'Note saved ✍️' : 'Highlight saved 📝');
+      closeSheet();
+      const s = window.getSelection(); if (s) s.removeAllRanges();
+      if (location.hash.startsWith('#/notes')) renderNotes(); else markNoted();
+    });
+    document.getElementById('nsDelete').addEventListener('click', () => {
+      if (sheetCtx && sheetCtx.noteId) { deleteNote(sheetCtx.noteId); toast('Note deleted'); }
+      closeSheet();
+      if (location.hash.startsWith('#/notes')) renderNotes(); else markNoted();
+    });
+  }
+
   if (noteBtn) {
     document.addEventListener('selectionchange', () => {
       clearTimeout(updateNoteBtn._t);
@@ -1003,7 +1046,8 @@
     });
     window.addEventListener('scroll', hideNoteBtn, true);
     noteBtn.addEventListener('mousedown', (e) => e.preventDefault());  // keep the selection
-    noteBtn.addEventListener('click', (e) => {
+    // quick save (highlight only)
+    document.getElementById('noteQuick').addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();
       const text = pendingSel;
       if (!text) return hideNoteBtn();
@@ -1011,8 +1055,32 @@
       toast(res === 'dup' ? 'Already in notes' : 'Added to notes 📝');
       hideNoteBtn();
       const s = window.getSelection(); if (s) s.removeAllRanges();
+      markNoted();
+    });
+    // save AND write your own note
+    document.getElementById('noteWrite').addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const text = pendingSel;
+      if (!text) return hideNoteBtn();
+      const src = Object.assign({}, noteSource);
+      hideNoteBtn();
+      openSheet({ text, src });
     });
   }
+
+  // NORMAL mode: tap a highlighted line to read / edit the note you made
+  view.addEventListener('click', (e) => {
+    if (noteMode) return;                                   // pen mode has its own handler
+    const el = e.target.closest('.noted');
+    if (!el || !view.contains(el)) return;
+    if (e.target.closest('button, a, .opt')) return;
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed) return;                    // user is selecting text
+    const n = findNoteByText(el.textContent, srcFor(el).moduleId);
+    if (!n) return;
+    e.preventDefault(); e.stopPropagation();
+    openSheet({ noteId: n.id });
+  });
 
   /* ---------- version chip ---------- */
   const verChip = document.getElementById('verChip');

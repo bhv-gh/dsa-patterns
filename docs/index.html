@@ -36,7 +36,23 @@
 
   <main id="view" class="view" aria-live="polite"></main>
 
-  <button id="noteBtn" class="note-fab" hidden>➕ Note</button>
+  <div id="noteBtn" class="note-fab" hidden>
+    <button id="noteQuick" type="button">📝 Save</button>
+    <button id="noteWrite" type="button">✍️ Note</button>
+  </div>
+
+  <div id="noteSheet" class="note-sheet" hidden>
+    <div class="ns-backdrop"></div>
+    <div class="ns-panel" role="dialog" aria-label="Note">
+      <div class="ns-quote" id="nsQuote"></div>
+      <textarea id="nsInput" class="ns-input" rows="4" placeholder="Write your note…"></textarea>
+      <div class="ns-btns">
+        <button id="nsDelete" class="ns-del" type="button">Delete</button>
+        <button id="nsCancel" class="ns-cancel" type="button">Cancel</button>
+        <button id="nsSave" class="ns-save" type="button">Save</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 

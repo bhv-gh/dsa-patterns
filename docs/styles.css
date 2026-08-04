@@ -499,13 +499,55 @@ body.note-mode .noted.has-comment::after { content: ' ✍️'; }
 
 /* ---------- Notes ---------- */
 .note-fab {
-  position: fixed; z-index: 1200; border: none; cursor: pointer;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
-  border-radius: 99px; padding: 9px 16px; font-size: 13.5px; font-weight: 800;
-  box-shadow: 0 6px 20px rgba(0,0,0,.4); white-space: nowrap;
-  animation: notepop .16s ease;
+  position: fixed; z-index: 1200; display: flex; gap: 2px; padding: 3px;
+  background: var(--bg-elev-2); border: 1px solid var(--border);
+  border-radius: 99px; box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  animation: notepop .16s ease; white-space: nowrap;
 }
 .note-fab[hidden] { display: none; }
+.note-fab button {
+  border: none; cursor: pointer; font: inherit; font-size: 13px; font-weight: 800;
+  border-radius: 99px; padding: 8px 14px; color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.note-fab #noteWrite { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #1a1205; }
+.note-fab button:active { filter: brightness(1.12); }
+
+/* tapping a highlight (pen off) opens its note */
+.noted { cursor: pointer; }
+
+/* note sheet */
+.note-sheet { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: flex-end; }
+.note-sheet[hidden] { display: none; }
+.ns-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+.ns-panel {
+  position: relative; width: 100%; max-width: 640px; margin: 0 auto;
+  background: var(--bg-elev); border-top: 1px solid var(--border);
+  border-radius: 18px 18px 0 0; padding: 16px 16px calc(18px + var(--safe-bottom));
+  box-shadow: 0 -10px 40px rgba(0,0,0,.5);
+  animation: sheetup .22s ease;
+}
+@keyframes sheetup { from { transform: translateY(16px); opacity: .6; } to { transform: none; opacity: 1; } }
+.ns-quote {
+  font-size: 13.5px; line-height: 1.5; color: var(--text-dim);
+  background: color-mix(in srgb, #fbbf24 12%, transparent);
+  border-left: 3px solid #fbbf24; border-radius: 8px;
+  padding: 9px 11px; margin-bottom: 12px; overflow-wrap: anywhere;
+}
+.ns-input {
+  width: 100%; box-sizing: border-box; resize: vertical; font: inherit; font-size: 15px;
+  background: var(--bg); color: var(--text);
+  border: 1.5px solid var(--accent); border-radius: 10px; padding: 11px 12px;
+}
+.ns-btns { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.ns-btns button {
+  font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+  border-radius: 99px; padding: 10px 18px; border: 1px solid var(--border);
+}
+.ns-del { background: transparent; color: var(--bad); border-color: color-mix(in srgb, var(--bad) 50%, var(--border)); margin-right: auto; }
+.ns-del[hidden] { display: none; }
+.ns-cancel { background: var(--bg-elev-2); color: var(--text-dim); }
+.ns-save { background: var(--accent); color: #fff; border-color: var(--accent); }
 @keyframes notepop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
 .note-card {
   background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent);
