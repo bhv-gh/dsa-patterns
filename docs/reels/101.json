@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "DP tracks LIS ending here",
+    "body": "**dp[i] = length of longest increasing subsequence ending at index i**\n\nFor each position, check all previous smaller elements:\n- If `nums[i] > nums[j]`, extend that subsequence\n- `dp[i] = max(dp[i], dp[j] + 1)`\n\nAnswer = `max(dp)` across all positions."
+  },
+  {
+    "type": "concept",
+    "heading": "O(n log n) trick: patience sorting",
+    "body": "`tails[k]` = smallest tail of all length-`(k+1)` subsequences\n\n**Not the actual LIS** — just a tool to compute its length.\n\nFor each number: **binary search** where it fits, then replace or extend `tails`. Answer = `len(tails)`."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from bisect import bisect_left\n\ndef lis_length(nums):\n    tails = []\n    for num in nums:\n        pos = bisect_left(tails, num)\n        if pos == len(tails):\n            tails.append(num)\n        else:\n            tails[pos] = num\n    return len(tails)"
+  },
+  {
+    "type": "quiz",
+    "q": "What does dp[i] represent in the DP solution?",
+    "options": [
+      "The length of the longest increasing subsequence in nums[0:i]",
+      "The length of the longest increasing subsequence ending at index i",
+      "The i-th element of the longest increasing subsequence",
+      "The number of increasing subsequences ending at index i"
+    ],
+    "answer": 1,
+    "explain": "dp[i] stores the length of the longest increasing subsequence that ends specifically at index i."
+  }
+]

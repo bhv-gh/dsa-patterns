@@ -55,6 +55,31 @@
       "id": "graphs",
       "title": "Graph Algorithms",
       "blurb": "Topological sort for ordering DAGs, plus Dijkstra / Bellman-Ford for weighted shortest paths."
+    },
+    {
+      "id": "dynamic-programming",
+      "title": "Dynamic Programming",
+      "blurb": "Break a problem into overlapping subproblems, solve each once, and reuse — memoize or tabulate."
+    },
+    {
+      "id": "greedy",
+      "title": "Greedy",
+      "blurb": "Take the locally best choice at each step — fast and simple when the greedy-choice property holds."
+    },
+    {
+      "id": "trie",
+      "title": "Trie",
+      "blurb": "A prefix tree for fast prefix lookups, autocomplete, and word-set membership."
+    },
+    {
+      "id": "prefix-sum",
+      "title": "Prefix Sum",
+      "blurb": "Precompute cumulative sums so any range query answers in O(1) — plus the hashmap counting trick."
+    },
+    {
+      "id": "matrices",
+      "title": "Matrices",
+      "blurb": "In-place 2D manipulation — spiral traversal, rotation, and marker tricks for O(1) extra space."
     }
   ],
   "modules": [
@@ -903,6 +928,249 @@
       "type": "problem",
       "difficulty": "medium",
       "summary": "Use Floyd-Warshall to find all-pairs shortest paths, count neighbors within threshold, return least-connected city (highest index if tied)."
+    },
+    {
+      "id": 95,
+      "slug": "dp-fundamentals",
+      "title": "Dynamic Programming: Fundamentals",
+      "pattern": "dynamic-programming",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Learn DP core concepts: overlapping subproblems, optimal substructure, memoization (top-down) vs tabulation (bottom-up)"
+    },
+    {
+      "id": 96,
+      "slug": "solving-with-dp",
+      "title": "Solving a Question with DP",
+      "pattern": "dynamic-programming",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "A 6-step recipe for attacking DP questions: recurrence, base cases, recursion, memoization, bottom-up, and space optimization."
+    },
+    {
+      "id": 97,
+      "slug": "counting-bits",
+      "title": "Counting Bits",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Count 1-bits in binary for 0..n using DP: reuse i/2's count plus the rightmost bit"
+    },
+    {
+      "id": 98,
+      "slug": "decode-ways",
+      "title": "Decode Ways",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Count the number of ways to decode a digit string where '1'-'26' map to 'A'-'Z' using dynamic programming."
+    },
+    {
+      "id": 99,
+      "slug": "unique-paths",
+      "title": "Unique Paths",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Count unique paths from top-left to bottom-right in a grid, moving only right or down using dynamic programming."
+    },
+    {
+      "id": 100,
+      "slug": "maximal-square",
+      "title": "Maximal Square",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the area of the largest square containing only 1's in a binary matrix using dynamic programming."
+    },
+    {
+      "id": 101,
+      "slug": "longest-increasing-subsequence",
+      "title": "Longest Increasing Subsequence",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the length of the longest strictly increasing subsequence in an array using DP or binary search."
+    },
+    {
+      "id": 102,
+      "slug": "word-break",
+      "title": "Word Break",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Determine if a string can be segmented into a sequence of dictionary words using dynamic programming."
+    },
+    {
+      "id": 103,
+      "slug": "maximum-profit-job-scheduling",
+      "title": "Maximum Profit in Job Scheduling",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Schedule non-overlapping jobs to maximize profit using DP and binary search after sorting by end time."
+    },
+    {
+      "id": 104,
+      "slug": "paint-house",
+      "title": "Paint House",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Paint n houses with 3 colors (no adjacent same color) minimizing cost using DP. Track min cost per color at each house."
+    },
+    {
+      "id": 105,
+      "slug": "paint-house-ii",
+      "title": "Paint House II",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Minimize cost to paint n houses with k colors where no adjacent houses share a color using O(n×k) DP with min/second-min tracking."
+    },
+    {
+      "id": 106,
+      "slug": "minimum-window-subsequence",
+      "title": "Minimum Window Subsequence",
+      "pattern": "dynamic-programming",
+      "type": "problem",
+      "difficulty": "hard",
+      "summary": "Find the shortest substring of S that contains T as a subsequence using dynamic programming to track window start indices."
+    },
+    {
+      "id": 107,
+      "slug": "greedy-overview",
+      "title": "Greedy Algorithms: Overview",
+      "pattern": "greedy",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Make locally optimal choices at each step. Works when greedy-choice property holds; fails when early choices block global optima."
+    },
+    {
+      "id": 108,
+      "slug": "best-time-to-buy-and-sell-stock",
+      "title": "Best Time to Buy and Sell Stock",
+      "pattern": "greedy",
+      "type": "problem",
+      "difficulty": "easy",
+      "summary": "Find max profit from buying and selling stock once by tracking minimum price and best profit in one pass."
+    },
+    {
+      "id": 109,
+      "slug": "gas-station",
+      "title": "Gas Station",
+      "pattern": "greedy",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find the starting gas station index to complete a circular route, or return -1 if impossible."
+    },
+    {
+      "id": 110,
+      "slug": "jump-game",
+      "title": "Jump Game",
+      "pattern": "greedy",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Track the furthest reachable index while iterating; if you stand beyond it, you're stuck; reaching the end means success."
+    },
+    {
+      "id": 111,
+      "slug": "jump-game-ii",
+      "title": "Jump Game II",
+      "pattern": "greedy",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Find minimum jumps to reach the end using BFS-like greedy levels: track current boundary and farthest reach."
+    },
+    {
+      "id": 112,
+      "slug": "partition-labels",
+      "title": "Partition Labels",
+      "pattern": "greedy",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Split a string into max segments where each character appears in exactly one segment using greedy last-occurrence tracking."
+    },
+    {
+      "id": 113,
+      "slug": "trie-overview",
+      "title": "Trie: Overview",
+      "pattern": "trie",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "A prefix tree that stores strings efficiently by sharing common prefixes, enabling fast word and prefix searches."
+    },
+    {
+      "id": 114,
+      "slug": "implement-trie",
+      "title": "Implement Trie",
+      "pattern": "trie",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Build search, startsWith, and delete methods for a Trie using children dict and is_end flag. O(len(word)) per operation."
+    },
+    {
+      "id": 115,
+      "slug": "prefix-matching",
+      "title": "Prefix Matching",
+      "pattern": "trie",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Use a trie to find all words starting with a given prefix by navigating to the prefix node and performing DFS to collect matches."
+    },
+    {
+      "id": 116,
+      "slug": "prefix-sum-overview",
+      "title": "Prefix Sum: Overview",
+      "pattern": "prefix-sum",
+      "type": "lesson",
+      "difficulty": null,
+      "summary": "Precompute cumulative sums to answer any range-sum query in O(1) time using prefix[r+1] - prefix[l]."
+    },
+    {
+      "id": 117,
+      "slug": "count-vowels-in-substrings",
+      "title": "Count Vowels in Substrings",
+      "pattern": "prefix-sum",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Efficiently count vowels in multiple substring ranges using a prefix sum array to answer each query in O(1) time."
+    },
+    {
+      "id": 118,
+      "slug": "subarray-sum-equals-k",
+      "title": "Subarray Sum Equals K",
+      "pattern": "prefix-sum",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Count contiguous subarrays summing to k using prefix-sum frequencies in a hashmap to track how many earlier sums differ by k."
+    },
+    {
+      "id": 119,
+      "slug": "spiral-matrix",
+      "title": "Spiral Matrix",
+      "pattern": "matrices",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Traverse an m×n matrix in clockwise spiral order from outer perimeter to inner core, returning all elements in a list."
+    },
+    {
+      "id": 120,
+      "slug": "rotate-image",
+      "title": "Rotate Image",
+      "pattern": "matrices",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Rotate an n×n matrix 90° clockwise in-place by transposing, then reversing each row."
+    },
+    {
+      "id": 121,
+      "slug": "set-matrix-zeroes",
+      "title": "Set Matrix Zeroes",
+      "pattern": "matrices",
+      "type": "problem",
+      "difficulty": "medium",
+      "summary": "Modify matrix in-place: if element is 0, set its entire row and column to 0. Use first row/col as markers to achieve O(1) space."
     }
   ]
 }

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Matrix is your storage",
+    "body": "**O(1) space trick:** use the first row & column as markers instead of extra arrays.\n\n- Find zero at `[i][j]`? Mark `matrix[i][0] = 0` and `matrix[0][j] = 0`\n- **Critical:** save whether row 0 / col 0 originally had zeros BEFORE using them as markers"
+  },
+  {
+    "type": "concept",
+    "heading": "Order matters: save → mark → zero",
+    "body": "**4-step sequence:**\n1. Check if first row/col have zeros (save flags)\n2. Scan inner matrix; mark `matrix[i][0]` & `matrix[0][j]` for each zero\n3. Zero cells where marker says to\n4. Zero first row/col **last** (else you corrupt the markers)"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def setZeroes(matrix):\n    rows, cols = len(matrix), len(matrix[0])\n    \n    # Save first row/col state\n    first_row_zero = any(matrix[0][j] == 0 for j in range(cols))\n    first_col_zero = any(matrix[i][0] == 0 for i in range(rows))\n    \n    # Mark using first row/col\n    for i in range(1, rows):\n        for j in range(1, cols):\n            if matrix[i][j] == 0:\n                matrix[i][0] = matrix[0][j] = 0\n    \n    # Zero inner matrix\n    for i in range(1, rows):\n        for j in range(1, cols):\n            if matrix[i][0] == 0 or matrix[0][j] == 0:\n                matrix[i][j] = 0\n    \n    # Zero first row/col last\n    if first_row_zero:\n        matrix[0] = [0] * cols\n    if first_col_zero:\n        for i in range(rows):\n            matrix[i][0] = 0"
+  },
+  {
+    "type": "quiz",
+    "q": "Why must we save the first row/column state before using them as markers?",
+    "options": [
+      "To optimize time complexity",
+      "Because we'll overwrite them with markers and lose whether they originally had zeros",
+      "To handle edge cases with 1×1 matrices",
+      "To avoid modifying the input matrix"
+    ],
+    "answer": 1,
+    "explain": "We use first row/col as storage—without saving their original state, we lose whether they need zeroing."
+  }
+]

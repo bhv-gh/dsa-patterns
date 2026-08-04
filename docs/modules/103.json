@@ -1,0 +1,71 @@
+{
+  "id": 103,
+  "slug": "maximum-profit-job-scheduling",
+  "title": "Maximum Profit in Job Scheduling",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Schedule non-overlapping jobs to maximize profit using DP and binary search after sorting by end time.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given three arrays **starts**, **ends**, and **profits** representing the start time, end time, and profit of jobs respectively, schedule jobs to maximize total profit. You can only work on one job at a time, and once started, you must finish it before starting another. Jobs cannot overlap.\n\n**Example:**\n- starts = [1, 3, 6, 10]\n- ends = [4, 5, 10, 12]\n- profits = [20, 20, 100, 70]\n\nOptimal schedule: Job 1 (1→4, profit 20) + Job 3 (6→10, profit 100) + Job 4 (10→12, profit 70) = **190**"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Sort jobs by **end time** to enable dynamic programming. For each job, decide: **skip it** (keep previous best profit) or **take it** (add its profit to the best profit from jobs that ended before it started). Use binary search to efficiently find the latest non-overlapping job."
+    },
+    {
+      "heading": "Approach",
+      "body": "1. Sort jobs by end time into a list of (start, end, profit) tuples\n2. Initialize dp array where dp[i] = max profit using first i jobs\n3. For each job i:\n   - Use binary search (bisect_right) to find count of jobs ending ≤ current job's start\n   - dp[i] = max(skip: dp[i-1], take: dp[num_jobs] + profit)\n4. Return dp[-1] as the maximum profit"
+    }
+  ],
+  "approach": [
+    "Sort jobs by end time into (start, end, profit) tuples",
+    "Initialize dp array of size n+1 with all zeros, where dp[i] = max profit from first i jobs",
+    "For each job, use bisect_right to find the number of jobs that end before current job starts",
+    "Decide to skip (dp[i-1]) or take current job (dp[num_jobs] + profit)",
+    "Store the maximum of the two choices in dp[i]",
+    "Return dp[-1] as the final answer"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "code": "from bisect import bisect_right\n\ndef job_scheduling(starts, ends, profits):\n    \"\"\"\n    Find maximum profit by scheduling non-overlapping jobs.\n    Sort by end time and use DP with binary search.\n    \"\"\"\n    jobs = sorted(zip(starts, ends, profits), key=lambda x: x[1])\n    dp = [0] * (len(jobs) + 1)\n    \n    for i in range(1, len(jobs) + 1):\n        start, end, profit = jobs[i - 1]\n        # Find number of jobs ending before current job starts\n        num_jobs = bisect_right([job[1] for job in jobs], start)\n        # Either skip current job or take it\n        dp[i] = max(dp[i - 1], dp[num_jobs] + profit)\n    \n    return dp[-1]",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n log n)",
+        "O(2^n)",
+        "O(n!)",
+        "O(n^2)"
+      ],
+      "answer": 0,
+      "explain": "Sorting takes O(n log n), and the DP loop runs n times with each bisect_right call taking O(log n), giving O(n log n) total."
+    },
+    {
+      "q": "Why do we sort jobs by end time instead of start time?",
+      "options": [
+        "It makes the code simpler",
+        "It allows us to build DP solution from jobs that have already ended",
+        "End times are always smaller than start times",
+        "Binary search only works on end times"
+      ],
+      "answer": 1,
+      "explain": "Sorting by end time ensures that when considering job i, all previous jobs (0 to i-1) have already ended, allowing us to find compatible jobs efficiently."
+    },
+    {
+      "q": "What does dp[i] represent in this solution?",
+      "options": [
+        "The profit of the i-th job",
+        "The number of jobs scheduled up to index i",
+        "The maximum profit obtainable from the first i jobs",
+        "The end time of the i-th job"
+      ],
+      "answer": 2,
+      "explain": "dp[i] stores the maximum profit that can be earned by scheduling any subset of the first i jobs (sorted by end time)."
+    }
+  ]
+}

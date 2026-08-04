@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Think in levels like BFS",
+    "body": "Group positions by **how many jumps** it takes to reach them.\n\n- **currentEnd**: boundary of positions reachable with current jumps\n- **farthest**: farthest position reachable in this level\n\nWhen `i` reaches `currentEnd`, you've finished the level—increment jumps and move boundary to `farthest`."
+  },
+  {
+    "type": "concept",
+    "heading": "BFS without a queue",
+    "body": "This is **linear-scan BFS**. No queue needed—just two boundaries:\n\n1. Scan positions in current level\n2. Track farthest reach from any position in that level\n3. When level ends, jump to next level\n\nStop at `len(nums) - 1` to avoid counting an extra jump when already at the goal."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def jump(nums):\n    jumps = 0\n    current_end = 0\n    farthest = 0\n    \n    for i in range(len(nums) - 1):\n        farthest = max(farthest, i + nums[i])\n        \n        if i == current_end:\n            jumps += 1\n            current_end = farthest\n    \n    return jumps"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we iterate only up to len(nums) - 1 instead of len(nums)?",
+    "options": [
+      "To optimize for performance",
+      "To avoid counting an extra jump when already at the goal",
+      "Because the last element cannot be jumped from",
+      "To prevent array index out of bounds errors"
+    ],
+    "answer": 1,
+    "explain": "If we're already at the goal (last index), we don't need another jump. Stopping at len(nums) - 1 prevents counting an unnecessary jump when currentEnd lands exactly on the last element."
+  }
+]

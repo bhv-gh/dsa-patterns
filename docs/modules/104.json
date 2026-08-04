@@ -1,0 +1,75 @@
+{
+  "id": 104,
+  "slug": "paint-house",
+  "title": "Paint House",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Paint n houses with 3 colors (no adjacent same color) minimizing cost using DP. Track min cost per color at each house.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Paint n houses in a row with one of three colors (Red, Blue, Green). Each house has different costs for each color. **No two neighboring houses can have the same color.** Return the minimum cost to paint all houses.\n\n**Example:**\n- Input: `costs = [[8, 4, 15], [10, 7, 3], [6, 9, 12]]`\n- Output: `13`\n- Explanation: House 0 → Blue (4), House 1 → Green (3), House 2 → Red (6) = 13"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "This is a classic DP problem with **overlapping subproblems**. A brute force approach tries all color combinations (O(2^n)), but many states like `minCost(house=2, prevColor=Green)` are computed multiple times.\n\nThe key insight: **only n × 3 = O(n) unique states exist** (house index, previous color). By caching results, we reduce exponential time to linear."
+    },
+    {
+      "heading": "State Definition",
+      "body": "`dp[i][c]` = minimum cost to paint houses 0 to i, where house i is painted color c.\n\n- `dp[i][0]` = house i painted Red\n- `dp[i][1]` = house i painted Blue\n- `dp[i][2]` = house i painted Green\n\n**Recurrence:** To paint house i with color c, house i-1 must be one of the other two colors:\n- `dp[i][0] = costs[i][0] + min(dp[i-1][1], dp[i-1][2])`\n- `dp[i][1] = costs[i][1] + min(dp[i-1][0], dp[i-1][2])`\n- `dp[i][2] = costs[i][2] + min(dp[i-1][0], dp[i-1][1])`\n\n**Base case:** `dp[0][c] = costs[0][c]` (no constraint for first house)"
+    },
+    {
+      "heading": "Space Optimization",
+      "body": "Since `dp[i]` only depends on `dp[i-1]`, we can use **rolling variables** instead of a 2D table. Track just 3 values (prev_red, prev_blue, prev_green) and update them as we iterate through houses.\n\nThis reduces space from O(n) to **O(1)**."
+    }
+  ],
+  "approach": [
+    "Initialize three variables with costs of painting the first house: `prev_red = costs[0][0]`, `prev_blue = costs[0][1]`, `prev_green = costs[0][2]`",
+    "For each house i from 1 to n-1, calculate current costs based on previous house's minimum costs from other colors",
+    "Compute `curr_red = costs[i][0] + min(prev_blue, prev_green)` (if painting red, previous must be blue or green)",
+    "Compute `curr_blue = costs[i][1] + min(prev_red, prev_green)` and `curr_green = costs[i][2] + min(prev_red, prev_blue)` similarly",
+    "Update rolling variables: `prev_red = curr_red`, `prev_blue = curr_blue`, `prev_green = curr_green`",
+    "Return minimum of the three final costs: `min(prev_red, prev_blue, prev_green)`"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def min_cost(costs):\n    \"\"\"Return minimum cost to paint n houses with no adjacent same color.\"\"\"\n    if not costs:\n        return 0\n    \n    prev_red = costs[0][0]\n    prev_blue = costs[0][1]\n    prev_green = costs[0][2]\n    \n    for i in range(1, len(costs)):\n        curr_red = costs[i][0] + min(prev_blue, prev_green)\n        curr_blue = costs[i][1] + min(prev_red, prev_green)\n        curr_green = costs[i][2] + min(prev_red, prev_blue)\n        \n        prev_red = curr_red\n        prev_blue = curr_blue\n        prev_green = curr_green\n    \n    return min(prev_red, prev_blue, prev_green)",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the space-optimized solution?",
+      "options": [
+        "O(n log n)",
+        "O(n)",
+        "O(n * 3)",
+        "O(2^n)"
+      ],
+      "answer": 1,
+      "explain": "We iterate through n houses once, doing constant work (3 min operations) per house, giving O(n) time."
+    },
+    {
+      "q": "How many unique states exist in this DP problem?",
+      "options": [
+        "O(2^n) - all possible color combinations",
+        "O(n * 3) - house index × 3 colors",
+        "O(n^2) - all pairs of houses",
+        "O(3^n) - 3 choices per house"
+      ],
+      "answer": 1,
+      "explain": "Each state is defined by (house index, color used for that house). With n houses and 3 colors, we have n × 3 = O(n) unique states."
+    },
+    {
+      "q": "Why can we reduce space from O(n) to O(1)?",
+      "options": [
+        "We only need to store the final answer",
+        "dp[i] only depends on dp[i-1], so we can use rolling variables",
+        "The costs array can be modified in-place",
+        "We can use recursion instead of iteration"
+      ],
+      "answer": 1,
+      "explain": "Since computing dp[i] only requires values from dp[i-1] (the previous house), we don't need to store the entire table. Three rolling variables (one per color) suffice."
+    }
+  ]
+}

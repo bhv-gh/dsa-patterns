@@ -270,8 +270,8 @@ Tell the user the live URL and which modules were added.
 
 ## Ledger — PDFs already converted to modules
 
-**Max module id:** 94
-**Last updated:** 2026-07-30
+**Max module id:** 121
+**Last updated:** 2026-08-04
 
 | PDF        | id | slug                                  | pattern        | type / difficulty |
 |------------|----|---------------------------------------|----------------|-------------------|
@@ -369,3 +369,30 @@ Tell the user the live URL and which modules were added.
 | 92.pdf     | 92 | cheapest-flights-k-stops              | graphs               | problem / medium  |
 | 93.pdf     | 93 | path-with-minimum-effort              | graphs               | problem / medium  |
 | 94.pdf     | 94 | find-city-fewest-reachable            | graphs               | problem / medium  |
+| 95.pdf    | 95 | dp-fundamentals                       | dynamic-programming  | lesson            |
+| 96.pdf    | 96 | solving-with-dp                       | dynamic-programming  | lesson            |
+| 97.pdf    | 97 | counting-bits                         | dynamic-programming  | problem / easy    |
+| 98.pdf    | 98 | decode-ways                           | dynamic-programming  | problem / medium  |
+| 99.pdf    | 99 | unique-paths                          | dynamic-programming  | problem / medium  |
+| 100.pdf    | 100 | maximal-square                        | dynamic-programming  | problem / medium  |
+| 101.pdf    | 101 | longest-increasing-subsequence        | dynamic-programming  | problem / medium  |
+| 102.pdf    | 102 | word-break                            | dynamic-programming  | problem / medium  |
+| 103.pdf    | 103 | maximum-profit-job-scheduling         | dynamic-programming  | problem / medium  |
+| 104.pdf    | 104 | paint-house                           | dynamic-programming  | problem / medium  |
+| 105.pdf    | 105 | paint-house-ii                        | dynamic-programming  | problem / hard    |
+| 106.pdf    | 106 | minimum-window-subsequence            | dynamic-programming  | problem / hard    |
+| 107.pdf    | 107 | greedy-overview                       | greedy               | lesson            |
+| 108.pdf    | 108 | best-time-to-buy-and-sell-stock       | greedy               | problem / easy    |
+| 109.pdf    | 109 | gas-station                           | greedy               | problem / medium  |
+| 110.pdf    | 110 | jump-game                             | greedy               | problem / medium  |
+| 111.pdf    | 111 | jump-game-ii                          | greedy               | problem / medium  |
+| 112.pdf    | 112 | partition-labels                      | greedy               | problem / medium  |
+| 113.pdf    | 113 | trie-overview                         | trie                 | lesson            |
+| 114.pdf    | 114 | implement-trie                        | trie                 | problem / medium  |
+| 115.pdf    | 115 | prefix-matching                       | trie                 | problem / medium  |
+| 116.pdf    | 116 | prefix-sum-overview                   | prefix-sum           | lesson            |
+| 117.pdf    | 117 | count-vowels-in-substrings            | prefix-sum           | problem / medium  |
+| 118.pdf    | 118 | subarray-sum-equals-k                 | prefix-sum           | problem / medium  |
+| 119.pdf    | 119 | spiral-matrix                         | matrices             | problem / medium  |
+| 120.pdf    | 120 | rotate-image                          | matrices             | problem / medium  |
+| 121.pdf    | 121 | set-matrix-zeroes                     | matrices             | problem / medium  |

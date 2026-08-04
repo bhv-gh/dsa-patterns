@@ -1,0 +1,71 @@
+{
+  "id": 106,
+  "slug": "minimum-window-subsequence",
+  "title": "Minimum Window Subsequence",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Find the shortest substring of S that contains T as a subsequence using dynamic programming to track window start indices.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a source string `s1` and a pattern string `s2`, find the shortest contiguous substring of `s1` that contains `s2` as a **subsequence** (characters in order, gaps allowed).\n\nReturn the shortest such substring. If multiple windows of equal length exist, return the leftmost one. If no valid window exists, return an empty string.\n\n**Example:**\n- `s1 = \"hellointerview\"`, `s2 = \"her\"` → `\"hellointer\"`\n- `s1 = \"abcdebdde\"`, `s2 = \"bde\"` → `\"bcde\"`\n- `s1 = \"codingisfun\"`, `s2 = \"xyz\"` → `\"\"`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Instead of checking every substring (O(m³)), we use **1D DP** to remember where partial matches started.\n\nDefine `dp[j]` = starting index in `s1` from which we can form `s2[0..j]` ending at the current position.\n\nWhen `s1[i] == s2[j]`:\n- If `j == 0`: start a new window at `i` → `dp[0] = i`\n- If `j > 0`: inherit the start from the previous character → `dp[j] = dp[j-1]`\n\nWhen `dp[n-1]` becomes valid (not -1), we've found a complete subsequence from `dp[n-1]` to `i`.\n\nWe iterate `j` **backwards** (from `n-1` down to `0`) to avoid overwriting `dp[j-1]` before using it."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Initialize:**\n- `dp = [-1] * n` (track start index for each prefix of `s2`)\n- `min_len = infinity`, `result = \"\"`\n\n**For each character `s1[i]`:**\n1. Iterate `j` from `n-1` down to `0`\n2. If `s1[i] == s2[j]`:\n   - If `j == 0`: set `dp[0] = i` (new window starts here)\n   - Else: set `dp[j] = dp[j-1]` (inherit previous start)\n3. If `dp[n-1] != -1`: we have a complete match\n   - Window length = `i - dp[n-1] + 1`\n   - Update `result` if this is the shortest so far\n\n**Return** `result`"
+    }
+  ],
+  "approach": [
+    "Initialize dp array with -1 values (length n) to track start indices for each prefix of s2",
+    "For each character in s1, iterate through s2 in reverse order (n-1 down to 0)",
+    "When s1[i] matches s2[j]: if j==0 set dp[0]=i (new window), else set dp[j]=dp[j-1] (inherit start)",
+    "After each character, check if dp[n-1] is valid (complete match found)",
+    "Calculate window length as i - dp[n-1] + 1 and update result if shorter",
+    "Return the shortest window found (empty string if none)"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(n)"
+  },
+  "code": "def min_window_subsequence(s1, s2):\n    \"\"\"Find shortest substring of s1 containing s2 as subsequence.\"\"\"\n    m, n = len(s1), len(s2)\n    if n == 0:\n        return \"\"\n    \n    dp = [-1] * n\n    result = \"\"\n    min_len = float('inf')\n    \n    for i in range(m):\n        # Iterate backwards to avoid overwriting dp[j-1] before using it\n        for j in range(n - 1, -1, -1):\n            if s1[i] == s2[j]:\n                if j == 0:\n                    dp[j] = i  # Start new window\n                else:\n                    dp[j] = dp[j - 1]  # Inherit previous start\n        \n        # Check if we have a complete match\n        if dp[n - 1] != -1:\n            start = dp[n - 1]\n            length = i - start + 1\n            if length < min_len:\n                min_len = length\n                result = s1[start:i + 1]\n    \n    return result",
+  "quiz": [
+    {
+      "q": "Why do we iterate through s2 in reverse order (j from n-1 to 0) when updating the dp array?",
+      "options": [
+        "To optimize cache performance",
+        "To avoid overwriting dp[j-1] before using it for dp[j]",
+        "To match the subsequence from right to left",
+        "To ensure we find the leftmost window first"
+      ],
+      "answer": 1,
+      "explain": "Since dp[j] depends on dp[j-1], iterating forwards would overwrite dp[j-1] before we use it to update dp[j]. Reverse iteration preserves the previous values we need."
+    },
+    {
+      "q": "What does dp[j] represent in this algorithm?",
+      "options": [
+        "The number of characters matched so far",
+        "The ending index of the window matching s2[0..j]",
+        "The starting index in s1 from which we can form s2[0..j] ending at current position",
+        "Whether s2[j] has been found in s1"
+      ],
+      "answer": 2,
+      "explain": "dp[j] stores the starting index in s1 where a window begins that matches the first j+1 characters of s2, ending at the current position in s1."
+    },
+    {
+      "q": "Given s1='abcdebdde' and s2='bde', what is the time complexity?",
+      "options": [
+        "O(9) constant time",
+        "O(9 * 3) = O(27) which is O(m * n)",
+        "O(9³) = O(729) cubic time",
+        "O(2⁹) exponential time"
+      ],
+      "answer": 1,
+      "explain": "We scan s1 once (m=9 iterations) and for each character check all of s2 (n=3 iterations), giving O(m * n) = O(27) time complexity."
+    }
+  ]
+}

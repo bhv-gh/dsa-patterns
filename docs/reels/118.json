@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Prefix sum hashmap unlocks it",
+    "body": "For every position, ask: **how many earlier prefix sums differ by k?** Each one represents a subarray summing to k.\n\n- Running sum so far: `sum_`\n- Look up: `prefix_counts[sum_ - k]`\n- That count = subarrays ending here that hit k"
+  },
+  {
+    "type": "concept",
+    "heading": "Why not sliding window?",
+    "body": "**Negative numbers break it.** Sliding window needs monotonic sum growth to know when to expand/shrink. Here, the sum can *decrease*, so prefix-sum hashmap is the move."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def subarraySum(nums, k):\n    count = 0\n    sum_ = 0\n    prefix_counts = {0: 1}  # empty prefix\n    \n    for num in nums:\n        sum_ += num\n        count += prefix_counts.get(sum_ - k, 0)\n        prefix_counts[sum_] = prefix_counts.get(sum_, 0) + 1\n    \n    return count"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we initialize `prefix_counts` with `{0: 1}` instead of an empty dictionary?",
+    "options": [
+      "To handle subarrays that start at index 0 and sum to k",
+      "To avoid division by zero errors",
+      "To optimize memory usage",
+      "To ensure the hashmap is never empty"
+    ],
+    "answer": 0,
+    "explain": "The entry `{0: 1}` represents an empty prefix. When `sum_ = k`, we need `sum_ - k = 0` in the map to count this subarray correctly."
+  }
+]

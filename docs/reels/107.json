@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Greedy = Best Local Choice",
+    "body": "Make the **locally optimal choice** at each step, never backtrack.\n\nWorks when early choices don't block future wins.\n\nExample: Sort greedy kids & cookies, match smallest-to-smallest → saves big cookies for big greeds."
+  },
+  {
+    "type": "concept",
+    "heading": "When Greedy Fails",
+    "body": "**Longest Increasing Subsequence** in `[10, 13, 2, 5, 3, 7, 101, 18]`:\n\nGreedy picks `[10, 13, 101]` (len 3).\n\nOptimal is `[2, 3, 7, 101]` (len 4).\n\nChoosing 10 early **blocks** the better path → use **DP** instead."
+  },
+  {
+    "type": "code",
+    "label": "Assign Cookies · Python",
+    "code": "def find_content_children(greeds, cookies):\n    greeds.sort()\n    cookies.sort()\n    count = 0\n    i, j = 0, 0\n    \n    while i < len(greeds) and j < len(cookies):\n        if cookies[j] >= greeds[i]:\n            count += 1\n            i += 1\n        j += 1\n    \n    return count"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the greedy-choice property?",
+    "options": [
+      "The algorithm runs in O(n log n) time by sorting the input first",
+      "Making the locally optimal choice at each step leads to a globally optimal solution",
+      "The problem can be solved by breaking it into overlapping subproblems",
+      "The algorithm never uses extra space beyond the input arrays"
+    ],
+    "answer": 1,
+    "explain": "The greedy-choice property means that a locally optimal (greedy) choice at each step leads to a globally optimal solution."
+  }
+]

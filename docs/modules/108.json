@@ -1,0 +1,71 @@
+{
+  "id": 108,
+  "slug": "best-time-to-buy-and-sell-stock",
+  "title": "Best Time to Buy and Sell Stock",
+  "pattern": "greedy",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Find max profit from buying and selling stock once by tracking minimum price and best profit in one pass.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array `prices` where `prices[i]` is the stock price on day `i`, find the maximum profit from one buy-sell transaction. The sell must occur after the buy. Return `0` if no profit is possible.\n\n**Example 1:**\n- Input: `[3,4,6,2,5,8]`\n- Output: `6`\n- Explanation: Buy on day 4 (price = 2) and sell on day 6 (price = 8), profit = 8 - 2 = 6.\n\n**Example 2:**\n- Input: `[9,7,5,3,1]`\n- Output: `0`\n- Explanation: Prices descending, no profit possible."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a **greedy approach**: at each day, calculate the profit if we sold today by subtracting the minimum price seen so far from the current price. Track the maximum of these profits.\n\nWe don't need to track which day we bought or sold—just the minimum price encountered and the best profit achievable."
+    },
+    {
+      "heading": "Approach",
+      "body": "- Initialize `min_price` to the first price and `max_profit` to 0.\n- Iterate through each price in the array.\n- Update `min_price` to be the minimum of the current `min_price` and the current price.\n- Calculate the potential profit as `price - min_price`.\n- Update `max_profit` to be the maximum of the current `max_profit` and the potential profit.\n- Return `max_profit` after the loop."
+    }
+  ],
+  "approach": [
+    "Initialize `min_price` to the first element and `max_profit` to 0",
+    "Iterate through each price in the array",
+    "Update `min_price` to the smaller of current `min_price` and current price",
+    "Calculate potential profit as `price - min_price`",
+    "Update `max_profit` to the larger of current `max_profit` and potential profit",
+    "Return `max_profit`"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def maxProfit(prices):\n    \"\"\"Return max profit from one buy-sell stock transaction.\"\"\"\n    if not prices:\n        return 0\n    \n    min_price = prices[0]\n    max_profit = 0\n    \n    for price in prices:\n        min_price = min(min_price, price)\n        max_profit = max(max_profit, price - min_price)\n    \n    return max_profit",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(n^2)",
+        "O(n log n)",
+        "O(n)",
+        "O(1)"
+      ],
+      "answer": 2,
+      "explain": "We iterate through the prices array once, performing constant-time operations at each step, resulting in O(n) time complexity."
+    },
+    {
+      "q": "Why do we update `min_price` before calculating profit at each step?",
+      "options": [
+        "To ensure we always buy at the lowest possible price",
+        "To ensure we consider the current price as a potential minimum for future sales",
+        "To avoid division by zero errors",
+        "To maintain sorted order of prices"
+      ],
+      "answer": 1,
+      "explain": "Updating `min_price` first ensures that when we calculate `price - min_price`, we're comparing against the lowest price seen up to and including the current day, allowing us to find the best profit if we sell today."
+    },
+    {
+      "q": "What should the function return if all prices are decreasing?",
+      "options": [
+        "The first price",
+        "The last price",
+        "0",
+        "-1"
+      ],
+      "answer": 2,
+      "explain": "If prices only decrease, no profitable transaction is possible (we can't sell for more than we bought). The problem states we should return 0 when no profit can be made."
+    }
+  ]
+}

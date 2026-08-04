@@ -1,0 +1,24 @@
+[
+  {
+    "type": "concept",
+    "heading": "Track the furthest you can reach",
+    "body": "**Jump Game** asks: can you hop from index 0 to the end?\n\n**Greedy insight:** you don't need to try every path. Just track `max_reach` — the furthest index you can land on.\n\n- If your current spot `i` is beyond `max_reach`, you're stuck.\n- Otherwise, update: `max_reach = max(max_reach, i + nums[i])`\n\nIf you finish the loop, you win. **O(n) time, O(1) space.**"
+  },
+  {
+    "type": "concept",
+    "heading": "When you're stuck vs. when you're safe",
+    "body": "**Stuck:** `i > max_reach` means you're standing at an index you can't actually reach — impossible.\n\n**Safe:** as long as `i <= max_reach`, you can be there. Keep scanning and updating `max_reach`.\n\nExample: `[3,2,1,0,4]` gets stuck at index 3 because `max_reach = 3` and `nums[3] = 0` — can't jump to 4."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def canJump(nums):\n    max_reach = 0\n    for i in range(len(nums)):\n        if i > max_reach:\n            return False\n        max_reach = max(max_reach, i + nums[i])\n    return True"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the greedy solution?",
+    "options": ["O(1)", "O(n)", "O(log n)", "O(2^n)"],
+    "answer": 1,
+    "explain": "We iterate through the array once, performing constant-time operations at each step, resulting in O(n) time complexity."
+  }
+]

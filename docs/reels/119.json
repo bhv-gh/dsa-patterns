@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Spiral inward: peel the layers",
+    "body": "Process a matrix in clockwise spiral order by peeling layers like an onion. Each layer = 4 steps:\n\n- **Top row**: left → right\n- **Right column**: top → bottom\n- **Bottom row**: right → left\n- **Left column**: bottom → top\n\nRepeat until the matrix is empty."
+  },
+  {
+    "type": "concept",
+    "heading": "Deque trick: pop from all sides",
+    "body": "Use `deque(deque(row) for row in matrix)` to enable efficient popping from **both ends**.\n\n- `popleft()` grabs the top/left\n- `pop()` grabs the bottom/right\n\nThis makes spiraling inward O(1) per element instead of O(n) shifts."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from collections import deque\n\ndef spiral_order(matrix):\n    matrix = deque(deque(row) for row in matrix)\n    result = []\n    \n    while matrix:\n        result.extend(matrix.popleft())  # top row\n        \n        if matrix and matrix[0]:\n            for row in matrix:\n                result.append(row.pop())  # right column\n        \n        if matrix:\n            result.extend(reversed(matrix.pop()))  # bottom row\n        \n        if matrix and matrix[0]:\n            for row in reversed(matrix):\n                result.append(row.popleft())  # left column\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the spiral matrix solution?",
+    "options": [
+      "O(m*n)",
+      "O(m+n)",
+      "O(n log n)",
+      "O(log n)"
+    ],
+    "answer": 0,
+    "explain": "We visit every element in the m×n matrix exactly once, so the time complexity is O(m*n)."
+  }
+]

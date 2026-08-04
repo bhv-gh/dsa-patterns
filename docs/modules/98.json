@@ -1,0 +1,71 @@
+{
+  "id": 98,
+  "slug": "decode-ways",
+  "title": "Decode Ways",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Count the number of ways to decode a digit string where '1'-'26' map to 'A'-'Z' using dynamic programming.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string `s` containing only digits, return the number of ways to decode it using the mapping:\n\n'1' -> \"A\"\n'2' -> \"B\"\n...\n'26' -> \"Z\"\n\nFor example, \"14\" can be decoded as \"AD\" (1, 4) or \"N\" (14).\n\n**Example:**\nInput: s = \"101\"\nOutput: 1\nExplanation: The only way is \"JA\" (10, 1). \"01\" cannot be decoded as \"A\" because \"1\" and \"01\" are different."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use dynamic programming where `dp[i]` represents the number of ways to decode the first `i` characters. At each position, we can:\n- Decode the current digit alone (if it's not 0) -> add `dp[i-1]` ways\n- Decode the current and previous digit together (if they form 10-26) -> add `dp[i-2]` ways\n\nThe key is handling zeros correctly: a 0 can only be decoded as part of 10 or 20, never alone."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Bottom-up dynamic programming:**\n\n1. Handle edge cases: if string is empty or starts with '0', return 0\n2. Create a DP array of length `n+1` where `dp[i]` = ways to decode first `i` characters\n3. Initialize: `dp[0] = 1` (empty string), `dp[1] = 1` (first character)\n4. For each position `i` from 2 to n:\n   - If the digit at `s[i-1]` is not 0, add `dp[i-1]` to `dp[i]`\n   - If the two-digit number `s[i-2:i]` is between 10 and 26, add `dp[i-2]` to `dp[i]`\n5. Return `dp[n]`\n\n**Space optimization:** Use two variables instead of an array to achieve O(1) space, since we only need the previous two values."
+    }
+  ],
+  "approach": [
+    "Check if string is empty or starts with '0'; return 0 if so",
+    "Create DP array of length n+1, initialize dp[0]=1 and dp[1]=1",
+    "Iterate from position 2 to n",
+    "If current digit is not 0, add dp[i-1] to dp[i] (single-digit decode)",
+    "If previous two digits form 10-26, add dp[i-2] to dp[i] (two-digit decode)",
+    "Return dp[n] as the total number of decodings"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n) or O(1) with rolling variables"
+  },
+  "code": "def num_decodings(s):\n    \"\"\"Count the number of ways to decode a digit string where 1-26 map to A-Z.\"\"\"\n    if not s or s[0] == '0':\n        return 0\n    \n    n = len(s)\n    dp = [0] * (n + 1)\n    dp[0], dp[1] = 1, 1\n    \n    for i in range(2, n + 1):\n        # Check single digit\n        digit = int(s[i - 1])\n        if digit != 0:\n            dp[i] += dp[i - 1]\n        \n        # Check two digits\n        two_digit = int(s[i - 2:i])\n        if 10 <= two_digit <= 26:\n            dp[i] += dp[i - 2]\n    \n    return dp[n]",
+  "quiz": [
+    {
+      "q": "What happens if the string contains a '0' that is not part of '10' or '20'?",
+      "options": [
+        "It can be decoded as 'A'",
+        "The number of decodings becomes 0",
+        "It is skipped and doesn't affect the count",
+        "It throws an error"
+      ],
+      "answer": 1,
+      "explain": "A '0' can only be decoded as part of '10' or '20'. If it appears alone or after '3'-'9', there are 0 ways to decode the string."
+    },
+    {
+      "q": "Why do we initialize dp[0] = 1?",
+      "options": [
+        "It represents the number of ways to decode the first character",
+        "It's a base case representing one way to decode an empty string",
+        "It handles the case when the string starts with '0'",
+        "It's arbitrary and could be any value"
+      ],
+      "answer": 1,
+      "explain": "dp[0] = 1 is a base case that represents one way to decode an empty string. This is needed for the recurrence relation when we decode two digits starting from position 2."
+    },
+    {
+      "q": "How can we optimize the space complexity to O(1)?",
+      "options": [
+        "Use a hash map instead of an array",
+        "Process the string in reverse order",
+        "Use only two variables to track dp[i-1] and dp[i-2]",
+        "Use recursion with memoization"
+      ],
+      "answer": 2,
+      "explain": "Since we only need the previous two DP values at any point, we can use two rolling variables (prev1, prev2) instead of the entire array, reducing space to O(1)."
+    }
+  ]
+}

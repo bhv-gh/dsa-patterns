@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "The weakest neighbor is the bottleneck",
+    "body": "For each cell with a 1, ask: **what's the largest all-ones square ending here?**\n\nTo form a square of side `k`, three neighbors must support squares of at least `k-1`:\n- **above** (enough 1's stretching up)\n- **left** (enough 1's stretching left)\n- **diagonal** (enough 1's filling the interior)\n\nThe **smallest** of the three limits how far you can extend."
+  },
+  {
+    "type": "concept",
+    "heading": "DP state: square size at each corner",
+    "body": "`dp[i][j]` = side length of largest all-ones square with bottom-right at `(i, j)`\n\n**Recurrence:**\n```\nif matrix[i][j] == 1:\n    dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\nelse:\n    dp[i][j] = 0\n```\n\nAnswer: track max side seen, return `max_side²`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def maximal_square(matrix):\n    if not matrix:\n        return 0\n    r, c = len(matrix), len(matrix[0])\n    dp = [[0] * (c + 1) for _ in range(r + 1)]\n    max_side = 0\n    \n    for i in range(1, r + 1):\n        for j in range(1, c + 1):\n            if matrix[i - 1][j - 1] == 1:\n                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\n                max_side = max(max_side, dp[i][j])\n    \n    return max_side * max_side"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we take the minimum of the three neighbors (top, left, diagonal) instead of the maximum?",
+    "options": [
+      "The maximum would give us the perimeter instead of the area",
+      "The weakest neighbor is the bottleneck—it limits how large the square can extend",
+      "Taking the minimum ensures we don't count the same square twice",
+      "The minimum guarantees we find the smallest possible square"
+    ],
+    "answer": 1,
+    "explain": "The smallest of the three neighbors determines the max square size at the current cell—if any direction can't support a large square, the whole square collapses to that bottleneck + 1."
+  }
+]

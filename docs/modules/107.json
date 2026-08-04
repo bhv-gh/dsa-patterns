@@ -1,0 +1,63 @@
+{
+  "id": 107,
+  "slug": "greedy-overview",
+  "title": "Greedy Algorithms: Overview",
+  "pattern": "greedy",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Make locally optimal choices at each step. Works when greedy-choice property holds; fails when early choices block global optima.",
+  "sections": [
+    {
+      "heading": "What is a Greedy Algorithm?",
+      "body": "A greedy algorithm makes the **locally optimal choice** at each step, hoping to find a global optimum. Key properties:\n\n- **Greedy Choice Property**: The best local choice leads to a globally optimal solution.\n- **Optimal Substructure**: The optimal solution to the problem can be constructed from optimal solutions to its subproblems.\n- **No Backtracking**: Once a choice is made, we never revisit or undo it."
+    },
+    {
+      "heading": "Classic Example: Assign Cookies",
+      "body": "**Problem**: Given `greeds[i]` (minimum cookie size to satisfy child i) and `cookies[j]` (cookie sizes), maximize the number of satisfied children. Each child gets at most one cookie.\n\n**Greedy Strategy**: Sort both arrays. Give each child the **smallest cookie that satisfies them**, using two pointers to scan both arrays. This saves larger cookies for greedier children.\n\n**Why it works**: The locally optimal choice (smallest satisfying cookie) doesn't block future optimal choices. Once we satisfy a child, we can remove them from consideration."
+    },
+    {
+      "heading": "When Greedy Fails",
+      "body": "**Problem**: Longest Increasing Subsequence (LIS) in `[10, 13, 2, 5, 3, 7, 101, 18]`.\n\n**Greedy attempt**: Start with the first element (10), then keep adding the next element if it's larger: `[10, 13, 101]` (length 3).\n\n**Why it fails**: Choosing 10 early blocks the optimal subsequence `[2, 3, 7, 101]` (length 4). The greedy choice has **future consequences** we can't foresee.\n\n**Solution**: Use **dynamic programming** to consider all possible subsequences and track the longest one ending at each position."
+    },
+    {
+      "heading": "Greedy vs. Dynamic Programming",
+      "body": "**Use Greedy** when:\n- The greedy-choice property holds (local optimum → global optimum).\n- Early choices don't limit future optimal choices.\n- You can prove correctness or find no counterexample.\n\n**Use DP** when:\n- Greedy fails: you can find a counterexample where the greedy choice blocks the optimal solution.\n- You need to **consider multiple choices** at each step.\n- Overlapping subproblems exist and memoization helps.\n\n**Sanity check**: Try to construct a small counterexample. If you find one, greedy won't work."
+    }
+  ],
+  "approach": [
+    "Sort the input if ordering helps identify the greedy choice",
+    "Make the locally optimal choice at each step (e.g., smallest, largest, earliest deadline)",
+    "Never revisit or undo a choice (no backtracking)",
+    "Verify the greedy-choice property: does the local optimum lead to the global optimum?",
+    "If you find a counterexample where greedy fails, consider dynamic programming instead"
+  ],
+  "complexity": {
+    "time": "O(n log n + m log m)",
+    "space": "O(1)"
+  },
+  "code": "def find_content_children(greeds, cookies):\n    \"\"\"Maximize the number of satisfied children by assigning cookies greedily.\"\"\"\n    greeds.sort()\n    cookies.sort()\n    count = 0\n    i, j = 0, 0\n    \n    while i < len(greeds) and j < len(cookies):\n        # Current cookie can satisfy current child\n        if cookies[j] >= greeds[i]:\n            count += 1\n            i += 1\n        j += 1\n    \n    return count",
+  "quiz": [
+    {
+      "q": "What is the greedy-choice property?",
+      "options": [
+        "The algorithm runs in O(n log n) time by sorting the input first",
+        "Making the locally optimal choice at each step leads to a globally optimal solution",
+        "The problem can be solved by breaking it into overlapping subproblems",
+        "The algorithm never uses extra space beyond the input arrays"
+      ],
+      "answer": 1,
+      "explain": "The greedy-choice property means that a locally optimal (greedy) choice at each step leads to a globally optimal solution. This is the defining characteristic of greedy algorithms."
+    },
+    {
+      "q": "Why does a greedy approach fail for the Longest Increasing Subsequence problem?",
+      "options": [
+        "The problem requires exponential time complexity, which greedy algorithms cannot achieve",
+        "Choosing the first element (a greedy choice) can block access to the optimal subsequence starting later in the array",
+        "The problem has overlapping subproblems that must be cached with memoization",
+        "Greedy algorithms cannot work on arrays with negative numbers"
+      ],
+      "answer": 1,
+      "explain": "In the LIS example with [10, 13, 2, 5, 3, 7, 101, 18], greedily starting with 10 yields [10, 13, 101] (length 3), but the optimal solution [2, 3, 7, 101] (length 4) starts with 2. The early greedy choice has future consequences that prevent finding the global optimum."
+    }
+  ]
+}

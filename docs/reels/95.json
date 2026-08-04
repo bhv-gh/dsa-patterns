@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "DP = Cache Your Recursion",
+    "body": "Dynamic Programming exploits **overlapping subproblems**: the same calculation happens multiple times.\n\n**The fix**: solve each subproblem once, cache the result.\n\nExample: climbing stairs. To reach step 5, you need steps 4 + 3. Naive recursion recalculates step 3 many times. DP caches it → O(2^n) drops to O(n)."
+  },
+  {
+    "type": "concept",
+    "heading": "Memoization vs Tabulation",
+    "body": "**Top-Down (Memoization)**: recursive + cache dictionary. Check cache before recursing; store result after computing.\n\n**Bottom-Up (Tabulation)**: iterative. Build a `dp` array from base cases up: `dp[i] = dp[i-1] + dp[i-2]`.\n\nBoth O(n) time & space. Tabulation avoids recursion overhead; memoization is easier to write from a recursive solution."
+  },
+  {
+    "type": "code",
+    "label": "Space-Optimized DP · Python",
+    "code": "def climbStairs(n: int) -> int:\n    \"\"\"Ways to climb n stairs (1 or 2 steps).\"\"\"\n    if n <= 1:\n        return 1\n    prev2, prev1 = 1, 1\n    for i in range(2, n + 1):\n        curr = prev1 + prev2\n        prev2, prev1 = prev1, curr\n    return prev1"
+  },
+  {
+    "type": "quiz",
+    "q": "What distinguishes a DP problem from a plain recursive problem?",
+    "options": [
+      "DP problems always require sorting the input first",
+      "DP problems have overlapping subproblems that can be cached",
+      "DP problems can only be solved bottom-up, not top-down",
+      "DP problems must use a 2D array for the cache"
+    ],
+    "answer": 1,
+    "explain": "The key insight: same subproblems solved multiple times. Caching avoids redundant work, dropping exponential → polynomial time."
+  }
+]

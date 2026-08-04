@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Decode DP: Split or Pair?",
+    "body": "At each digit, ask: **take it alone** (if not 0) or **pair with previous** (if 10-26)?\n\n`dp[i] = ways to decode first i chars`\n- Single: add `dp[i-1]`\n- Pair: add `dp[i-2]`\n\n**Gotcha:** '0' can ONLY pair (10 or 20). Alone = dead end."
+  },
+  {
+    "type": "concept",
+    "heading": "The Recurrence in One Line",
+    "body": "`dp[i] = (dp[i-1] if s[i-1] != '0') + (dp[i-2] if 10 <= s[i-2:i] <= 26)`\n\nBase: `dp[0] = 1` (empty string), `dp[1] = 1` (first char, if valid).\n\nJust like climbing stairs, but some steps are blocked (zeros)."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def num_decodings(s):\n    if not s or s[0] == '0':\n        return 0\n    prev2, prev1 = 1, 1\n    for i in range(2, len(s) + 1):\n        curr = 0\n        if s[i-1] != '0':\n            curr += prev1\n        if 10 <= int(s[i-2:i]) <= 26:\n            curr += prev2\n        prev2, prev1 = prev1, curr\n    return prev1"
+  },
+  {
+    "type": "quiz",
+    "q": "What happens if the string contains a '0' that is not part of '10' or '20'?",
+    "options": [
+      "It can be decoded as 'A'",
+      "The number of decodings becomes 0",
+      "It is skipped and doesn't affect the count",
+      "It throws an error"
+    ],
+    "answer": 1,
+    "explain": "A '0' can only be decoded as part of '10' or '20'. If it appears alone or after '3'-'9', there are 0 ways to decode the string."
+  }
+]

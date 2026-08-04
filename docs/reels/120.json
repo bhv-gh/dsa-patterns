@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Rotate = Transpose + Reverse",
+    "body": "90° clockwise rotation is TWO simple moves:\n\n**1. Transpose** (flip along diagonal)\n**2. Reverse each row**\n\nNo extra space needed. Both steps modify in-place."
+  },
+  {
+    "type": "concept",
+    "heading": "Why j starts at i",
+    "body": "During transpose, `for j in range(i, n)` swaps each pair **once**.\n\nIf you started at 0, you'd swap `(i,j)` with `(j,i)` then later swap them back — undoing the transpose!"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def rotate_image(matrix):\n    n = len(matrix)\n    # Transpose\n    for i in range(n):\n        for j in range(i, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n    # Reverse each row\n    for i in range(n):\n        matrix[i] = matrix[i][::-1]\n    return matrix"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(2ⁿ)",
+      "O(4ⁿ)",
+      "O(n²)",
+      "O(n log n)"
+    ],
+    "answer": 2,
+    "explain": "Two nested loops (transpose + reverse) both visit all n² elements."
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "id": 101,
+  "slug": "longest-increasing-subsequence",
+  "title": "Longest Increasing Subsequence",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the length of the longest strictly increasing subsequence in an array using DP or binary search.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums`, return the **length** of the longest strictly increasing subsequence.\n\nThe subsequence does not need to be contiguous, but elements must satisfy `nums[i] < nums[j]` for all `i < j` in the subsequence.\n\n**Example:** `[8,2,4,3,6,12]` → `4` (the LIS is `[2,4,6,12]`)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**DP Approach (O(n²)):** For each position `i`, track the longest increasing subsequence ending at that index by extending any smaller element before it.\n\n**Optimized (O(n log n)):** Use a `tails` array where `tails[k]` is the smallest tail element of all increasing subsequences of length `k+1`. Use binary search to update it. Note: the `tails` array is **not** the actual LIS, just a tool to compute its length."
+    },
+    {
+      "heading": "Approach",
+      "body": "**O(n²) DP Solution:**\n- Create `dp` array where `dp[i]` = length of LIS ending at index `i`\n- Initialize all `dp[i] = 1` (each element is a subsequence of length 1)\n- For each `i`, check all previous indices `j < i`\n- If `nums[i] > nums[j]`, update `dp[i] = max(dp[i], dp[j] + 1)`\n- Return `max(dp)`\n\n**O(n log n) Binary Search:**\n- Maintain `tails` array where `tails[k]` = smallest tail of length-`(k+1)` subsequences\n- For each number, binary search for its position in `tails`\n- Replace or extend `tails` at that position\n- Return length of `tails`"
+    },
+    {
+      "heading": "Complexity",
+      "body": "**DP Approach:**\n- Time: O(n²) - nested loops over array\n- Space: O(n) - dp array\n\n**Binary Search Approach:**\n- Time: O(n log n) - n iterations × log n binary search\n- Space: O(n) - tails array"
+    }
+  ],
+  "approach": [
+    "Initialize dp array with all 1s (base case: each element is LIS of length 1)",
+    "For each position i from 1 to n-1, iterate through all previous positions j",
+    "If nums[i] > nums[j], it can extend the subsequence ending at j",
+    "Update dp[i] = max(dp[i], dp[j] + 1) to track the longest extension",
+    "Return max(dp) as the overall longest increasing subsequence length",
+    "For O(n log n): maintain tails array and use bisect_left to find/update positions"
+  ],
+  "complexity": {
+    "time": "O(n²) for DP approach, O(n log n) for binary search",
+    "space": "O(n)"
+  },
+  "code": "from bisect import bisect_left\n\ndef longest_increasing_subsequence(nums):\n    \"\"\"Return length of longest strictly increasing subsequence.\"\"\"\n    if not nums:\n        return 0\n    \n    # O(n²) DP approach\n    n = len(nums)\n    dp = [1] * n\n    \n    for i in range(1, n):\n        for j in range(i):\n            if nums[i] > nums[j]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    \n    return max(dp)\n\ndef longest_increasing_subsequence_optimized(nums):\n    \"\"\"O(n log n) binary search approach using patience sorting.\"\"\"\n    if not nums:\n        return 0\n    \n    tails = []  # tails[k] = smallest tail of all length-(k+1) subsequences\n    \n    for num in nums:\n        pos = bisect_left(tails, num)\n        if pos == len(tails):\n            tails.append(num)\n        else:\n            tails[pos] = num\n    \n    return len(tails)",
+  "quiz": [
+    {
+      "q": "What does dp[i] represent in the DP solution?",
+      "options": [
+        "The length of the longest increasing subsequence in nums[0:i]",
+        "The length of the longest increasing subsequence ending at index i",
+        "The i-th element of the longest increasing subsequence",
+        "The number of increasing subsequences ending at index i"
+      ],
+      "answer": 1,
+      "explain": "dp[i] stores the length of the longest increasing subsequence that ends specifically at index i, not just within the first i elements."
+    },
+    {
+      "q": "In the O(n log n) approach, what does the tails array represent?",
+      "options": [
+        "The actual longest increasing subsequence",
+        "The smallest tail element for each possible LIS length",
+        "All possible increasing subsequences",
+        "The indices of elements in the LIS"
+      ],
+      "answer": 1,
+      "explain": "tails[k] stores the smallest ending element among all increasing subsequences of length k+1. This is NOT the actual LIS, just a tool to efficiently compute its length using binary search."
+    },
+    {
+      "q": "Why do we use bisect_left instead of bisect_right in the optimized solution?",
+      "options": [
+        "To handle duplicate elements correctly",
+        "To find the leftmost position where num can replace a larger value",
+        "To maintain strict inequality (we want nums[i] < nums[j], not <=)",
+        "All of the above"
+      ],
+      "answer": 3,
+      "explain": "bisect_left finds the leftmost position to insert/replace, ensuring we replace the first element >= num. This maintains strict increasing order and handles duplicates by replacing them rather than extending."
+    }
+  ]
+}

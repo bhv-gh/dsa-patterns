@@ -1,0 +1,69 @@
+{
+  "id": 120,
+  "slug": "rotate-image",
+  "title": "Rotate Image",
+  "pattern": "matrices",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Rotate an n×n matrix 90° clockwise in-place by transposing, then reversing each row.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to rotate an n×n 2D matrix representing an image by 90 degrees clockwise. The rotation must be done **in-place**, meaning you should modify the input matrix directly without using an additional matrix.\n\n**Example:**\n- Input: `[[1,4,7], [2,5,8], [3,6,9]]`\n- Output: `[[3,2,1], [6,5,4], [9,8,7]]`\n\nThe matrix is rotated by 90 degrees clockwise, transforming its columns into rows in reverse order."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A 90° clockwise rotation can be achieved through two simpler transformations:\n1. **Transpose** the matrix (swap elements across the main diagonal)\n2. **Reverse** each row\n\nThis works because transposing flips the matrix along its diagonal, and reversing rows completes the clockwise rotation. Both operations can be done in-place without extra space."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Step 1: Transpose the matrix**\n- Use a nested loop to swap elements across the diagonal\n- For each position `(i, j)` where `j >= i`, swap `matrix[i][j]` with `matrix[j][i]`\n\n**Step 2: Reverse each row**\n- Iterate through each row and reverse its elements\n- This can be done with Python's slice notation `[::-1]`"
+    }
+  ],
+  "approach": [
+    "Get the size n of the matrix",
+    "Transpose: For i from 0 to n-1, for j from i to n-1, swap matrix[i][j] with matrix[j][i]",
+    "Reverse: For each row i from 0 to n-1, reverse the elements in matrix[i]",
+    "Return the modified matrix"
+  ],
+  "complexity": {
+    "time": "O(n²)",
+    "space": "O(1)"
+  },
+  "code": "def rotate_image(matrix):\n    \"\"\"\n    Rotate an n x n matrix 90 degrees clockwise in-place.\n    \"\"\"\n    n = len(matrix)\n    # Transpose the matrix\n    for i in range(n):\n        for j in range(i, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n    # Reverse each row\n    for i in range(n):\n        matrix[i] = matrix[i][::-1]\n    return matrix",
+  "quiz": [
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(2ⁿ)",
+        "O(4ⁿ)",
+        "O(n²)",
+        "O(n log n)"
+      ],
+      "answer": 2,
+      "explain": "We perform two nested loops: one for transpose (n²/2 swaps) and one for reversing rows (n²/2 element accesses). Both are O(n²), so overall time complexity is O(n²)."
+    },
+    {
+      "q": "Why do we start the inner loop at j = i instead of j = 0 during transpose?",
+      "options": [
+        "To reduce time complexity from O(n²) to O(n)",
+        "To avoid swapping each element twice and undoing the transpose",
+        "To handle the diagonal elements specially",
+        "It's a bug; j should start at 0"
+      ],
+      "answer": 1,
+      "explain": "Starting at j = i ensures we only swap each pair once. If we started at j = 0, we'd swap (i,j) with (j,i) and then later swap (j,i) back with (i,j), undoing the transpose."
+    },
+    {
+      "q": "What would happen if we reversed rows BEFORE transposing?",
+      "options": [
+        "We'd get the same 90° clockwise rotation",
+        "We'd get a 90° counter-clockwise rotation",
+        "We'd get a 180° rotation",
+        "We'd get a vertical flip instead of a rotation"
+      ],
+      "answer": 1,
+      "explain": "Reversing rows first then transposing gives a 90° counter-clockwise rotation. The order matters: transpose-then-reverse gives clockwise, reverse-then-transpose gives counter-clockwise."
+    }
+  ]
+}

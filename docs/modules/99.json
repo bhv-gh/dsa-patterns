@@ -1,0 +1,70 @@
+{
+  "id": 99,
+  "slug": "unique-paths",
+  "title": "Unique Paths",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Count unique paths from top-left to bottom-right in a grid, moving only right or down using dynamic programming.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a robot starting at the top-left corner of an **m x n** grid, count the number of unique paths to reach the bottom-right corner. The robot can only move **right** or **down** at any point in time.\n\n**Example:** For a 2 x 3 grid, there are **3** unique paths. For a 3 x 7 grid, there are **28** unique paths."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "To reach any cell `(i, j)`, the robot must arrive from either:\n- The cell above `(i-1, j)` by moving down, or\n- The cell to the left `(i, j-1)` by moving right\n\nTherefore: **the number of ways to reach any cell equals the sum of ways to reach the cell above it plus the ways to reach the cell to its left.**\n\nThis recurrence relation forms the core of the DP solution:\n\n`dp[i][j] = dp[i-1][j] + dp[i][j-1]`"
+    },
+    {
+      "heading": "Approach",
+      "body": "**Bottom-up dynamic programming:**\n\n- Create a 2D array `dp` of size m x n where `dp[i][j]` represents the number of unique paths from `(0,0)` to `(i,j)`\n- **Base cases:** First row and first column cells can only be reached in 1 way (moving only right or only down)\n- Fill the DP table row by row using the recurrence: `dp[i][j] = dp[i-1][j] + dp[i][j-1]`\n- Return `dp[m-1][n-1]` as the final answer\n\n**Space optimization:** Use a 1D array instead of 2D by maintaining only the current and previous row, reducing space to O(n)."
+    }
+  ],
+  "approach": [
+    "Initialize a 2D DP array of size m x n with all zeros",
+    "Set base case: dp[0][j] = 1 for all j (first row has only 1 path)",
+    "Set base case: dp[i][0] = 1 for all i (first column has only 1 path)",
+    "For each cell (i, j) from (1,1) to (m-1, n-1), compute dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+    "Return dp[m-1][n-1] as the total number of unique paths"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(m * n), optimizable to O(n) with rolling array"
+  },
+  "code": "class Solution:\n    def unique_paths(self, m: int, n: int) -> int:\n        \"\"\"Count unique paths in m x n grid from top-left to bottom-right.\"\"\"\n        # Initialize 2D DP array\n        dp = [[0] * n for _ in range(m)]\n        \n        # Base case: first row - only one way (move right)\n        for i in range(n):\n            dp[0][i] = 1\n        \n        # Base case: first column - only one way (move down)\n        for j in range(m):\n            dp[j][0] = 1\n        \n        # Fill DP table using recurrence relation\n        for i in range(1, m):\n            for j in range(1, n):\n                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\n        \n        return dp[m - 1][n - 1]",
+  "quiz": [
+    {
+      "q": "What is the recurrence relation for this problem?",
+      "options": [
+        "dp[i][j] = dp[i-1][j] * dp[i][j-1]",
+        "dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+        "dp[i][j] = max(dp[i-1][j], dp[i][j-1])",
+        "dp[i][j] = dp[i-1][j-1] + 1"
+      ],
+      "answer": 1,
+      "explain": "The number of paths to cell (i,j) equals the sum of paths from the cell above and the cell to the left, since the robot can only move right or down."
+    },
+    {
+      "q": "What is the value of dp[0][j] for any j in the first row?",
+      "options": [
+        "0",
+        "1",
+        "j",
+        "undefined"
+      ],
+      "answer": 1,
+      "explain": "There is exactly 1 way to reach any cell in the first row: move right repeatedly from the starting position. This is a base case."
+    },
+    {
+      "q": "What is the time complexity of the bottom-up DP solution?",
+      "options": [
+        "O(1)",
+        "O(n log n)",
+        "O(4^n)",
+        "O(m * n)"
+      ],
+      "answer": 3,
+      "explain": "We fill an m x n DP table with constant-time operations per cell, resulting in O(m * n) time complexity."
+    }
+  ]
+}

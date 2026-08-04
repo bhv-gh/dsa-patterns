@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Extend until last occurrence",
+    "body": "Can't close a segment mid-character. If you see 'a' at index 0 and 'a' appears again at index 5, the segment **must** extend to at least index 5.\n\n**Strategy:** Precompute last index of every char, then scan left-to-right tracking the farthest \"must-reach\" point."
+  },
+  {
+    "type": "concept",
+    "heading": "When i == end, cut",
+    "body": "Track `end = max(end, last[c])` as you scan. When your current index **equals** `end`, you've satisfied all constraints — no character in this segment appears later.\n\nThat's your cut point. Record segment length, then start fresh."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def partitionLabels(s):\n    last = {c: i for i, c in enumerate(s)}\n    result, start, end = [], 0, 0\n    \n    for i, c in enumerate(s):\n        end = max(end, last[c])\n        if i == end:\n            result.append(i - start + 1)\n            start = i + 1\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we precompute the last occurrence of each character instead of searching for it during the main scan?",
+    "options": [
+      "To avoid O(n²) time complexity from repeatedly scanning forward",
+      "To use more memory and make the code more complex",
+      "To handle uppercase letters differently",
+      "To ensure segments are sorted in ascending order"
+    ],
+    "answer": 0,
+    "explain": "Precomputing avoids repeatedly searching forward for each character's last occurrence, which would degrade to O(n²)."
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "id": 105,
+  "slug": "paint-house-ii",
+  "title": "Paint House II",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "hard",
+  "summary": "Minimize cost to paint n houses with k colors where no adjacent houses share a color using O(n×k) DP with min/second-min tracking.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Paint n houses in a row using k available colors. Each house has a different cost for each color given in a 2D array `costs[i][j]` (cost to paint house i with color j). No two adjacent houses can have the same color.\n\nReturn the minimum total cost to paint all houses.\n\n**Constraints:**\n- 1 ≤ n ≤ 100\n- 1 ≤ k ≤ 20\n- 1 ≤ costs[i][j] ≤ 1000"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "The naive extension from Paint House scales poorly: for each of k colors at each house, we'd scan k-1 previous values to find the minimum, yielding O(n×k²).\n\n**The optimization:** Track only the **minimum** (min1) and **second minimum** (min2) from the previous row, plus min1's index.\n\nWhen computing cost for color j:\n- If j ≠ min1's index → use min1 (we're excluding something that wasn't minimum anyway)\n- If j = min1's index → use min2 (can't reuse the same color)\n\nThis reduces \"minimum excluding j\" from O(k) to **O(1)** lookup."
+    },
+    {
+      "heading": "Approach",
+      "body": "Define `dp[i][j]` = minimum cost to paint houses 0..i where house i uses color j.\n\n**Recurrence:**\n```\ndp[i][j] = costs[i][j] + (min2 if j == min1_idx else min1)\n```\n\n**Algorithm:**\n1. Initialize `prev = costs[0]` (first row has no dependencies)\n2. Find min1, min2, min1_idx from prev\n3. For each subsequent house i:\n   - For each color j: `curr[j] = costs[i][j] + (min2 if j == min1_idx else min1)`\n   - Update min1, min2, min1_idx from curr\n   - Set prev = curr\n4. Return `min(prev)`"
+    }
+  ],
+  "approach": [
+    "Initialize prev = costs[0] (first house uses raw costs)",
+    "For each house i from 1 to n-1:",
+    "  - Find min1, min2, and min1_idx from prev row",
+    "  - For each color j: curr[j] = costs[i][j] + (min2 if j == min1_idx else min1)",
+    "  - Update prev = curr",
+    "Return min(prev)"
+  ],
+  "complexity": {
+    "time": "O(n×k)",
+    "space": "O(k)"
+  },
+  "code": "def min_cost_ii(costs):\n    \"\"\"\n    Minimize cost to paint n houses with k colors (no adjacent same color).\n    Uses O(n×k) DP tracking min and second-min from previous row.\n    \"\"\"\n    if not costs:\n        return 0\n    \n    n, k = len(costs), len(costs[0])\n    prev = costs[0][:]\n    \n    for i in range(1, n):\n        # Find min1, min2, min1_idx from previous row\n        min1, min2, min1_idx = float('inf'), float('inf'), -1\n        for j in range(k):\n            if prev[j] < min1:\n                min2, min1, min1_idx = min1, prev[j], j\n            elif prev[j] < min2:\n                min2 = prev[j]\n        \n        # Compute current row\n        curr = [0] * k\n        for j in range(k):\n            if j == min1_idx:\n                curr[j] = costs[i][j] + min2\n            else:\n                curr[j] = costs[i][j] + min1\n        prev = curr\n    \n    return min(prev)",
+  "quiz": [
+    {
+      "q": "Why does tracking min1 and min2 reduce time complexity from O(n×k²) to O(n×k)?",
+      "options": [
+        "It eliminates the need to store the full DP table",
+        "It allows O(1) lookup of 'minimum excluding color j' instead of scanning k values",
+        "It reduces the number of houses we need to process",
+        "It changes the recurrence relation to avoid dependencies"
+      ],
+      "answer": 1,
+      "explain": "By precomputing min1 and min2 from the previous row, we can answer 'what's the minimum cost excluding color j?' in O(1) time: if j is the min1 index use min2, otherwise use min1. Without this, we'd scan all k values for each of k colors."
+    },
+    {
+      "q": "When computing dp[i][j], in which case do we use min2 instead of min1?",
+      "options": [
+        "When j is an even number",
+        "When costs[i][j] is larger than min1",
+        "When j equals min1_idx (the index of min1 from the previous row)",
+        "When min2 is less than min1"
+      ],
+      "answer": 2,
+      "explain": "If j equals min1_idx, it means we'd be using the same color as the house that produced min1 in the previous row. Since adjacent houses can't share colors, we must use the second-best option (min2) instead."
+    },
+    {
+      "q": "What is the space complexity of the optimized solution, and can it be improved?",
+      "options": [
+        "O(n×k), cannot be improved",
+        "O(k), can be reduced to O(1) by storing only min1, min2, min1_idx",
+        "O(n), cannot be improved below this",
+        "O(1), already optimal"
+      ],
+      "answer": 1,
+      "explain": "The array-based solution uses O(k) for prev and curr. However, since we only need min1, min2, and min1_idx from the previous row (not the full array), we can reduce space to O(1) by tracking just those three values across iterations."
+    }
+  ]
+}

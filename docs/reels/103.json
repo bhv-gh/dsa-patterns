@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Sort by end time, decide per job",
+    "body": "For each job, **skip it** (keep previous best) or **take it** (add profit to best from compatible jobs).\n\nCompatible = ended before this one starts.\n\nSorting by end time lets you look back at jobs that already finished."
+  },
+  {
+    "type": "concept",
+    "heading": "DP state + recurrence",
+    "body": "`dp[i]` = max profit from first i jobs (sorted by end)\n\n**Recurrence:**\n`dp[i] = max(dp[i-1], dp[k] + profit[i])`\n\nwhere k = count of jobs ending ≤ start[i] (via binary search)"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "from bisect import bisect_right\n\ndef job_scheduling(starts, ends, profits):\n    jobs = sorted(zip(starts, ends, profits), key=lambda x: x[1])\n    dp = [0] * (len(jobs) + 1)\n    \n    for i in range(1, len(jobs) + 1):\n        start, end, profit = jobs[i - 1]\n        k = bisect_right([job[1] for job in jobs], start)\n        dp[i] = max(dp[i - 1], dp[k] + profit)\n    \n    return dp[-1]"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n log n)",
+      "O(2^n)",
+      "O(n!)",
+      "O(n^2)"
+    ],
+    "answer": 0,
+    "explain": "Sorting takes O(n log n), and the DP loop runs n times with each bisect_right call taking O(log n)."
+  }
+]

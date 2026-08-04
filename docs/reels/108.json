@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Track min price, max profit",
+    "body": "You don't need to remember *which* day you bought. Just keep:\n- **min_price**: lowest seen so far\n- **max_profit**: best gain if we sold today\n\nFor each price, ask: \"if I sell now, what's my profit?\" That's `price - min_price`. Keep the best."
+  },
+  {
+    "type": "concept",
+    "heading": "One pass solves it",
+    "body": "**Greedy trick**: update the minimum *first*, then calc profit.\n\nWhy? Because `min_price` must come *before* today (you can't sell before you buy). Updating on the same iteration is safe—you're comparing today's price to all *previous* minimums, not itself."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def maxProfit(prices):\n    min_price = float('inf')\n    max_profit = 0\n    for price in prices:\n        min_price = min(min_price, price)\n        max_profit = max(max_profit, price - min_price)\n    return max_profit"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of this solution?",
+    "options": [
+      "O(n^2)",
+      "O(n log n)",
+      "O(n)",
+      "O(1)"
+    ],
+    "answer": 2,
+    "explain": "One pass through prices, constant work per element = O(n)."
+  }
+]

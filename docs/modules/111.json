@@ -1,0 +1,74 @@
+{
+  "id": 111,
+  "slug": "jump-game-ii",
+  "title": "Jump Game II",
+  "pattern": "greedy",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find minimum jumps to reach the end using BFS-like greedy levels: track current boundary and farthest reach.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an array where each element represents the maximum jump distance from that position, find the minimum number of jumps to reach the last index. You may assume a valid path always exists.\n\n**Example:**\n- Input: `[2, 3, 1, 1, 4]`\n- Output: `2`\n- Explanation: Jump from index 0→1, then 1→4. Total = 2 jumps."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Think in **levels** like BFS. Group positions by how many jumps it takes to reach them. Track two boundaries:\n\n- **currentEnd**: boundary of positions reachable with current number of jumps\n- **farthest**: farthest position reachable from any position scanned in current level\n\nWhen `i` reaches `currentEnd`, we've finished the current level—increment jumps and move `currentEnd` to `farthest`."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Greedy level-by-level scan:**\n\n1. Initialize `jumps = 0`, `currentEnd = 0`, `farthest = 0`\n2. Iterate through array (stop at `len(nums) - 1` to avoid extra jump)\n3. For each position `i`, update `farthest = max(farthest, i + nums[i])`\n4. When `i == currentEnd`, increment `jumps` and set `currentEnd = farthest`\n5. Return `jumps`\n\nThis is BFS without a queue—linear scan with boundary tracking."
+    },
+    {
+      "heading": "Complexity",
+      "body": "**Time:** O(n) — single pass through the array\n**Space:** O(1) — only three variables"
+    }
+  ],
+  "approach": [
+    "Initialize jumps = 0, currentEnd = 0, farthest = 0",
+    "Iterate from index 0 to len(nums) - 2",
+    "For each position i, update farthest = max(farthest, i + nums[i])",
+    "When i == currentEnd, increment jumps and set currentEnd = farthest",
+    "Return jumps after scanning all positions"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def jump(nums):\n    \"\"\"Find minimum jumps to reach the end using greedy BFS levels.\"\"\"\n    if len(nums) <= 1:\n        return 0\n    \n    jumps = 0\n    current_end = 0\n    farthest = 0\n    \n    for i in range(len(nums) - 1):\n        farthest = max(farthest, i + nums[i])\n        \n        if i == current_end:\n            jumps += 1\n            current_end = farthest\n    \n    return jumps",
+  "quiz": [
+    {
+      "q": "Why do we iterate only up to len(nums) - 1 instead of len(nums)?",
+      "options": [
+        "To optimize for performance",
+        "To avoid counting an extra jump when already at the goal",
+        "Because the last element cannot be jumped from",
+        "To prevent array index out of bounds errors"
+      ],
+      "answer": 1,
+      "explain": "If we're already at the goal (last index), we don't need another jump. Stopping at len(nums) - 1 prevents counting an unnecessary jump when currentEnd lands exactly on the last element."
+    },
+    {
+      "q": "What does currentEnd represent in the greedy algorithm?",
+      "options": [
+        "The farthest position reachable overall",
+        "The current position being scanned",
+        "The boundary of positions reachable with the current number of jumps",
+        "The index of the last jump made"
+      ],
+      "answer": 2,
+      "explain": "currentEnd is the boundary of the current level—positions reachable with the current number of jumps. When i reaches currentEnd, we've finished scanning that level and need to jump to the next level."
+    },
+    {
+      "q": "How does this algorithm relate to BFS?",
+      "options": [
+        "It uses a queue to track positions at each level",
+        "It performs level-order traversal using boundary tracking instead of a queue",
+        "It recursively explores all possible paths",
+        "It uses backtracking to find the optimal path"
+      ],
+      "answer": 1,
+      "explain": "The algorithm mimics BFS by grouping positions into levels (same number of jumps). Instead of a queue, it uses currentEnd and farthest to track level boundaries, making it a linear-scan BFS equivalent."
+    }
+  ]
+}

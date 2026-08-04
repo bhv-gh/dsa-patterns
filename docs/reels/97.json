@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Binary bit count via DP",
+    "body": "Every number **i** = `i >> 1` (the number with rightmost bit removed) + rightmost bit (`i & 1`).\n\n**Recurrence**: `dp[i] = dp[i >> 1] + (i & 1)`\n\nReuse the count from **i/2** (already computed) and add 1 if **i** is odd."
+  },
+  {
+    "type": "concept",
+    "heading": "Why right-shift splits the problem",
+    "body": "`i >> 1` divides **i** by 2, effectively removing the rightmost bit. We've already computed how many 1-bits that smaller number has.\n\n`i & 1` checks if the last bit is set (1 if odd, 0 if even).\n\nThis means **no need to count bits from scratch** — just look up and add."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def count_bits(n):\n    dp = [0] * (n + 1)\n    for i in range(1, n + 1):\n        dp[i] = dp[i >> 1] + (i & 1)\n    return dp"
+  },
+  {
+    "type": "quiz",
+    "q": "What does `i >> 1` represent in the recurrence relation?",
+    "options": [
+      "The number with the rightmost bit removed (i divided by 2)",
+      "The number with the leftmost bit removed",
+      "The count of 1-bits in i",
+      "The remainder when i is divided by 2"
+    ],
+    "answer": 0,
+    "explain": "`i >> 1` shifts i right by 1 bit, effectively dividing by 2 and removing the rightmost bit. We've already computed dp[i>>1], so we reuse it."
+  }
+]

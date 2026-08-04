@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "One pass finds your start",
+    "body": "**Gas Station** is a greedy scan problem. If total gas ≥ total cost, a solution exists. Walk the circle once: when your tank dips below zero, **reset start to the next station**. Why? Any station between the old start and failure point would fail even sooner."
+  },
+  {
+    "type": "concept",
+    "heading": "The greedy reset trick",
+    "body": "**Key insight**: if you can't reach station `i+1` starting from `s`, then starting from any station between `s` and `i` will also fail — you'd have even less fuel.\n\n**Action**: reset `start = i+1` and `fuel = 0`; continue scanning."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def canCompleteCircuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    \n    start, fuel = 0, 0\n    for i in range(len(gas)):\n        if fuel + gas[i] - cost[i] < 0:\n            start, fuel = i + 1, 0\n        else:\n            fuel += gas[i] - cost[i]\n    return start"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the greedy gas station solution?",
+    "options": [
+      "O(n log n)",
+      "O(4^n)",
+      "O(log m * n)",
+      "O(n)"
+    ],
+    "answer": 3,
+    "explain": "We make a single pass through all n stations, performing O(1) work at each station."
+  }
+]

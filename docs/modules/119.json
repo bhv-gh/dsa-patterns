@@ -1,0 +1,71 @@
+{
+  "id": 119,
+  "slug": "spiral-matrix",
+  "title": "Spiral Matrix",
+  "pattern": "matrices",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Traverse an m×n matrix in clockwise spiral order from outer perimeter to inner core, returning all elements in a list.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Write a function to traverse an m×n matrix in spiral order and return all elements in a single list. The traversal should start from the top left corner and proceed clockwise, spiraling inward until every element has been visited.\n\n**Example:**\n\n```\nmatrix = [\n  [0,1,2],\n  [3,4,5],\n  [6,7,8]\n]\n```\n\n**Output:** `[0,1,2,5,8,7,6,3,4]`\n\n**Explanation:** The elements are returned in the order they are visited in a clockwise spiral starting from the top left corner."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Use a deque to efficiently pop elements from all four directions. Process the matrix in four steps per spiral layer: top row (left to right), right column (top to bottom), bottom row (right to left), and left column (bottom to top). After each layer, the matrix shrinks inward until empty."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Top Row:** Pop the first row and extend the result from left to right.\n\n**Right Column:** Traverse the remaining rows and pop the last element of each, appending to result from top to bottom.\n\n**Bottom Row:** Pop the last row and extend the result in reversed order (right to left).\n\n**Left Column:** Traverse the remaining rows in reverse and pop the first element of each, appending from bottom to top.\n\n**Repeat:** Continue spiraling inward until the matrix is empty."
+    }
+  ],
+  "approach": [
+    "Convert the matrix into a deque of deques for efficient popping from both ends",
+    "Pop and extend the top row into result (left to right)",
+    "Pop the last element from each remaining row into result (top to bottom)",
+    "Pop and extend the bottom row in reversed order into result (right to left)",
+    "Pop the first element from each remaining row in reverse order (bottom to top)",
+    "Repeat until the matrix is empty"
+  ],
+  "complexity": {
+    "time": "O(m*n)",
+    "space": "O(m*n)"
+  },
+  "code": "from collections import deque\n\ndef spiral_order(matrix):\n    \"\"\"Traverse matrix in clockwise spiral order.\"\"\"\n    matrix = deque(deque(row) for row in matrix)\n    result = []\n    \n    while matrix:\n        # Top row: left to right\n        result.extend(matrix.popleft())\n        \n        # Right column: top to bottom\n        if matrix and matrix[0]:\n            for row in matrix:\n                result.append(row.pop())\n        \n        # Bottom row: right to left\n        if matrix:\n            result.extend(reversed(matrix.pop()))\n        \n        # Left column: bottom to top\n        if matrix and matrix[0]:\n            for row in reversed(matrix):\n                result.append(row.popleft())\n    \n    return result",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the spiral matrix solution?",
+      "options": [
+        "O(m*n)",
+        "O(m+n)",
+        "O(n log n)",
+        "O(log n)"
+      ],
+      "answer": 0,
+      "explain": "We visit every element in the m×n matrix exactly once, so the time complexity is O(m*n)."
+    },
+    {
+      "q": "Why do we check `if matrix and matrix[0]` before traversing columns?",
+      "options": [
+        "To guard against empty rows after popping the top or bottom row",
+        "To optimize the traversal speed",
+        "To avoid duplicate elements in the result",
+        "To ensure the matrix is square"
+      ],
+      "answer": 0,
+      "explain": "After popping the top or bottom row, we may have empty rows remaining. This check ensures we don't try to pop from empty deques."
+    },
+    {
+      "q": "What happens if we don't reverse the bottom row when extending the result?",
+      "options": [
+        "The spiral order will break, producing elements left-to-right instead of right-to-left",
+        "The solution will throw an error",
+        "The time complexity increases to O(n²)",
+        "Nothing, the result will be the same"
+      ],
+      "answer": 0,
+      "explain": "The bottom row must be traversed right-to-left to maintain clockwise spiral order. Without reversing, we'd add elements left-to-right, breaking the pattern."
+    }
+  ]
+}

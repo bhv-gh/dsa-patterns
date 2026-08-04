@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Subsequence window with 1D DP",
+    "body": "**Don't check every substring** (O(m³)). Track where each partial match **started**.\n\n`dp[j]` = starting index in `s1` from which we can form `s2[0..j]` ending at current position.\n\nWhen `s1[i] == s2[j]`:\n- `j==0`: new window starts at `i`\n- `j>0`: inherit start from `dp[j-1]`"
+  },
+  {
+    "type": "concept",
+    "heading": "Why iterate backwards?",
+    "body": "**Iterate `j` from `n-1` down to `0`** to avoid overwriting `dp[j-1]` before using it.\n\nSince `dp[j] = dp[j-1]` when matching, forward iteration would clobber the value you need next."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def min_window_subsequence(s1, s2):\n    m, n = len(s1), len(s2)\n    dp = [-1] * n\n    result = \"\"\n    min_len = float('inf')\n    \n    for i in range(m):\n        # Reverse to preserve dp[j-1]\n        for j in range(n - 1, -1, -1):\n            if s1[i] == s2[j]:\n                dp[j] = i if j == 0 else dp[j - 1]\n        \n        if dp[n - 1] != -1:\n            start = dp[n - 1]\n            length = i - start + 1\n            if length < min_len:\n                min_len = length\n                result = s1[start:i + 1]\n    \n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "Why do we iterate through s2 in reverse order (j from n-1 to 0) when updating the dp array?",
+    "options": [
+      "To optimize cache performance",
+      "To avoid overwriting dp[j-1] before using it for dp[j]",
+      "To match the subsequence from right to left",
+      "To ensure we find the leftmost window first"
+    ],
+    "answer": 1,
+    "explain": "Since dp[j] depends on dp[j-1], iterating forwards would overwrite dp[j-1] before we use it to update dp[j]."
+  }
+]

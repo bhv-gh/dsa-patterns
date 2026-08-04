@@ -1,0 +1,70 @@
+{
+  "id": 112,
+  "slug": "partition-labels",
+  "title": "Partition Labels",
+  "pattern": "greedy",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Split a string into max segments where each character appears in exactly one segment using greedy last-occurrence tracking.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string of lowercase letters, split it into as many segments as possible so that each character appears in exactly one segment. When you concatenate all segments, they form the original string. Return a list of integers representing the length of each segment.\n\n**Example 1:**\n- Input: `s = \"abacbcdd\"`\n- Output: `[6, 2]`\n- Explanation: 'a' appears at indices 0 and 2, 'b' at 1 and 4, 'c' at 3 and 5, 'd' at 6 and 7. To keep all occurrences together, partition into \"abacbc\" (length 6) and \"dd\" (length 2).\n\n**Example 2:**\n- Input: `s = \"eccbbbbdec\"`\n- Output: `[10]`\n- Explanation: All characters are interleaved such that the entire string must be one segment."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Once we start a segment at some index, we're committed to extending it until we've captured the **last occurrence** of every character we've encountered. If we see 'a' at index 0 and 'a' also appears at index 2, our segment can't end before index 2.\n\nThe greedy approach:\n- Precompute the last occurrence index for each character\n- Scan left to right, tracking the farthest \"must-reach\" index\n- When our current position equals that farthest index, cut the segment"
+    },
+    {
+      "heading": "Approach",
+      "body": "**Step 1: Precompute Last Occurrences**\nScan the string once to record the last index of each character in a map.\n\n**Step 2: Track Segment Boundary**\nInitialize `start = 0` and `end = 0`. For each character at index `i`, update `end = max(end, last[c])` to extend our reach.\n\n**Step 3: Cut When Boundary Reached**\nWhen `i == end`, we've satisfied all constraints for the current segment. Record the segment size `(i - start + 1)` and start a new segment at `i + 1`.\n\n**Step 4: Return Result**\nAfter processing all characters, return the list of segment sizes."
+    }
+  ],
+  "approach": [
+    "Build a map of each character to its last occurrence index by scanning the string once",
+    "Initialize start = 0, end = 0, and an empty result list",
+    "For each index i and character c in the string, update end = max(end, last[c])",
+    "When i == end, append (i - start + 1) to result and set start = i + 1",
+    "Return the result list of segment sizes"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def partitionLabels(s):\n    \"\"\"Split string into max segments where each char appears in exactly one segment.\"\"\"\n    last_index = {}\n    for i, c in enumerate(s):\n        last_index[c] = i\n    \n    result = []\n    start = 0\n    end = 0\n    \n    for i, c in enumerate(s):\n        end = max(end, last_index[c])\n        \n        if i == end:\n            result.append(i - start + 1)\n            start = i + 1\n    \n    return result",
+  "quiz": [
+    {
+      "q": "Why do we precompute the last occurrence of each character instead of searching for it during the main scan?",
+      "options": [
+        "To avoid O(n²) time complexity from repeatedly scanning forward",
+        "To use more memory and make the code more complex",
+        "To handle uppercase letters differently",
+        "To ensure segments are sorted in ascending order"
+      ],
+      "answer": 0,
+      "explain": "Precomputing avoids repeatedly searching forward for each character's last occurrence, which would degrade to O(n²). With precomputation, we achieve O(n) time."
+    },
+    {
+      "q": "What does the condition `i == end` signify when we're scanning the string?",
+      "options": [
+        "We've reached the alphabetically last character",
+        "We've found a duplicate character",
+        "We've satisfied all constraints for the current segment and can cut here",
+        "We need to start a new segment immediately"
+      ],
+      "answer": 2,
+      "explain": "When i == end, we've reached the farthest index required by all characters seen so far in the current segment. This means we can safely cut the segment here without splitting any character's occurrences."
+    },
+    {
+      "q": "In the string \"abacbcdd\", after processing index 3 (char 'c'), what is the value of end?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "7"
+      ],
+      "answer": 2,
+      "explain": "At index 3 we see 'c' whose last occurrence is at index 5. Previously end was 4 (from 'b'). We update end = max(4, 5) = 5, extending the segment boundary to include all 'c' occurrences."
+    }
+  ]
+}

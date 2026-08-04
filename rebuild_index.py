@@ -16,6 +16,16 @@ NEW_PATTERNS = [
      "blurb": "Choose, explore, un-choose — search a tree of partial solutions and prune branches that can't work."},
     {"id": "graphs", "title": "Graph Algorithms",
      "blurb": "Topological sort for ordering DAGs, plus Dijkstra / Bellman-Ford for weighted shortest paths."},
+    {"id": "dynamic-programming", "title": "Dynamic Programming",
+     "blurb": "Break a problem into overlapping subproblems, solve each once, and reuse — memoize or tabulate."},
+    {"id": "greedy", "title": "Greedy",
+     "blurb": "Take the locally best choice at each step — fast and simple when the greedy-choice property holds."},
+    {"id": "trie", "title": "Trie",
+     "blurb": "A prefix tree for fast prefix lookups, autocomplete, and word-set membership."},
+    {"id": "prefix-sum", "title": "Prefix Sum",
+     "blurb": "Precompute cumulative sums so any range query answers in O(1) — plus the hashmap counting trick."},
+    {"id": "matrices", "title": "Matrices",
+     "blurb": "In-place 2D manipulation — spiral traversal, rotation, and marker tricks for O(1) extra space."},
 ]
 
 mods = []

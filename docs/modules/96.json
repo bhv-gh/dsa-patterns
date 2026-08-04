@@ -1,0 +1,62 @@
+{
+  "id": 96,
+  "slug": "solving-with-dp",
+  "title": "Solving a Question with DP",
+  "pattern": "dynamic-programming",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "A 6-step recipe for attacking DP questions: recurrence, base cases, recursion, memoization, bottom-up, and space optimization.",
+  "sections": [
+    {
+      "heading": "The 6-Step DP Recipe",
+      "body": "**1. Find the Recurrence Relation** - define the state and express the answer in terms of smaller subproblems.\n**2. Identify the Base Case(s)** - the smallest inputs where you know the answer without recursion.\n**3. Write the Recursive Solution** - combine recurrence + base cases into a helper function.\n**4. Add Memoization** - cache results to eliminate overlapping subproblems (exponential → O(n)).\n**5. Convert to Bottom-Up DP** - build up from base cases with iteration.\n**6. Further Optimization** - reduce space complexity if recurrence only needs last k values."
+    },
+    {
+      "heading": "Example: House Robber",
+      "body": "**Problem**: Collect max treasure from houses in a row without taking adjacent houses.\n\n**Step 1 - Recurrence**: Let `dp(i)` = max treasure from first `i` houses.\n`dp(i) = max(dp(i-1), dp(i-2) + treasure[i-1])`\n(skip house `i` vs. take it)\n\n**Step 2 - Base Cases**: `dp(0) = 0`, `dp(1) = treasure[0]`.\n\n**Step 3 - Recursive**: Define `rob_helper(i)` that calls itself with `i-1` and `i-2`."
+    },
+    {
+      "heading": "Memoization & Bottom-Up",
+      "body": "**Step 4 - Memoization**: Initialize a dictionary `memo = {}`. Before recursing, check if `i in memo`; after computing `max(skip, take)`, store in `memo[i]`.\n\n**Step 5 - Bottom-Up**: Initialize `dp = [0]*(len(treasure)+1)`, set `dp[1] = treasure[0]`, then loop `for i in range(2, len(treasure)+1): dp[i] = max(dp[i-1], dp[i-2]+treasure[i-1])`.\n\n**Step 6 - Optimization**: Only track `prev` and `curr` (last two values) to reduce space from O(n) → O(1)."
+    },
+    {
+      "heading": "Common Pitfalls",
+      "body": "**Off-by-one errors**: Changing how you define the state (e.g., `dp(i)` = first `i` houses vs. `dp[i]` = treasure up to index `i`) cascades through base cases, recurrence, and loop bounds. **Always keep your definition consistent.**\n\n**Overlapping subproblems**: Without memoization, the recursive tree explodes exponentially. For `n=6`, `dp(3)` is called 3 times independently."
+    }
+  ],
+  "approach": [
+    "Recognize optimal substructure: can you express the answer for input `n` using answers for smaller inputs?",
+    "Spot overlapping subproblems: do you compute the same sub-answer multiple times?",
+    "Define state clearly (e.g., 'first `i` houses' vs. 'index `i`') to avoid index errors",
+    "Start recursive + memoization, then convert to bottom-up iteration"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n) for bottom-up array, O(1) with variable optimization"
+  },
+  "code": "def rob(treasure):\n    \"\"\"Return max treasure from non-adjacent houses.\"\"\"\n    if not treasure:\n        return 0\n    prev, curr = 0, treasure[0]\n    for i in range(2, len(treasure) + 1):\n        take = prev + treasure[i - 1]\n        skip = curr\n        prev, curr = curr, max(take, skip)\n    return curr",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the naive recursive solution (no memoization) for the House Robber problem with n houses?",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(2^n)",
+        "O(n^2)"
+      ],
+      "answer": 2,
+      "explain": "Each call branches into two recursive calls (i-1 and i-2), creating an exponential tree with ~2^n nodes."
+    },
+    {
+      "q": "When converting a memoized top-down DP to bottom-up, which direction do you iterate?",
+      "options": [
+        "From the largest input down to base cases",
+        "From base cases up to the largest input",
+        "Randomly, order doesn't matter",
+        "From the middle outward"
+      ],
+      "answer": 1,
+      "explain": "Bottom-up DP starts at base cases (smallest subproblems) and builds up to the final answer, filling the DP table in dependency order."
+    }
+  ]
+}

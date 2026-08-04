@@ -1,0 +1,71 @@
+{
+  "id": 100,
+  "slug": "maximal-square",
+  "title": "Maximal Square",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the area of the largest square containing only 1's in a binary matrix using dynamic programming.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m x n 2D matrix with only 0's and 1's, write a function to return the area of the largest square containing only 1's.\n\n**Example:**\n- Input: `[[0,0,1,0,0], [1,1,1,0,1], [0,1,1,0,0]]`\n- Output: `4` (a 2×2 square)"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "For each cell containing 1, ask: **what's the largest all-ones square that ends at this cell as its bottom-right corner?**\n\nTo form a square of side length `k` ending at a cell, three neighbors must all support squares of at least `k-1`:\n- The cell **above** (enough 1's stretching up)\n- The cell to the **left** (enough 1's stretching left)\n- The cell **diagonally above-left** (enough 1's filling the interior)\n\nThe **weakest neighbor is the bottleneck**—you can only extend by 1 beyond the smallest."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Dynamic Programming Recurrence:**\n\nDefine `dp[i][j]` = side length of the largest all-ones square whose bottom-right corner is at `(i, j)`.\n\n**Recurrence:**\n```\nif matrix[i][j] == 1:\n    dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\nelse:\n    dp[i][j] = 0\n```\n\n**Base case:** First row and column have at most `1` if the cell is `1`, otherwise `0`.\n\n**Answer:** Track the maximum side length seen, then return `max_side * max_side`."
+    }
+  ],
+  "approach": [
+    "Create a padded DP table `dp` of size `(rows+1) x (cols+1)` initialized to 0.",
+    "Initialize `max_side = 0` to track the largest square side length.",
+    "Iterate through each cell `(i, j)` in the matrix (1-indexed in dp table).",
+    "If `matrix[i-1][j-1] == 1`, set `dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])`.",
+    "Update `max_side = max(max_side, dp[i][j])` after each calculation.",
+    "Return `max_side * max_side` as the area of the largest square."
+  ],
+  "complexity": {
+    "time": "O(m*n)",
+    "space": "O(m*n)"
+  },
+  "code": "def maximal_square(matrix):\n    \"\"\"Find the area of the largest all-ones square in a binary matrix.\"\"\"\n    if not matrix:\n        return 0\n    \n    r = len(matrix)\n    c = len(matrix[0])\n    dp = [[0] * (c + 1) for _ in range(r + 1)]\n    max_side = 0\n    \n    for i in range(1, r + 1):\n        for j in range(1, c + 1):\n            if matrix[i - 1][j - 1] == 1:\n                top = dp[i - 1][j]\n                left = dp[i][j - 1]\n                diag = dp[i - 1][j - 1]\n                dp[i][j] = min(top, left, diag) + 1\n                max_side = max(max_side, dp[i][j])\n    \n    return max_side * max_side",
+  "quiz": [
+    {
+      "q": "Why do we take the minimum of the three neighbors (top, left, diagonal) instead of the maximum?",
+      "options": [
+        "The maximum would give us the perimeter instead of the area",
+        "The weakest neighbor is the bottleneck—it limits how large the square can extend",
+        "Taking the minimum ensures we don't count the same square twice",
+        "The minimum guarantees we find the smallest possible square"
+      ],
+      "answer": 1,
+      "explain": "The smallest of the three neighbors determines the maximum square size at the current cell. If any direction can't support a large enough square (e.g., left neighbor only has side 2), the whole square collapses to that bottleneck + 1."
+    },
+    {
+      "q": "What is the time complexity of the bottom-up DP solution?",
+      "options": [
+        "O(log n)",
+        "O(n log n)",
+        "O(m * n)",
+        "O(n²)"
+      ],
+      "answer": 2,
+      "explain": "We iterate through each cell in the m×n matrix exactly once, performing constant-time operations (min and max) at each cell. This gives us O(m*n) time complexity."
+    },
+    {
+      "q": "What should dp[i][j] represent for cells on the first row or first column of the matrix?",
+      "options": [
+        "Always 0 because they're edge cells",
+        "The maximum of all neighboring cells",
+        "1 if the cell contains 1, otherwise 0",
+        "The sum of all 1's in that row or column"
+      ],
+      "answer": 2,
+      "explain": "For edge cells (first row or column), there's no room to form anything larger than a 1×1 square. So dp[i][j] is 1 if the cell is 1, and 0 if the cell is 0."
+    }
+  ]
+}

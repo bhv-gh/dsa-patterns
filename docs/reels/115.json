@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Prefix matching in tries",
+    "body": "Find all words starting with a prefix in **two steps**: walk the trie to the prefix node (O(N)), then DFS from there to collect every word beneath it (O(M)). If the prefix doesn't exist, bail early with []."
+  },
+  {
+    "type": "concept",
+    "heading": "The DFS trick",
+    "body": "Once you reach the prefix node, recursively explore all children:\n- Mark each `isEndOfWord` node → add to results\n- Build the word character by character\n- Backtrack naturally via recursion"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def prefix_match(self, prefix):\n    # Walk to prefix node\n    node = self.root\n    for char in prefix:\n        if char not in node.children:\n            return []\n        node = node.children[char]\n    \n    # DFS to collect all words\n    result = []\n    def dfs(node, word):\n        if node.isEndOfWord:\n            result.append(word)\n        for char, child in node.children.items():\n            dfs(child, word + char)\n    \n    dfs(node, prefix)\n    return result"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity if N is the length of the prefix and M is the total number of characters in all matching words?",
+    "options": [
+      "O(2^N)",
+      "O(4^N)",
+      "O(N + M)",
+      "O(N + Q)"
+    ],
+    "answer": 2,
+    "explain": "We traverse N characters to find the prefix node, then visit M characters total in the DFS to collect all matching words."
+  }
+]

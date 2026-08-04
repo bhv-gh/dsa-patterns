@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "The 6-Step DP Recipe",
+    "body": "**1. Recurrence** – define state, express in terms of subproblems\n**2. Base Cases** – smallest inputs you know without recursion\n**3. Recursive** – combine recurrence + base\n**4. Memoization** – cache to kill overlapping calls (exponential → O(n))\n**5. Bottom-Up** – iterate from base cases up\n**6. Optimize** – reduce space if only last k values needed"
+  },
+  {
+    "type": "concept",
+    "heading": "House Robber: The Core Trick",
+    "body": "**State**: `dp(i)` = max treasure from first `i` houses\n**Recurrence**: `dp(i) = max(dp(i-1), dp(i-2) + treasure[i-1])`\n(skip house `i` vs. take it)\n**Base**: `dp(0) = 0`, `dp(1) = treasure[0]`\n\nWithout memoization, `dp(3)` is called 3× independently – exponential blowup!"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def rob(treasure):\n    if not treasure:\n        return 0\n    prev, curr = 0, treasure[0]\n    for i in range(2, len(treasure) + 1):\n        take = prev + treasure[i - 1]\n        skip = curr\n        prev, curr = curr, max(take, skip)\n    return curr"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the time complexity of the naive recursive solution (no memoization) for the House Robber problem with n houses?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(2^n)",
+      "O(n^2)"
+    ],
+    "answer": 2,
+    "explain": "Each call branches into two recursive calls (i-1 and i-2), creating an exponential tree with ~2^n nodes."
+  }
+]

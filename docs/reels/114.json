@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Trie Operations: Prefix vs. Word",
+    "body": "**search(word)**: traverse char-by-char, check `is_end` at last node.\n\n**startsWith(prefix)**: same traversal, but skip the `is_end` check — if you can walk the entire prefix, it exists.\n\n**delete(word)**: unmark `is_end`, then recursively prune nodes with no children and not a word-end."
+  },
+  {
+    "type": "concept",
+    "heading": "Delete Trick: Prune Childless Nodes",
+    "body": "After unmarking `is_end`, a node can be deleted if:\n- It's **not** an end-of-word (`is_end=False`)\n- It has **no children** (`len(children)==0`)\n\nRecurse bottom-up: delete child first, then check if parent should also be deleted. This keeps shared prefixes intact."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.is_end = False\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n    \n    def search(self, word):\n        node = self.root\n        for char in word:\n            if char not in node.children:\n                return False\n            node = node.children[char]\n        return node.is_end\n    \n    def startsWith(self, prefix):\n        node = self.root\n        for char in prefix:\n            if char not in node.children:\n                return False\n            node = node.children[char]\n        return True\n    \n    def delete(self, word):\n        def _delete(node, i):\n            if i == len(word):\n                node.is_end = False\n                return len(node.children) == 0\n            char = word[i]\n            if char not in node.children:\n                return False\n            should_delete = _delete(node.children[char], i + 1)\n            if should_delete:\n                del node.children[char]\n            return not node.is_end and len(node.children) == 0\n        _delete(self.root, 0)"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does startsWith not check is_end at the final node?",
+    "options": [
+      "Because is_end is only for complete words, not prefixes",
+      "To improve performance by skipping the check",
+      "Because prefixes never set is_end to True",
+      "It's a bug; startsWith should check is_end"
+    ],
+    "answer": 0,
+    "explain": "startsWith returns True if any word starts with the prefix; the prefix itself doesn't need to be a complete word."
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "id": 109,
+  "slug": "gas-station",
+  "title": "Gas Station",
+  "pattern": "greedy",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Find the starting gas station index to complete a circular route, or return -1 if impossible.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given `n` gas stations along a circular route with arrays `gas` and `cost` of length `n`, where `gas[i]` is the gas available at station `i` and `cost[i]` is the gas required to travel to the next station.\n\nStarting with an empty tank at one station, return the starting station's index if you can complete the circuit once clockwise, otherwise return `-1`. If a solution exists, it is guaranteed to be unique."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "If `sum(gas) >= sum(cost)`, a solution is guaranteed to exist. Use a greedy approach: whenever you can't reach the next station from your current start, reset the start to `i+1` and the fuel to `0`. All stations between the old start and `i` can be ruled out as valid starting points."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Check feasibility**: If `sum(gas) < sum(cost)`, return `-1` immediately.\n\n**Single pass greedy scan**: Track `start` and `fuel` as you iterate through all stations.\n\n**Reset on failure**: If `fuel + gas[i] - cost[i] < 0`, you can't reach the next station from the current start, so set `start = i+1` and `fuel = 0`.\n\n**Update on success**: Otherwise, add the net gain `gas[i] - cost[i]` to `fuel` and continue.\n\n**Return start**: After the loop, `start` is the valid starting index."
+    }
+  ],
+  "approach": [
+    "Check if total gas >= total cost; if not, return -1",
+    "Initialize start index to 0 and fuel to 0",
+    "Iterate through each station index i",
+    "If fuel + gas[i] - cost[i] < 0, reset start to i+1 and fuel to 0",
+    "Otherwise, update fuel by adding gas[i] - cost[i]",
+    "Return the start index after the loop"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "code": "def canCompleteCircuit(gas, cost):\n    \"\"\"\n    Find starting gas station index to complete the circular route.\n    Returns -1 if impossible.\n    \"\"\"\n    if sum(gas) < sum(cost):\n        return -1\n    \n    start, fuel = 0, 0\n    for i in range(len(gas)):\n        if fuel + gas[i] - cost[i] < 0:\n            # Can't reach next station, reset start\n            start, fuel = i + 1, 0\n        else:\n            # Can reach next station, update fuel\n            fuel += gas[i] - cost[i]\n    \n    return start",
+  "quiz": [
+    {
+      "q": "What is the time complexity of the greedy gas station solution?",
+      "options": [
+        "O(n log n)",
+        "O(4^n)",
+        "O(log m * n)",
+        "O(n)"
+      ],
+      "answer": 3,
+      "explain": "We make a single pass through all n stations, performing O(1) work at each station."
+    },
+    {
+      "q": "Why can we reset the start index to i+1 when we can't reach the next station?",
+      "options": [
+        "Because station i+1 has the most gas",
+        "Because all stations between the old start and i will also fail to complete the circuit",
+        "Because the problem guarantees the solution is at i+1",
+        "Because we need to try every station in order"
+      ],
+      "answer": 1,
+      "explain": "If starting at index s we fail at station i, then starting at any station between s and i will also fail at or before station i, since we'd have even less fuel."
+    },
+    {
+      "q": "What condition guarantees that a solution exists?",
+      "options": [
+        "The first station has the most gas",
+        "All gas values are greater than cost values",
+        "sum(gas) >= sum(cost)",
+        "The array length is even"
+      ],
+      "answer": 2,
+      "explain": "If the total gas available is at least the total cost, then there must be a starting point where we can complete the circuit. The greedy scan finds it in one pass."
+    }
+  ]
+}

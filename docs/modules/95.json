@@ -1,0 +1,62 @@
+{
+  "id": 95,
+  "slug": "dp-fundamentals",
+  "title": "Dynamic Programming: Fundamentals",
+  "pattern": "dynamic-programming",
+  "type": "lesson",
+  "difficulty": null,
+  "summary": "Learn DP core concepts: overlapping subproblems, optimal substructure, memoization (top-down) vs tabulation (bottom-up)",
+  "sections": [
+    {
+      "heading": "What is Dynamic Programming?",
+      "body": "Dynamic programming solves problems with two key properties:\n\n**Optimal Substructure**: The problem can be broken down into subproblems whose optimal solutions combine to form the optimal solution to the original problem.\n\n**Overlapping Subproblems**: The same subproblems are solved multiple times. DP avoids redundant work by solving each subproblem once and caching the result.\n\nExample: To find `climbStairs(5)`, we need `climbStairs(4)` + `climbStairs(3)`. A naive recursive solution recalculates `climbStairs(3)` multiple times—DP caches it."
+    },
+    {
+      "heading": "Top-Down: Memoization",
+      "body": "Start with a recursive solution, then add a cache (dictionary) to store results:\n\n- **Before** making a recursive call, check if the result is already cached\n- **After** computing a result, store it in the cache before returning\n\nThis converts exponential `O(2^n)` time to `O(n)` by ensuring each subproblem is solved once. Space complexity is `O(n)` for the cache plus `O(n)` recursion stack."
+    },
+    {
+      "heading": "Bottom-Up: Tabulation",
+      "body": "Start from base cases and iteratively build up to the solution:\n\n- Create a `dp` array where `dp[i]` stores the solution for input `i`\n- Initialize base cases (e.g., `dp[0] = 1`, `dp[1] = 1`)\n- Fill the array using the recurrence relation: `dp[i] = dp[i-1] + dp[i-2]`\n\nNo recursion overhead. Same `O(n)` time and `O(n)` space. Can often optimize space to `O(1)` by keeping only the last few values needed."
+    },
+    {
+      "heading": "Space Optimization",
+      "body": "When the recurrence only depends on a fixed number of previous states (e.g., `dp[i-1]` and `dp[i-2]`), replace the full array with variables:\n\n```python\nprev2, prev1 = 1, 1\nfor i in range(2, n + 1):\n    curr = prev1 + prev2\n    prev2, prev1 = prev1, curr\n```\n\nThis reduces space from `O(n)` to `O(1)` while maintaining `O(n)` time."
+    }
+  ],
+  "approach": [
+    "Problem has optimal substructure (can be solved recursively)",
+    "Same subproblems appear multiple times (overlapping subproblems)",
+    "Start top-down (memoize recursion) or bottom-up (iterate from base cases)",
+    "Look for space optimization: if recurrence uses only last k values, keep k variables"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n) for standard DP; O(1) if optimized"
+  },
+  "code": "def climbStairs(n: int) -> int:\n    \"\"\"Return number of distinct ways to climb n stairs (1 or 2 steps at a time).\n    \n    Shows both memoization and tabulation approaches.\n    \"\"\"\n    # Top-down with memoization\n    memo = {}\n    \n    def climb_memo(i: int) -> int:\n        if i <= 1:\n            return 1\n        if i in memo:\n            return memo[i]\n        memo[i] = climb_memo(i - 1) + climb_memo(i - 2)\n        return memo[i]\n    \n    # Bottom-up tabulation\n    def climb_tabulation(n: int) -> int:\n        if n <= 1:\n            return 1\n        dp = [0] * (n + 1)\n        dp[0], dp[1] = 1, 1\n        for i in range(2, n + 1):\n            dp[i] = dp[i - 1] + dp[i - 2]\n        return dp[n]\n    \n    # Space-optimized bottom-up\n    def climb_optimized(n: int) -> int:\n        if n <= 1:\n            return 1\n        prev2, prev1 = 1, 1\n        for i in range(2, n + 1):\n            curr = prev1 + prev2\n            prev2, prev1 = prev1, curr\n        return prev1\n    \n    return climb_optimized(n)",
+  "quiz": [
+    {
+      "q": "What distinguishes a DP problem from a plain recursive problem?",
+      "options": [
+        "DP problems always require sorting the input first",
+        "DP problems have overlapping subproblems that can be cached",
+        "DP problems can only be solved bottom-up, not top-down",
+        "DP problems must use a 2D array for the cache"
+      ],
+      "answer": 1,
+      "explain": "The key insight of DP is that the same subproblems are solved multiple times. By caching (memoizing) results, we avoid redundant computation and improve from exponential to polynomial time."
+    },
+    {
+      "q": "When can you optimize DP space complexity from O(n) to O(1)?",
+      "options": [
+        "When the problem uses a greedy approach",
+        "When the recurrence only depends on a fixed number of previous states",
+        "Only in top-down memoization, not bottom-up",
+        "When n is small enough to fit in cache"
+      ],
+      "answer": 1,
+      "explain": "If the recurrence relation only reads the last k values (e.g., dp[i-1] and dp[i-2]), you can replace the entire array with k variables. This is common in Fibonacci-like problems."
+    }
+  ]
+}

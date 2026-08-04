@@ -1,0 +1,74 @@
+{
+  "id": 118,
+  "slug": "subarray-sum-equals-k",
+  "title": "Subarray Sum Equals K",
+  "pattern": "prefix-sum",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Count contiguous subarrays summing to k using prefix-sum frequencies in a hashmap to track how many earlier sums differ by k.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer array `nums` and target `k`, return the total number of contiguous subarrays whose elements sum to `k`.\n\n**Example:**\n- Input: `nums = [3, 4, 7, 2, -3, 1, 4, 2]`, `k = 7`\n- Output: `4`\n- Explanation: Subarrays `[3, 4]`, `[7]`, `[7, 2, -3, 1]`, `[1, 4, 2]` all sum to 7."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "For any subarray ending at index `i` with prefix sum `sum_`, we can find how many earlier prefix sums equal `sum_ - k`. Each such earlier sum represents a subarray summing to `k`.\n\n**Why not sliding window?** Negative numbers can cause the sum to decrease, so the window property (monotonic sum growth) doesn't hold. A hashmap of prefix sums handles negatives correctly."
+    },
+    {
+      "heading": "Approach",
+      "body": "Track prefix sums and their frequencies in a hashmap. For each element, check how many earlier prefix sums would create a subarray summing to `k`.\n\n**Visual:** If `sum_ = 7` and `k = 5`, we need an earlier prefix sum of `7 - 5 = 2`. If we've seen prefix sum `2` twice before, there are two subarrays ending here that sum to `5`."
+    },
+    {
+      "heading": "Implementation Details",
+      "body": "Initialize `prefix_counts = {0: 1}` to handle subarrays starting at index 0. The entry `{0: 1}` represents an empty prefix, allowing `sum_ - k = 0` to correctly count subarrays from the start.\n\nAt each step:\n- Add current element to running sum\n- Add `prefix_counts[sum_ - k]` to count (defaults to 0 if not seen)\n- Increment `prefix_counts[sum_]`"
+    }
+  ],
+  "approach": [
+    "Initialize `prefix_counts = {0: 1}`, `sum_ = 0`, `count = 0`",
+    "For each element in the array, add it to `sum_`",
+    "Look up `prefix_counts[sum_ - k]` and add to `count` (this is the number of subarrays ending here that sum to k)",
+    "Increment `prefix_counts[sum_]` by 1",
+    "Return `count`"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def subarraySum(nums, k):\n    \"\"\"\n    Count contiguous subarrays summing to k using prefix-sum frequencies.\n    \"\"\"\n    count = 0\n    sum_ = 0\n    prefix_counts = {0: 1}\n    \n    for num in nums:\n        sum_ += num\n        if sum_ - k in prefix_counts:\n            count += prefix_counts[sum_ - k]\n        prefix_counts[sum_] = prefix_counts.get(sum_, 0) + 1\n    \n    return count",
+  "quiz": [
+    {
+      "q": "Why do we initialize `prefix_counts` with `{0: 1}` instead of an empty dictionary?",
+      "options": [
+        "To handle subarrays that start at index 0 and sum to k",
+        "To avoid division by zero errors",
+        "To optimize memory usage",
+        "To ensure the hashmap is never empty"
+      ],
+      "answer": 0,
+      "explain": "The entry `{0: 1}` represents an empty prefix. When `sum_ = k`, we need `sum_ - k = 0` in the map to count this subarray correctly."
+    },
+    {
+      "q": "Why can't we use a sliding window approach for this problem?",
+      "options": [
+        "Sliding window is too slow for this problem",
+        "The array contains negative numbers, so sums can decrease",
+        "We need to count subarrays, not find just one",
+        "Sliding window only works with sorted arrays"
+      ],
+      "answer": 1,
+      "explain": "Negative numbers break the sliding window property. When the sum decreases, we can't determine whether to expand or shrink the window."
+    },
+    {
+      "q": "If `sum_ = 10`, `k = 3`, and `prefix_counts[7] = 2`, how many subarrays summing to k end at the current index?",
+      "options": [
+        "0 subarrays",
+        "1 subarray",
+        "2 subarrays",
+        "3 subarrays"
+      ],
+      "answer": 2,
+      "explain": "We need `sum_ - k = 10 - 3 = 7`. Since we've seen prefix sum 7 twice before, there are 2 subarrays ending here that sum to 3."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": 97,
+  "slug": "counting-bits",
+  "title": "Counting Bits",
+  "pattern": "dynamic-programming",
+  "type": "problem",
+  "difficulty": "easy",
+  "summary": "Count 1-bits in binary for 0..n using DP: reuse i/2's count plus the rightmost bit",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an integer **n**, return an array **dp** of size n+1, where **dp[i]** stores the count of '1' bits in the binary form of **i**.\n\n**Example**: n = 6\n- 0 → 0 (0 ones)\n- 1 → 1 (1 one)\n- 2 → 10 (1 one)\n- 3 → 11 (2 ones)\n- 4 → 100 (1 one)\n- 5 → 101 (2 ones)\n- 6 → 110 (2 ones)\n\nOutput: `[0, 1, 1, 2, 1, 2, 2]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Any number **i** can be split into:\n- The **rightmost bit**: `i & 1` (or `i % 2`)\n- The **remaining bits**: `i >> 1` (or `i // 2`)\n\nIf we already know the bit count for `i >> 1`, then:\n\n`dp[i] = dp[i >> 1] + (i & 1)`\n\n**Alternative recurrence**: `dp[i] = dp[i & (i-1)] + 1`\n\nClearing the lowest set bit (`i & (i-1)`) and adding 1 also gives the count, but the right-shift approach is more intuitive."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Bottom-up DP**:\n- Initialize array `dp` of size `n+1` with zeros\n- Base case: `dp[0] = 0` (no bits set)\n- For each `i` from 1 to n:\n  - `dp[i] = dp[i >> 1] + (i & 1)`\n  - Reuse the already-computed count for `i/2`, then add 1 if `i` is odd\n- Return `dp`"
+    },
+    {
+      "heading": "Complexity",
+      "body": "**Time**: O(n) — single pass from 1 to n\n\n**Space**: O(n) — dp array of size n+1"
+    }
+  ],
+  "approach": [
+    "Create dp array of size n+1, initialized to 0",
+    "Set base case: dp[0] = 0 (zero has no 1-bits)",
+    "For i from 1 to n:",
+    "  - dp[i] = dp[i >> 1] + (i & 1)",
+    "  - Reuse count from i/2, add 1 if i is odd",
+    "Return dp"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "code": "def count_bits(n):\n    \"\"\"Return array where dp[i] = count of 1-bits in binary of i.\"\"\"\n    dp = [0] * (n + 1)\n    for i in range(1, n + 1):\n        dp[i] = dp[i >> 1] + (i & 1)\n    return dp",
+  "quiz": [
+    {
+      "q": "What does `i >> 1` represent in the recurrence relation?",
+      "options": [
+        "The number with the rightmost bit removed (i divided by 2)",
+        "The number with the leftmost bit removed",
+        "The count of 1-bits in i",
+        "The remainder when i is divided by 2"
+      ],
+      "answer": 0,
+      "explain": "`i >> 1` shifts i right by 1 bit, effectively dividing by 2 and removing the rightmost bit. We've already computed dp[i>>1], so we reuse it."
+    },
+    {
+      "q": "Why does `dp[i] = dp[i >> 1] + (i & 1)` work?",
+      "options": [
+        "It splits i into rightmost bit and the rest, reusing the count from i/2",
+        "It counts all bits in i from scratch",
+        "It uses memoization to store intermediate results",
+        "It applies a greedy strategy to count bits"
+      ],
+      "answer": 0,
+      "explain": "The recurrence splits i into (i>>1) and the last bit (i&1). Since dp[i>>1] is already computed, we just add 1 if the last bit is set."
+    },
+    {
+      "q": "What is the alternative DP recurrence for this problem?",
+      "options": [
+        "dp[i] = dp[i-1] + 1",
+        "dp[i] = dp[i & (i-1)] + 1",
+        "dp[i] = dp[i] + dp[i-1]",
+        "dp[i] = dp[2*i] + (i % 2)"
+      ],
+      "answer": 1,
+      "explain": "`i & (i-1)` clears the lowest set bit of i. Since dp[i&(i-1)] has one fewer 1-bit, adding 1 gives the count for i."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "id": 114,
+  "slug": "implement-trie",
+  "title": "Implement Trie",
+  "pattern": "trie",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Build search, startsWith, and delete methods for a Trie using children dict and is_end flag. O(len(word)) per operation.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Implement the `search(word)`, `startsWith(prefix)`, and `delete(word)` methods of a Trie.\n\n- `search(word)` returns `True` if the word is in the Trie, `False` otherwise.\n- `startsWith(prefix)` returns `True` if any word in the Trie starts with the given prefix, `False` otherwise.\n- `delete(word)` removes the word from the Trie (no return value).\n\nThe Trie structure and `insert` method are already implemented. Each node has a `children` dict (char → TrieNode) and an `is_end` boolean."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**Search**: Traverse the trie following each character; check `is_end` when you reach the last character.\n\n**StartsWith**: Same as search but skip the `is_end` check — if you can traverse the entire prefix, it exists.\n\n**Delete**: Unmark `is_end` for the last character, then recursively delete nodes that are (1) not end-of-word and (2) have no children."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Search:**\n1. Start at root node.\n2. For each character, check if it exists in `node.children`.\n3. If missing, return `False`; otherwise move to that child.\n4. After processing all characters, return `node.is_end`.\n\n**StartsWith:**\n1. Same as search steps 1–3.\n2. After processing all prefix characters, return `True` (no `is_end` check).\n\n**Delete (recursive helper):**\n1. Traverse to the last character using a recursive helper `_delete(node, index)`.\n2. Base case: when `index == len(word)`, set `node.is_end = False`.\n3. Return `True` if this node should be deleted: `len(node.children) == 0`.\n4. In the recursive step: if child should be deleted, remove it from `node.children`.\n5. Return whether current node should be deleted: `not node.is_end and len(node.children) == 0`."
+    }
+  ],
+  "approach": [
+    "Search: traverse the trie char-by-char; return node.is_end at the end",
+    "StartsWith: traverse the prefix; return True if all chars found (no is_end check)",
+    "Delete: use recursive helper to unmark is_end and prune childless non-word nodes",
+    "Delete helper base case: set is_end=False, return True if no children",
+    "Delete recursive step: delete child if helper returns True, then check if current node should be deleted"
+  ],
+  "complexity": {
+    "time": "O(n) per operation where n = len(word) or len(prefix)",
+    "space": "O(n) for delete recursion stack; O(1) for search/startsWith"
+  },
+  "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.is_end = False\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n    \n    def insert(self, word):\n        \"\"\"Insert a word into the trie.\"\"\"\n        node = self.root\n        for char in word:\n            if char not in node.children:\n                node.children[char] = TrieNode()\n            node = node.children[char]\n        node.is_end = True\n    \n    def search(self, word):\n        \"\"\"Return True if word exists in trie.\"\"\"\n        node = self.root\n        for char in word:\n            if char not in node.children:\n                return False\n            node = node.children[char]\n        return node.is_end\n    \n    def startsWith(self, prefix):\n        \"\"\"Return True if any word starts with prefix.\"\"\"\n        node = self.root\n        for char in prefix:\n            if char not in node.children:\n                return False\n            node = node.children[char]\n        return True\n    \n    def delete(self, word):\n        \"\"\"Delete word from trie.\"\"\"\n        def _delete(node, index):\n            if index == len(word):\n                node.is_end = False\n                return len(node.children) == 0\n            \n            char = word[index]\n            child = node.children.get(char)\n            if child is None:\n                return False\n            \n            should_delete_child = _delete(child, index + 1)\n            if should_delete_child:\n                del node.children[char]\n            \n            return not node.is_end and len(node.children) == 0\n        \n        _delete(self.root, 0)",
+  "quiz": [
+    {
+      "q": "Why does startsWith not check is_end at the final node?",
+      "options": [
+        "Because is_end is only for complete words, not prefixes",
+        "To improve performance by skipping the check",
+        "Because prefixes never set is_end to True",
+        "It's a bug; startsWith should check is_end"
+      ],
+      "answer": 0,
+      "explain": "startsWith returns True if *any* word starts with the prefix. The prefix itself doesn't need to be a complete word (is_end=True). For example, 'app' is a valid prefix for 'apple' even if 'app' isn't in the trie."
+    },
+    {
+      "q": "When deleting 'bat' from a trie containing 'bat' and 'bath', which nodes are deleted?",
+      "options": [
+        "None; we only unmark 't' as is_end",
+        "Only the 't' node",
+        "The 't' and 'a' nodes",
+        "All nodes 'b', 'a', 't'"
+      ],
+      "answer": 0,
+      "explain": "After unmarking 't' as is_end, the 't' node still has a child ('h' from 'bath'), so it cannot be deleted. No nodes are removed, only is_end is set to False."
+    },
+    {
+      "q": "What is the space complexity of the delete operation?",
+      "options": [
+        "O(n) for the recursion stack where n = len(word)",
+        "O(1) because we only modify pointers",
+        "O(k) where k = number of nodes in the trie",
+        "O(m) where m = number of words in the trie"
+      ],
+      "answer": 0,
+      "explain": "delete uses a recursive helper that makes one call per character in the word, so the recursion stack depth is O(n) where n = len(word)."
+    }
+  ]
+}

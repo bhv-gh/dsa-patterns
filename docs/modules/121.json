@@ -1,0 +1,75 @@
+{
+  "id": 121,
+  "slug": "set-matrix-zeroes",
+  "title": "Set Matrix Zeroes",
+  "pattern": "matrices",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Modify matrix in-place: if element is 0, set its entire row and column to 0. Use first row/col as markers to achieve O(1) space.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given an m×n matrix, modify it **in place** so that if any element is 0, its entire row and column are set to 0.\n\n**Example:**\n- Input: `[[1,1,1],[1,0,1],[1,1,1]]`\n- Output: `[[1,0,1],[0,0,0],[1,0,1]]`\n\nThe naive approach uses O(m+n) space to track which rows/columns to zero. We can do better."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "**Use the matrix itself as storage!**\n\nInstead of extra arrays, use the first row and first column as markers:\n- When we find a zero at `[i][j]`, mark `matrix[i][0] = 0` (row i needs zeroing) and `matrix[0][j] = 0` (column j needs zeroing).\n\n**Critical:** Save whether the first row/column originally had zeros **before** using them as markers, then handle them last."
+    },
+    {
+      "heading": "Approach",
+      "body": "The algorithm has 4 phases:\n\n1. **Save first row/column state:** Check if row 0 or column 0 originally contain zeros. Store in boolean flags `first_row_zero` and `first_col_zero`.\n\n2. **Mark zeros:** Scan the inner matrix `[1:][1:]`. When finding a zero at `[i][j]`, set `matrix[i][0] = 0` and `matrix[0][j] = 0` as markers.\n\n3. **Zero the inner matrix:** For each cell `[i][j]` where `i,j >= 1`, if `matrix[i][0] == 0` or `matrix[0][j] == 0`, set `matrix[i][j] = 0`.\n\n4. **Handle first row/column:** If the saved flags indicate they originally had zeros, zero them now."
+    },
+    {
+      "heading": "Why This Order Matters",
+      "body": "We must:\n- Save first row/col state **before** using them as markers (else we lose original info)\n- Zero them **last** (else we corrupt the markers we're reading in step 3)"
+    }
+  ],
+  "approach": [
+    "Check if first row contains any zeros → save in `first_row_zero`",
+    "Check if first column contains any zeros → save in `first_col_zero`",
+    "Scan inner matrix [1:][1:]; for each zero at [i][j], mark matrix[i][0]=0 and matrix[0][j]=0",
+    "Iterate inner matrix again; zero cell [i][j] if matrix[i][0]==0 or matrix[0][j]==0",
+    "If `first_row_zero`, zero entire first row",
+    "If `first_col_zero`, zero entire first column"
+  ],
+  "complexity": {
+    "time": "O(m × n)",
+    "space": "O(1)"
+  },
+  "code": "def setZeroes(matrix):\n    \"\"\"Modify matrix in-place: set rows/cols to 0 if element is 0.\"\"\"\n    rows, cols = len(matrix), len(matrix[0])\n    \n    # Step 1: Save first row/column state\n    first_row_zero = any(matrix[0][j] == 0 for j in range(cols))\n    first_col_zero = any(matrix[i][0] == 0 for i in range(rows))\n    \n    # Step 2: Mark zeros using first row/column as markers\n    for i in range(1, rows):\n        for j in range(1, cols):\n            if matrix[i][j] == 0:\n                matrix[i][0] = 0\n                matrix[0][j] = 0\n    \n    # Step 3: Zero the inner matrix based on markers\n    for i in range(1, rows):\n        for j in range(1, cols):\n            if matrix[i][0] == 0 or matrix[0][j] == 0:\n                matrix[i][j] = 0\n    \n    # Step 4: Handle first row/column\n    if first_row_zero:\n        for j in range(cols):\n            matrix[0][j] = 0\n    \n    if first_col_zero:\n        for i in range(rows):\n            matrix[i][0] = 0",
+  "quiz": [
+    {
+      "q": "Why must we save the first row/column state before using them as markers?",
+      "options": [
+        "To optimize time complexity",
+        "Because we'll overwrite them with markers and lose whether they originally had zeros",
+        "To handle edge cases with 1×1 matrices",
+        "To avoid modifying the input matrix"
+      ],
+      "answer": 1,
+      "explain": "We use the first row/column as storage for markers. If we don't save their original state first, we won't know whether they originally contained zeros and need to be zeroed in the final step."
+    },
+    {
+      "q": "What is the space complexity of this solution?",
+      "options": [
+        "O(m + n)",
+        "O(m × n)",
+        "O(1)",
+        "O(min(m, n))"
+      ],
+      "answer": 2,
+      "explain": "We only use two boolean variables (first_row_zero and first_col_zero) regardless of matrix size. The first row/column are part of the input matrix, not additional space."
+    },
+    {
+      "q": "Why do we zero the first row/column last (step 4)?",
+      "options": [
+        "To improve cache locality",
+        "Because the problem requires it",
+        "To avoid corrupting the markers we read in step 3",
+        "To handle the corner cell matrix[0][0] correctly"
+      ],
+      "answer": 2,
+      "explain": "In step 3, we read matrix[i][0] and matrix[0][j] as markers to decide which cells to zero. If we zeroed the first row/column earlier, we'd destroy these markers before using them."
+    }
+  ]
+}

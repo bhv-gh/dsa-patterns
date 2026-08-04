@@ -1,0 +1,71 @@
+{
+  "id": 115,
+  "slug": "prefix-matching",
+  "title": "Prefix Matching",
+  "pattern": "trie",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Use a trie to find all words starting with a given prefix by navigating to the prefix node and performing DFS to collect matches.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Implement a `match(prefix)` function that returns a list of all words in the trie that start with the given prefix.\n\n**Example 1:**\n- Initial words: `[\"apple\", \"app\", \"apartment\", \"ap\", \"apricot\"]`\n- Prefix: `\"app\"`\n- Output: `[\"apple\", \"app\"]`\n\n**Example 2:**\n- Initial words: `[\"ball\", \"bath\", \"bat\", \"batter\"]`\n- Prefix: `\"bat\"`\n- Output: `[\"bat\", \"bath\", \"batter\"]`"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Navigate to the trie node representing the prefix, then use **depth-first search** from that node to collect all words beneath it. If the prefix doesn't exist in the trie, return an empty list."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Step 1: Search for the prefix**\n- Start from the root and traverse character by character\n- If any character is missing, return empty list\n- Stop at the node corresponding to the last character of the prefix\n\n**Step 2: Perform DFS from the prefix node**\n- Create a helper function `dfs(current_node, current_word)`\n- For each child, recursively explore and build the word\n- When `isEndOfWord` is true, add the complete word to results\n- Return all collected words"
+    }
+  ],
+  "approach": [
+    "Start from the root node and traverse the trie character by character for the given prefix",
+    "If any character in the prefix is not found, return an empty list",
+    "Once the prefix node is found, initialize a result list and a DFS helper function",
+    "In the DFS function, check if the current node marks the end of a word and add it to results",
+    "Recursively explore all children, appending each character to build complete words",
+    "Return the collected list of all words with the given prefix"
+  ],
+  "complexity": {
+    "time": "O(N + M)",
+    "space": "O(N + M)"
+  },
+  "code": "def prefix(self, word):\n    \"\"\"\n    Return a list of all words in the trie that start with the given prefix.\n    \"\"\"\n    node = self.root\n    for char in word:\n        if char not in node.children:\n            return []  # Prefix not found in trie\n        node = node.children[char]\n    \n    # Now perform DFS to collect all words\n    result = []\n    \n    def dfs(current_node, current_word):\n        if current_node.isEndOfWord:\n            result.append(current_word)\n        \n        for char, child_node in current_node.children.items():\n            dfs(child_node, current_word + char)\n    \n    dfs(node, word)\n    return result",
+  "quiz": [
+    {
+      "q": "What is the time complexity if N is the length of the prefix and M is the total number of characters in all matching words?",
+      "options": [
+        "O(2^N)",
+        "O(4^N)",
+        "O(N + M)",
+        "O(N + Q)"
+      ],
+      "answer": 2,
+      "explain": "We traverse N characters to find the prefix node, then visit M characters total in the DFS to collect all matching words."
+    },
+    {
+      "q": "What should we return if the prefix is not found in the trie?",
+      "options": [
+        "None",
+        "An empty list",
+        "Raise an exception",
+        "The closest matching prefix"
+      ],
+      "answer": 1,
+      "explain": "When the prefix doesn't exist in the trie, we return an empty list to indicate no matches were found."
+    },
+    {
+      "q": "Why do we use DFS after finding the prefix node?",
+      "options": [
+        "To delete the prefix from the trie",
+        "To count the number of matching words",
+        "To collect all complete words that start with the prefix",
+        "To find the shortest word with the prefix"
+      ],
+      "answer": 2,
+      "explain": "DFS explores all paths from the prefix node, collecting every complete word (marked by isEndOfWord) that starts with the given prefix."
+    }
+  ]
+}

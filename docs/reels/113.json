@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Trie: A Prefix Tree",
+    "body": "A **trie** stores strings in a tree where each node = one character. Words sharing prefixes share nodes — APPLE and APP both use A→P→P.\n\nEach node has an `is_end_of_word` flag to mark complete words vs. just prefixes.\n\n**Why use it?** Hash sets only check exact matches. Tries answer \"does ANY word start with BA?\" in O(L) time."
+  },
+  {
+    "type": "concept",
+    "heading": "When to Reach for a Trie",
+    "body": "Use tries for:\n- **Prefix searches** — \"starts with AB?\"\n- **Auto-complete** — suggest words from partial input\n- **Word games** — fast dictionary lookups\n\nAll ops (insert, search, starts_with) run in **O(L)** where L = word length.\n\nIf the problem asks about prefixes or autocomplete, think trie first."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.is_end_of_word = False\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n    \n    def insert(self, word):\n        node = self.root\n        for char in word:\n            if char not in node.children:\n                node.children[char] = TrieNode()\n            node = node.children[char]\n        node.is_end_of_word = True\n    \n    def starts_with(self, prefix):\n        node = self.root\n        for char in prefix:\n            if char not in node.children:\n                return False\n            node = node.children[char]\n        return True"
+  },
+  {
+    "type": "quiz",
+    "q": "Why use a trie instead of a hash set for storing words?",
+    "options": [
+      "A trie uses less memory than a hash set",
+      "A trie supports prefix queries efficiently, while a hash set only supports exact match",
+      "A trie has O(1) search time, while a hash set has O(L) search time",
+      "A trie automatically sorts words alphabetically"
+    ],
+    "answer": 1,
+    "explain": "Tries answer \"starts with X?\" in O(L); hash sets only check exact matches."
+  }
+]

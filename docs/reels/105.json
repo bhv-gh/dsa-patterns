@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Paint k colors in O(n×k)",
+    "body": "**Paint House II** scales to k colors by tracking just **min1** & **min2** from the previous row.\n\n- If next color ≠ min1's index → use min1\n- If next color = min1's index → use min2\n\nThis turns \"find minimum excluding j\" from **O(k)** scan into **O(1)** lookup."
+  },
+  {
+    "type": "concept",
+    "heading": "State + recurrence",
+    "body": "`dp[i][j]` = min cost to paint houses 0..i where house i uses color j\n\n**Recurrence:**\n```\ndp[i][j] = costs[i][j] + (min2 if j == min1_idx else min1)\n```\n\nwhere min1, min2, min1_idx come from row i-1."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def min_cost_ii(costs):\n    prev = costs[0][:]\n    for i in range(1, len(costs)):\n        # Find min1, min2, min1_idx\n        min1 = min2 = float('inf')\n        min1_idx = -1\n        for j, val in enumerate(prev):\n            if val < min1:\n                min2, min1, min1_idx = min1, val, j\n            elif val < min2:\n                min2 = val\n        # Build curr row\n        curr = [costs[i][j] + (min2 if j == min1_idx else min1)\n                for j in range(len(costs[0]))]\n        prev = curr\n    return min(prev)"
+  },
+  {
+    "type": "quiz",
+    "q": "Why does tracking min1 and min2 reduce time complexity from O(n×k²) to O(n×k)?",
+    "options": [
+      "It eliminates the need to store the full DP table",
+      "It allows O(1) lookup of 'minimum excluding color j' instead of scanning k values",
+      "It reduces the number of houses we need to process",
+      "It changes the recurrence relation to avoid dependencies"
+    ],
+    "answer": 1,
+    "explain": "By precomputing min1 and min2, we answer 'what's the minimum cost excluding color j?' in O(1): if j is min1_idx use min2, else use min1."
+  }
+]

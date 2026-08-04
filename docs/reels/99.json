@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Grid paths = addition",
+    "body": "To reach any cell, you can only arrive from **above** or from the **left**. So paths to `(i,j)` = paths to cell above + paths to cell left.\n\n**Recurrence:** `dp[i][j] = dp[i-1][j] + dp[i][j-1]`\n\n**Base case:** First row & first column = 1 (only one way to reach them)."
+  },
+  {
+    "type": "concept",
+    "heading": "Why DP works here",
+    "body": "Every cell's answer depends on **smaller subproblems** (cells above/left). Build bottom-up from top-left to bottom-right.\n\n- Start: `dp[0][0] = 1`\n- Fill row by row\n- Final answer: `dp[m-1][n-1]`"
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def unique_paths(m: int, n: int) -> int:\n    dp = [[1] * n for _ in range(m)]\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[i][j] = dp[i-1][j] + dp[i][j-1]\n    return dp[m-1][n-1]"
+  },
+  {
+    "type": "quiz",
+    "q": "What is the recurrence relation for this problem?",
+    "options": [
+      "dp[i][j] = dp[i-1][j] * dp[i][j-1]",
+      "dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+      "dp[i][j] = max(dp[i-1][j], dp[i][j-1])",
+      "dp[i][j] = dp[i-1][j-1] + 1"
+    ],
+    "answer": 1,
+    "explain": "Paths to (i,j) = sum of paths from above and left, since robot moves only right or down."
+  }
+]

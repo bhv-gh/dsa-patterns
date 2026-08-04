@@ -1,0 +1,29 @@
+[
+  {
+    "type": "concept",
+    "heading": "Prefix sum = cumulative total",
+    "body": "**Prefix sum** is the running total from index 0 to i. To find any range sum [L, R], just subtract two prefix values:\n\n**sum(L, R) = prefix[R+1] - prefix[L]**\n\nPreprocess once in O(n), then answer unlimited range queries in O(1)."
+  },
+  {
+    "type": "concept",
+    "heading": "Build it with size n+1",
+    "body": "Use array of size **n+1** with `prefix[0] = 0` (empty range). Then:\n\n`prefix[i] = prefix[i-1] + arr[i-1]`\n\nWhy n+1? Avoids off-by-one headaches — the formula `prefix[R+1] - prefix[L]` works uniformly for all ranges, even when L=0."
+  },
+  {
+    "type": "code",
+    "label": "Crux · Python",
+    "code": "def build_prefix(arr):\n    prefix = [0] * (len(arr) + 1)\n    for i in range(1, len(arr) + 1):\n        prefix[i] = prefix[i - 1] + arr[i - 1]\n    return prefix\n\ndef range_sum(prefix, left, right):\n    return prefix[right + 1] - prefix[left]"
+  },
+  {
+    "type": "quiz",
+    "q": "Given prefix array [0, 1, 4, 8, 14, 16, 21, 29] for arr = [1, 3, 4, 6, 2, 5, 8], what is the sum of arr[2:5] (inclusive)?",
+    "options": [
+      "12",
+      "17",
+      "13",
+      "16"
+    ],
+    "answer": 1,
+    "explain": "sum(2, 5) = prefix[6] - prefix[2] = 21 - 4 = 17"
+  }
+]

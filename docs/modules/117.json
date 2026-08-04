@@ -1,0 +1,70 @@
+{
+  "id": 117,
+  "slug": "count-vowels-in-substrings",
+  "title": "Count Vowels in Substrings",
+  "pattern": "prefix-sum",
+  "type": "problem",
+  "difficulty": "medium",
+  "summary": "Efficiently count vowels in multiple substring ranges using a prefix sum array to answer each query in O(1) time.",
+  "sections": [
+    {
+      "heading": "Problem",
+      "body": "Given a string `word` and a list of `queries` as `[left, right]` pairs, count the number of vowels in each substring `word[left:right+1]`.\n\n**Input:** `word = \"prefixsum\"`, `queries = [[0, 2], [1, 4], [3, 5]]`\n**Output:** `[1, 2, 1]`\n\n**Explanation:**\n- `word[0:3]` → \"pre\" contains 1 vowel\n- `word[1:5]` → \"refi\" contains 2 vowels\n- `word[3:6]` → \"fix\" contains 1 vowel\n\nThe function must be optimized for a large number of queries."
+    },
+    {
+      "heading": "Key Insight",
+      "body": "Build a prefix sum array where `prefix_sum[i]` stores the count of vowels in `word[0:i]`. Any range query `[left, right]` can then be answered in **O(1)** using the formula:\n\n`vowels_in_range = prefix_sum[right + 1] - prefix_sum[left]`\n\nThis transforms a problem that would take O(N × Q) time (checking each range character-by-character) into O(N + Q) by preprocessing once and querying in constant time."
+    },
+    {
+      "heading": "Approach",
+      "body": "**Step 1:** Create a prefix sum array of length `len(word) + 1`, initialized to 0.\n\n**Step 2:** Iterate through the word. For each character, if it's a vowel, increment the prefix count; otherwise, carry forward the previous count.\n\n**Step 3:** For each query `[left, right]`, compute the vowel count as `prefix_sum[right + 1] - prefix_sum[left]`.\n\n**Step 4:** Collect all results and return them as a list."
+    }
+  ],
+  "approach": [
+    "Initialize `prefix_sum = [0] * (len(word) + 1)` and `vowels = {'a', 'e', 'i', 'o', 'u'}`.",
+    "Loop through each character in `word` (index `i` from 1 to `len(word)`): if `word[i-1]` is a vowel, set `prefix_sum[i] = prefix_sum[i-1] + 1`, else `prefix_sum[i] = prefix_sum[i-1]`.",
+    "Initialize an empty result list.",
+    "For each `[left, right]` in `queries`, append `prefix_sum[right + 1] - prefix_sum[left]` to the result list.",
+    "Return the result list."
+  ],
+  "complexity": {
+    "time": "O(N + Q)",
+    "space": "O(N)"
+  },
+  "code": "def count_vowels_in_substrings(word, queries):\n    \"\"\"\n    Count vowels in multiple substring ranges using prefix sums.\n    Time: O(N + Q), Space: O(N) where N = len(word), Q = len(queries).\n    \"\"\"\n    vowels = {'a', 'e', 'i', 'o', 'u'}\n    prefix_sum = [0] * (len(word) + 1)\n    \n    # Build prefix sum of vowel counts\n    for i in range(1, len(word) + 1):\n        is_vowel = word[i - 1] in vowels\n        prefix_sum[i] = prefix_sum[i - 1] + (1 if is_vowel else 0)\n    \n    # Answer each query in O(1)\n    result = []\n    for left, right in queries:\n        num_vowels = prefix_sum[right + 1] - prefix_sum[left]\n        result.append(num_vowels)\n    \n    return result",
+  "quiz": [
+    {
+      "q": "Why do we use `prefix_sum[right + 1] - prefix_sum[left]` instead of `prefix_sum[right] - prefix_sum[left]`?",
+      "options": [
+        "Because `prefix_sum[i]` stores the count of vowels in `word[0:i]`, so to include index `right`, we need `prefix_sum[right + 1]`.",
+        "To avoid off-by-one errors in the loop.",
+        "Because `right` is always one less than the actual endpoint.",
+        "Because Python uses exclusive end indices in slicing."
+      ],
+      "answer": 0,
+      "explain": "`prefix_sum[i]` represents the vowel count in `word[0:i]`, so to include character at index `right`, we need the count up to `right + 1`."
+    },
+    {
+      "q": "What is the time complexity of this solution?",
+      "options": [
+        "O(N × Q) where N is the length of the word and Q is the number of queries.",
+        "O(N + Q) where N is the length of the word and Q is the number of queries.",
+        "O(N log Q) where N is the length of the word and Q is the number of queries.",
+        "O(Q) where Q is the number of queries."
+      ],
+      "answer": 1,
+      "explain": "We build the prefix sum in O(N) and answer each of Q queries in O(1), giving O(N + Q) total time."
+    },
+    {
+      "q": "If we skipped the prefix sum and counted vowels directly for each query, what would the time complexity be?",
+      "options": [
+        "O(N + Q)",
+        "O(N × Q)",
+        "O(N log Q)",
+        "O(N²)"
+      ],
+      "answer": 1,
+      "explain": "Each query would require scanning up to N characters, so Q queries would take O(N × Q) time, which is inefficient for large Q."
+    }
+  ]
+}
